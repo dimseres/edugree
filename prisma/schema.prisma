@@ -26,6 +26,7 @@ model User {
   updated_at DateTime?
   deleted_at DateTime?
   token Token[]
+  @@map("users")
 }
 
 model Token {
@@ -34,6 +35,7 @@ model Token {
   user_id Int
   token String @db.Text
   expire_date DateTime
+  @@map("tokens")
 }
 
 // Пока-что Админ, Модератор, Преподаватель, Студент
@@ -46,6 +48,7 @@ model Role {
   updated_at DateTime?
   deleted_at DateTime?
   user User[]
+  @@map("roles")
 }
 
 model Permission {
@@ -57,4 +60,5 @@ model Permission {
   created_at DateTime?
   updated_at DateTime?
   deleted_at DateTime?
+  @@map("permissions")
 }

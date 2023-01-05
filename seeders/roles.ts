@@ -32,7 +32,7 @@ export class RolesSeeder implements ISeeder{
                 ...roleData,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
-                deleted_at: new Date().toISOString(),
+                deleted_at: null,
             }
             payload.push(async () => {
                 console.log("CREATING ROLES");

@@ -24,7 +24,7 @@ export class UserSeeder implements ISeeder {
                         active: true,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString(),
-                        deleted_at: new Date().toISOString(),
+                        deleted_at: null,
                     }
                 })
             });
