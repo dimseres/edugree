@@ -1,13 +1,14 @@
-package users
+package tests
 
 import (
 	"edugree_auth/internal/database"
+	"edugree_auth/internal/repositories/users"
 	"github.com/joho/godotenv"
 	"testing"
 )
 
 func init() {
-	err := godotenv.Load("../../.env")
+	err := godotenv.Load("../.env")
 	if err != nil {
 		panic(err)
 	}
@@ -15,7 +16,7 @@ func init() {
 }
 
 func TestRepository_GetUserById(t *testing.T) {
-	rep := NewRepository()
+	rep := users.NewRepository()
 	id := 2
 	model := rep.GetUserById(id)
 	if model.Id == 0 {
