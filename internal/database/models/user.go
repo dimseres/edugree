@@ -12,7 +12,7 @@ type User struct {
 	Avatar            *string
 	Bio               *string
 	Active            bool
-	RoleId            uint
+	RoleId            *uint
 	Role              *Role `gorm:"foreignKey:role_id;references:id"`
 	Token             *[]Token
 }
