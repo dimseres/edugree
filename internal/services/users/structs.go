@@ -5,5 +5,5 @@ import (
 )
 
 type UserService struct {
-	repository users.Repository
+	repository users.UserRepository
 }

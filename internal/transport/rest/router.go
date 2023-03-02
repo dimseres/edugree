@@ -1,9 +1,9 @@
-package controllers
+package rest
 
 import (
-	"edugree_auth/internal/controllers/auth"
-	"edugree_auth/internal/controllers/permissions"
-	"edugree_auth/internal/controllers/users"
+	"edugree_auth/internal/transport/rest/controllers/auth"
+	"edugree_auth/internal/transport/rest/controllers/permissions"
+	"edugree_auth/internal/transport/rest/controllers/users"
 	"github.com/labstack/echo/v4"
 )
 

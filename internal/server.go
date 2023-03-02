@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"edugree_auth/internal/controllers"
+	"edugree_auth/internal/transport/rest"
 	"github.com/labstack/echo/v4"
 )
 
@@ -12,6 +12,6 @@ func StartHttpServer(port string) {
 	}
 	e.Static("/public", "storage/public")
 	apiGroup := e.Group("/api")
-	controllers.InitRoutes(apiGroup)
+	rest.InitRoutes(apiGroup)
 	e.Logger.Fatal(e.Start(":" + port))
 }
