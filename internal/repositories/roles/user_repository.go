@@ -8,27 +8,21 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func NewRepository() UserRepository {
-	return UserRepository{
+func NewRepository() RoleRepository {
+	return RoleRepository{
 		db: database.GetConnection(),
 	}
 }
 
-func (rep *UserRepository) payloadToModel(payload *UserDataPayload) models.User {
-	return models.User{
-		Email:             payload.Email,
-		Password:          payload.Password,
-		PasswordResetCode: payload.PasswordResetCode,
-		Phone:             payload.Phone,
-		FullName:          payload.FullName,
-		Avatar:            payload.Avatar,
-		Bio:               payload.Bio,
-		Active:            payload.Active,
-		RoleId:            payload.RoleId,
+func (rep *RoleRepository) payloadToModel(payload *RoleDataPayload) models.Role {
+	return models.Role{
+		Title:  payload.Title,
+		Domain: payload.Domain,
+		Slug:   payload.Slug,
 	}
 }
 
-func (rep *UserRepository) handleError(err error) error {
+func (rep *RoleRepository) handleError(err error) error {
 	if err != nil {
 		switch err.(type) {
 		default:
@@ -40,13 +34,13 @@ func (rep *UserRepository) handleError(err error) error {
 	return nil
 }
 
-func (rep *UserRepository) GetUserById(id uint) *models.User {
-	user := models.User{}
+func (rep *RoleRepository) GetUserById(id uint) *models.Role {
+	user := models.Role{}
 	rep.db.Preload("Role").First(&user, id)
 	return &user
 }
 
-func (rep *UserRepository) CreateNewUser(payload *UserDataPayload) (error, *models.User) {
+func (rep *RoleRepository) CreateNewUser(payload *RoleDataPayload) (error, *models.Role) {
 	newUser := rep.payloadToModel(payload)
 	data := rep.db.Create(&newUser)
 	if data.Error != nil {
@@ -55,8 +49,8 @@ func (rep *UserRepository) CreateNewUser(payload *UserDataPayload) (error, *mode
 	return nil, &newUser
 }
 
-func (rep *UserRepository) CreateNewUsers(payload []*UserDataPayload) (bool, []models.User) {
-	var inserted []models.User
+func (rep *RoleRepository) CreateNewUsers(payload []*RoleDataPayload) (bool, []models.Role) {
+	var inserted []models.Role
 	for i := 0; i < len(payload); i++ {
 		inserted = append(inserted, rep.payloadToModel(payload[i]))
 	}
@@ -67,8 +61,8 @@ func (rep *UserRepository) CreateNewUsers(payload []*UserDataPayload) (bool, []m
 	return true, inserted
 }
 
-func (rep *UserRepository) UpdateUser(id uint, payload *UserDataPayload) (error, *models.User) {
-	user := models.User{}
+func (rep *RoleRepository) UpdateUser(id uint, payload *RoleDataPayload) (error, *models.Role) {
+	user := models.Role{}
 	user.Id = id
 	updatedUser := rep.payloadToModel(payload)
 	queryResult := rep.db.Model(&user).Updates(&updatedUser)
@@ -79,8 +73,8 @@ func (rep *UserRepository) UpdateUser(id uint, payload *UserDataPayload) (error,
 	return nil, &user
 }
 
-func (rep *UserRepository) DeleteUser(id uint) (error, bool) {
-	user := models.User{}
+func (rep *RoleRepository) DeleteUser(id uint) (error, bool) {
+	user := models.Role{}
 	result := rep.db.Delete(&user, id)
 	if result.Error != nil {
 		return rep.handleError(result.Error), false

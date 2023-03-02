@@ -19,7 +19,7 @@ func init() {
 
 func TestRepository_GetUserById(t *testing.T) {
 	rep := users.NewRepository()
-	var id uint = 2
+	var id uint = 3
 	model := rep.GetUserById(id)
 	if model.Id == 0 {
 		t.Fatalf("User With ID: %d not found", id)
@@ -72,4 +72,14 @@ func TestRepository_UpdateUser(t *testing.T) {
 		panic(err)
 	}
 	fmt.Println(model)
+}
+
+func TestRepository_DeleteUser(t *testing.T) {
+	rep := users.NewRepository()
+	var id uint = 3
+	err, success := rep.DeleteUser(id)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(success)
 }

@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository struct {
+type UserRepository struct {
 	db *gorm.DB
 }
 
