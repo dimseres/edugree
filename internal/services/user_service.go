@@ -1,6 +1,6 @@
 package services
 
-import "edugree_auth/internal/infrastructure/models"
+import "edugree_auth/internal/models"
 
 type UserRepository interface {
 	GetUserById(id uint) *models.User

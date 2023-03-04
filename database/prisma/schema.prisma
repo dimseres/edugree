@@ -11,54 +11,85 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @db.VarChar(256) @unique
-  password String @db.VarChar(512)
-  password_reset_code String? @db.VarChar(256)
-  phone String @db.VarChar(256) @unique
-  full_name String @db.VarChar(128)
-  avatar String? @db.Text
-  bio String? @db.Text
-  active Boolean @default(true)
-  role Role? @relation(fields: [role_id], references: [id], onDelete: SetNull)
-  role_id Int?
-  created_at DateTime?
-  updated_at DateTime?
-  deleted_at DateTime?
-  token Token[]
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique @db.VarChar(256)
+  password            String               @db.VarChar(512)
+  password_reset_code String?              @db.VarChar(256)
+  phone               String               @unique @db.VarChar(256)
+  full_name           String               @db.VarChar(128)
+  avatar              String?              @db.Text
+  bio                 String?              @db.Text
+  active              Boolean              @default(true)
+  role                Role?                @relation(fields: [role_id], references: [id], onDelete: SetNull)
+  role_id             Int?
+  created_at          DateTime?
+  updated_at          DateTime?
+  deleted_at          DateTime?
+  token               Token[]
+  organizations       UsersOrganizations[]
+  Organization        Organization[]
+
   @@map("users")
 }
 
 model Token {
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [user_id], references: [id])
-  user_id Int
-  token String @db.Text
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     Int
+  token       String   @db.Text
   expire_date DateTime
+
   @@map("tokens")
 }
 
 // Пока-что Админ, Модератор, Преподаватель, Студент
 model Role {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(128)
-  slug String @db.VarChar(64) @unique
-  description String @db.Text
-  created_at DateTime?
-  updated_at DateTime?
-  deleted_at DateTime?
-  user User[]
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(128)
+  slug        String    @unique @db.VarChar(64)
+  description String    @db.Text
+  created_at  DateTime?
+  updated_at  DateTime?
+  deleted_at  DateTime?
+  user        User[]
+
   @@map("roles")
 }
 
+model UsersOrganizations {
+  user            User         @relation(fields: [user_id], references: [id])
+  user_id         Int
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  organization_id Int
+
+  @@id([user_id, organization_id])
+  @@map("users_organizations")
+}
+
+model Organization {
+  id          Int                  @id @default(autoincrement())
+  title       String               @db.VarChar(128)
+  description String?              @db.Text
+  avatar      String?              @db.Text
+  created_at  DateTime?
+  updated_at  DateTime?
+  deleted_at  DateTime?
+  users       UsersOrganizations[]
+  User        User?                @relation(fields: [userId], references: [id])
+  userId      Int?
+
+  @@map("organizations")
+}
+
 model Permission {
-  id Int @id @default(autoincrement())
-  title String @db.VarChar(128)
-  domain String @db.VarChar(128)
-  slug String @db.VarChar(128) @unique
-  description String @db.Text
-  created_at DateTime?
-  updated_at DateTime?
-  deleted_at DateTime?
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(128)
+  domain      String    @db.VarChar(128)
+  slug        String    @unique @db.VarChar(128)
+  description String    @db.Text
+  created_at  DateTime?
+  updated_at  DateTime?
+  deleted_at  DateTime?
+
   @@map("permissions")
 }
