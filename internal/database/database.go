@@ -12,13 +12,6 @@ import (
 
 var db *gorm.DB
 
-type BaseModel struct {
-	Id        uint `gorm:"primaryKey;column:id"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt
-}
-
 func InitConnection() *gorm.DB {
 	fmt.Println("Try to Database connect")
 	logger := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"edugree_auth/internal"
 	"edugree_auth/internal/database"
+	"edugree_auth/internal/transport/rest"
 	"fmt"
 	"github.com/joho/godotenv"
 )
@@ -17,5 +17,5 @@ func init() {
 func main() {
 	connection := database.InitConnection()
 	fmt.Println(connection)
-	internal.StartHttpServer("7001")
+	rest.StartHttpServer("7001")
 }

@@ -2,7 +2,7 @@ package tests
 
 import (
 	"edugree_auth/internal/database"
-	"edugree_auth/internal/repositories/users"
+	users "edugree_auth/internal/repositories"
 	"fmt"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
@@ -19,9 +19,10 @@ func init() {
 
 func TestRepository_GetUserById(t *testing.T) {
 	rep := users.NewRepository()
-	var id uint = 3
+	var id uint = 2
 	model := rep.GetUserById(id)
-	if model.Id == 0 {
+	fmt.Println(model)
+	if model.BaseModel.Id == 0 {
 		t.Fatalf("User With ID: %d not found", id)
 	}
 	t.Log("User Found")
@@ -33,7 +34,7 @@ func TestRepository_CreateNewUser(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	mock := users.UserDataPayload{
+	mock := users.DataPayload{
 		Email:             "test@mail.com",
 		Password:          string(hashed),
 		PasswordResetCode: nil,
@@ -55,7 +56,7 @@ func TestRepository_CreateNewUser(t *testing.T) {
 }
 
 func TestRepository_UpdateUser(t *testing.T) {
-	mock := users.UserDataPayload{
+	mock := users.DataPayload{
 		Email:             "test2@mail.com",
 		PasswordResetCode: nil,
 		Phone:             "+72822922020",
