@@ -18,7 +18,7 @@ func getUserById(c echo.Context) error {
 		return c.JSON(500, err)
 	}
 
-	repository := repositories.NewRepository()
+	repository := repositories.NewUserRepository()
 	service := services.NewUserService(&repository)
 	result := service.GetUser(uint(id))
 

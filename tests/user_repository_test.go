@@ -18,7 +18,7 @@ func init() {
 }
 
 func TestRepository_GetUserById(t *testing.T) {
-	rep := users.NewRepository()
+	rep := users.NewUserRepository()
 	var id uint = 2
 	model := rep.GetUserById(id)
 	fmt.Println(model)
@@ -34,7 +34,7 @@ func TestRepository_CreateNewUser(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	mock := users.DataPayload{
+	mock := users.UserDataPayload{
 		Email:             "test@mail.com",
 		Password:          string(hashed),
 		PasswordResetCode: nil,
@@ -45,7 +45,7 @@ func TestRepository_CreateNewUser(t *testing.T) {
 		Active:            false,
 		RoleId:            nil,
 	}
-	rep := users.NewRepository()
+	rep := users.NewUserRepository()
 	err, model := rep.CreateNewUser(&mock)
 	if err != nil {
 		t.Fatal("User wasnt created", err.Error())
@@ -56,7 +56,7 @@ func TestRepository_CreateNewUser(t *testing.T) {
 }
 
 func TestRepository_UpdateUser(t *testing.T) {
-	mock := users.DataPayload{
+	mock := users.UserDataPayload{
 		Email:             "test2@mail.com",
 		PasswordResetCode: nil,
 		Phone:             "+72822922020",
@@ -66,7 +66,7 @@ func TestRepository_UpdateUser(t *testing.T) {
 		Active:            false,
 		RoleId:            nil,
 	}
-	rep := users.NewRepository()
+	rep := users.NewUserRepository()
 	var id uint = 3
 	err, model := rep.UpdateUser(id, &mock)
 	if err != nil {
@@ -76,7 +76,7 @@ func TestRepository_UpdateUser(t *testing.T) {
 }
 
 func TestRepository_DeleteUser(t *testing.T) {
-	rep := users.NewRepository()
+	rep := users.NewUserRepository()
 	var id uint = 3
 	err, success := rep.DeleteUser(id)
 	if err != nil {

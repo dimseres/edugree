@@ -12,11 +12,11 @@ import (
 type RepositoryInterface interface {
 }
 
-type Repository struct {
+type UserRepository struct {
 	db *gorm.DB
 }
 
-type DataPayload struct {
+type UserDataPayload struct {
 	Email             string
 	Password          string
 	PasswordResetCode *string
@@ -28,13 +28,13 @@ type DataPayload struct {
 	RoleId            *uint
 }
 
-func NewRepository() Repository {
-	return Repository{
+func NewUserRepository() UserRepository {
+	return UserRepository{
 		db: database.GetConnection(),
 	}
 }
 
-func (rep *Repository) payloadToModel(payload *DataPayload) models.User {
+func (rep *UserRepository) payloadToModel(payload *UserDataPayload) models.User {
 	return models.User{
 		BaseUser: models.BaseUser{
 			Email:    payload.Email,
@@ -50,7 +50,7 @@ func (rep *Repository) payloadToModel(payload *DataPayload) models.User {
 	}
 }
 
-func (rep *Repository) handleError(err error) error {
+func (rep *UserRepository) handleError(err error) error {
 	if err != nil {
 		switch err.(type) {
 		default:
@@ -62,13 +62,13 @@ func (rep *Repository) handleError(err error) error {
 	return nil
 }
 
-func (rep *Repository) GetUserById(id uint) *models.User {
+func (rep *UserRepository) GetUserById(id uint) *models.User {
 	user := models.User{}
 	rep.db.Preload("Role").Preload("Token").First(&user, id)
 	return &user
 }
 
-func (rep *Repository) CreateNewUser(payload *DataPayload) (error, *models.User) {
+func (rep *UserRepository) CreateNewUser(payload *UserDataPayload) (error, *models.User) {
 	newUser := rep.payloadToModel(payload)
 	data := rep.db.Create(&newUser)
 	if data.Error != nil {
@@ -77,7 +77,7 @@ func (rep *Repository) CreateNewUser(payload *DataPayload) (error, *models.User)
 	return nil, &newUser
 }
 
-func (rep *Repository) CreateNewUsers(payload []*DataPayload) (bool, *[]models.User) {
+func (rep *UserRepository) CreateNewUsers(payload []*UserDataPayload) (bool, *[]models.User) {
 	var inserted []models.User
 	for i := 0; i < len(payload); i++ {
 		inserted = append(inserted, rep.payloadToModel(payload[i]))
@@ -89,7 +89,7 @@ func (rep *Repository) CreateNewUsers(payload []*DataPayload) (bool, *[]models.U
 	return true, &inserted
 }
 
-func (rep *Repository) UpdateUser(id uint, payload *DataPayload) (error, *models.User) {
+func (rep *UserRepository) UpdateUser(id uint, payload *UserDataPayload) (error, *models.User) {
 	user := models.User{}
 	user.Id = id
 	updatedUser := rep.payloadToModel(payload)
@@ -101,7 +101,7 @@ func (rep *Repository) UpdateUser(id uint, payload *DataPayload) (error, *models
 	return nil, &user
 }
 
-func (rep *Repository) DeleteUser(id uint) (error, bool) {
+func (rep *UserRepository) DeleteUser(id uint) (error, bool) {
 	user := models.User{}
 	result := rep.db.Delete(&user, id)
 	if result.Error != nil {
