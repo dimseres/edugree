@@ -18,8 +18,8 @@ import {useRouter} from "vue-router";
 
 const router = useRouter()
 
-const link = computed(() => {
-  return router.options.history.state.back ?? '/'
+const link = computed((): string => {
+  return ""+router.options.history.state.back ?? '/'
 })
 
 </script>
