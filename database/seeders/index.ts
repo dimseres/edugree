@@ -2,13 +2,15 @@ import {PrismaClient} from "@prisma/client";
 import {ISeeder} from "./ISeeder";
 import {UserSeeder} from "./users";
 import {RolesSeeder} from "./roles";
+import {OrganizationSeeder} from "./organization";
 
 
 const prisma = new PrismaClient();
 
 const seedList: ISeeder[] = [
     new RolesSeeder,
-    new UserSeeder
+    new UserSeeder,
+    new OrganizationSeeder,
 ];
 
 async function main() {

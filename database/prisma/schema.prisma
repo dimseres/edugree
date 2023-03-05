@@ -11,23 +11,22 @@ datasource db {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
-  email               String               @unique @db.VarChar(256)
-  password            String               @db.VarChar(512)
-  password_reset_code String?              @db.VarChar(256)
-  phone               String               @unique @db.VarChar(256)
-  full_name           String               @db.VarChar(128)
-  avatar              String?              @db.Text
-  bio                 String?              @db.Text
-  active              Boolean              @default(true)
-  role                Role?                @relation(fields: [role_id], references: [id], onDelete: SetNull)
+  id                  Int          @id @default(autoincrement())
+  email               String       @unique @db.VarChar(256)
+  password            String       @db.VarChar(512)
+  password_reset_code String?      @db.VarChar(256)
+  phone               String       @unique @db.VarChar(256)
+  full_name           String       @db.VarChar(128)
+  avatar              String?      @db.Text
+  bio                 String?      @db.Text
+  active              Boolean      @default(true)
+  role                Role?        @relation(fields: [role_id], references: [id], onDelete: SetNull)
   role_id             Int?
   created_at          DateTime?
   updated_at          DateTime?
   deleted_at          DateTime?
   token               Token[]
-  organizations       UsersOrganizations[]
-  Organization        Organization[]
+  organizations       Membership[]
 
   @@map("users")
 }
@@ -56,27 +55,26 @@ model Role {
   @@map("roles")
 }
 
-model UsersOrganizations {
+model Membership {
   user            User         @relation(fields: [user_id], references: [id])
   user_id         Int
   organization    Organization @relation(fields: [organization_id], references: [id])
   organization_id Int
 
   @@id([user_id, organization_id])
-  @@map("users_organizations")
+  @@map("memberships")
 }
 
 model Organization {
-  id          Int                  @id @default(autoincrement())
-  title       String               @db.VarChar(128)
-  description String?              @db.Text
-  avatar      String?              @db.Text
+  id          Int          @id @default(autoincrement())
+  title       String       @db.VarChar(512)
+  description String?      @db.Text
+  avatar      String?      @db.Text
+  email       String       @unique @db.VarChar(256)
   created_at  DateTime?
   updated_at  DateTime?
   deleted_at  DateTime?
-  users       UsersOrganizations[]
-  User        User?                @relation(fields: [userId], references: [id])
-  userId      Int?
+  members     Membership[]
 
   @@map("organizations")
 }
@@ -92,4 +90,16 @@ model Permission {
   deleted_at  DateTime?
 
   @@map("permissions")
+}
+
+model ServiceToken {
+  id          Int       @id @default(autoincrement())
+  title       String
+  token       String
+  description String?   @db.Text
+  created_at  DateTime?
+  updated_at  DateTime?
+  deleted_at  DateTime?
+
+  @@map("_services")
 }
