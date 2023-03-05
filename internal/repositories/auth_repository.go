@@ -16,9 +16,9 @@ func NewAuthRepository() AuthRepository {
 	}
 }
 
-func (self *AuthRepository) CheckLoginData(email string, password string) (error, *models.User) {
+func (self *AuthRepository) CheckLoginData(email string) (error, *models.User) {
 	user := models.User{}
-	res := self.db.First(&user, "email = ? and password = ?", email, password)
+	res := self.db.First(&user, "email = ?", email)
 	if res.Error != nil {
 		return res.Error, nil
 	}

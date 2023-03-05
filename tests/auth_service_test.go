@@ -22,7 +22,7 @@ func TestService_SignIn(t *testing.T) {
 	rep := users.NewAuthRepository()
 	service := services.NewAuthService(&rep)
 
-	password, err := bcrypt.GenerateFromPassword([]byte("admin"), 11)
+	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
 
 	fmt.Println(string(password))
 
@@ -30,7 +30,7 @@ func TestService_SignIn(t *testing.T) {
 		panic(err)
 	}
 
-	err, result := service.SignIn("admin@example.com", string(password))
+	err, result := service.SignIn("admin@example.com", "admin")
 
 	if err != nil {
 		t.Fatal(err)

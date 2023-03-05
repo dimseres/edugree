@@ -1,20 +1,24 @@
 import {ISeeder} from "./ISeeder";
 import {PrismaClient} from "@prisma/client";
 
-const bcrypt = require('bcrypt');
-const bcryptRounds = 11;
+const crypto = require('crypto');
+const salt = "awnid";
 
 export class UserSeeder implements ISeeder {
     seed(client: PrismaClient) {
         return async () => {
             console.log("CREATING USERS");
-            await bcrypt.hash("admin", bcryptRounds).then(async (hash: any) => {
+            await crypto.scrypt("admin", salt, 32, { N: 2048 },async (err: any, hash: any) => {
+                if (err) {
+                    throw err
+                }
+                const hashedPassword = hash.toString()
                 await client.user.upsert({
                     update: {},
                     where: { email: "admin@example.com"},
                     create: {
                         email: "admin@example.com",
-                        password: hash,
+                        password: hashedPassword,
                         password_reset_code: null,
                         phone: "",
                         full_name: "Superadmin",

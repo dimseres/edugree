@@ -4,10 +4,11 @@ import (
 	"edugree_auth/internal/models"
 	"fmt"
 	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthRepository interface {
-	CheckLoginData(email string, password string) (error, *models.User)
+	CheckLoginData(email string) (error, *models.User)
 }
 
 type Claims struct {
@@ -26,9 +27,15 @@ func NewAuthService(repository AuthRepository) AuthService {
 }
 
 func (self *AuthService) SignIn(email string, password string) (error, interface{}) {
-	err, userData := self.repository.CheckLoginData(email, password)
+	err, userData := self.repository.CheckLoginData(email)
 
-	fmt.Println(err)
+	fmt.Println(err, password)
+
+	if err != nil {
+		return err, nil
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(password), []byte(userData.Password))
 
 	if err != nil {
 		return err, nil
