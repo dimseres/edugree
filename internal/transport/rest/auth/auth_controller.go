@@ -1,6 +1,12 @@
 package auth
 
-import "github.com/labstack/echo/v4"
+import (
+	"edugree_auth/internal/models"
+	"edugree_auth/internal/repositories"
+	"edugree_auth/internal/services"
+	"github.com/labstack/echo/v4"
+	"net/http"
+)
 
 func InitRoutes(app *echo.Group) {
 	app.POST("/login", Login)
@@ -10,7 +16,44 @@ func InitRoutes(app *echo.Group) {
 }
 
 func Login(c echo.Context) error {
-	return nil
+	username := c.FormValue("email")
+	password := c.FormValue("password")
+
+	if username == "" || password == "" {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "password and login required",
+		})
+	}
+
+	repository := repositories.NewAuthRepository()
+	service := services.NewAuthService(&repository)
+
+	err, user := service.SignIn(username, password)
+
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	err, token := service.CreateJwtToken(user)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"error": false,
+		"user": models.PublicUser{
+			BaseModel: user.BaseModel,
+			BaseUser:  user.BaseUser,
+			Role:      user.Role,
+			Token:     nil,
+		},
+		"token": token,
+	})
 }
 
 func Logout(c echo.Context) error {
