@@ -1,8 +1,12 @@
 package permissions
 
-import "github.com/labstack/echo/v4"
+import (
+	"edugree_auth/internal/transport/rest/middlewares"
+	"github.com/labstack/echo/v4"
+)
 
 func InitRoutes(group *echo.Group) {
+	group.Use(middlewares.JwtProtect())
 	group.POST("/", createPermission)
 	group.GET("/", getPermissionList)
 }

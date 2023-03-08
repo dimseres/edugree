@@ -3,12 +3,14 @@ package users
 import (
 	"edugree_auth/internal/repositories"
 	"edugree_auth/internal/services"
+	"edugree_auth/internal/transport/rest/middlewares"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 )
 
 func InitRoutes(app *echo.Group) {
+	app.Use(middlewares.JwtProtect())
 	app.GET("/:id", getUserById)
 }
 

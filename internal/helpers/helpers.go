@@ -3,7 +3,7 @@ package helpers
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/scrypt"
 	"os"
 	"strconv"

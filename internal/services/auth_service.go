@@ -49,7 +49,13 @@ func (self *AuthService) CreateJwtToken(user *models.User) (error, string) {
 	//	"role_id": user.RoleId,
 	//}
 	fmt.Println()
-	jwtPayload["user_id"] = user.BaseUser.Id
+	jwtPayload["user_id"] = user.Id
 	jwtPayload["name"] = user.BaseUser.FullName
+
+	if user.Role != nil {
+		jwtPayload["role"] = user.Role.Id
+		jwtPayload["role_name"] = user.Role.Slug
+	}
+
 	return helpers.CreateAuthToken(jwtPayload)
 }
