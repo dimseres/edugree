@@ -1,10 +1,9 @@
 package services
 
 import (
+	"edugree_auth/internal/helpers"
 	"edugree_auth/internal/models"
-	"fmt"
 	"github.com/golang-jwt/jwt"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthRepository interface {
@@ -28,15 +27,11 @@ func NewAuthService(repository AuthRepository) AuthService {
 
 func (self *AuthService) SignIn(email string, password string) (error, interface{}) {
 	err, userData := self.repository.CheckLoginData(email)
-
-	fmt.Println(err, password)
-
 	if err != nil {
 		return err, nil
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(password), []byte(userData.Password))
-
+	err = helpers.ComparePasswordAndHash(password, userData.Password)
 	if err != nil {
 		return err, nil
 	}

@@ -2,11 +2,11 @@ package tests
 
 import (
 	"edugree_auth/internal/database"
+	"edugree_auth/internal/helpers"
 	users "edugree_auth/internal/repositories"
 	"edugree_auth/internal/services"
 	"fmt"
 	"github.com/joho/godotenv"
-	"golang.org/x/crypto/bcrypt"
 	"testing"
 )
 
@@ -22,9 +22,16 @@ func TestService_SignIn(t *testing.T) {
 	rep := users.NewAuthRepository()
 	service := services.NewAuthService(&rep)
 
-	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
+	//firstSalt, err := scrypt.Key([]byte("admin"), []byte(os.Getenv("SALT")), 2048, 4, 2, 32)
+	//passwordHash, err := scrypt.Key([]byte("admin"), firstSalt, 16384, 8, 1, 32)
+	//fmt.Println("============", string(passwordHash))
+	//encoded := hex.EncodeToString(passwordHash)
+	//fmt.Println("+++++++++++", encoded)
+	//password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
 
-	fmt.Println(string(password))
+	password, err := helpers.CreatePasswordHash("admin")
+
+	fmt.Println("-------------", password)
 
 	if err != nil {
 		panic(err)
