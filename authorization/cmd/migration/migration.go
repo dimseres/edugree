@@ -26,10 +26,9 @@ func main() {
 	err = db.AutoMigrate(
 		&models.Role{},
 		&models.Permissions{},
-		//&models.Membership{},
+		//&models.Membership{}, // m2m table created inside structs
 		&models.User{},
 		&models.Organization{},
-		//&models.OrganizationService{}
 	)
 	if err != nil {
 		panic(err)
