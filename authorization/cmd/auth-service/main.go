@@ -1,6 +1,7 @@
 package main
 
 import (
+	casbin2 "authorization/internal/casbin"
 	"authorization/internal/database"
 	"authorization/internal/transport/rest"
 	"fmt"
@@ -16,6 +17,8 @@ func init() {
 
 func main() {
 	connection := database.InitConnection()
+	casbin2.InitCasbin(connection)
+
 	fmt.Println(connection)
 	rest.StartHttpServer("7001")
 }

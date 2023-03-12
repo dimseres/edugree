@@ -22,6 +22,14 @@ func (self *UserService) GetUser(id uint) *models.PublicUser {
 		BaseModel: user.BaseModel,
 		BaseUser:  user.BaseUser,
 		Role:      user.Role,
-		Token:     user.Token,
 	}
+}
+
+type RegistrationData struct {
+	Email    string
+	Password string
+	Phone    string
+	FullName string
+	Avatar   *string
+	Bio      *string
 }

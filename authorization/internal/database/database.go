@@ -19,7 +19,7 @@ func InitConnection() *gorm.DB {
 			SlowThreshold:             time.Second,   // Slow SQL threshold
 			LogLevel:                  logger.Silent, // Log level
 			IgnoreRecordNotFoundError: false,         // Ignore ErrRecordNotFound error for logger
-			Colorful:                  true,          // Disable color
+			Colorful:                  false,         // Disable color
 			ParameterizedQueries:      true,
 		},
 	)

@@ -1,30 +1,19 @@
 package models
 
-type BaseOrganization struct {
-	BaseModel
-	Email    string  `gorm:"unique" json:"email"`
-	Phone    string  `gorm:"unique" json:"phone"`
-	FullName string  `json:"full_name"`
-	Avatar   *string `json:"avatar"`
-	Bio      *string `json:"bio"`
-	Active   bool    `json:"active"`
-	RoleId   *uint   `json:"role_id"`
-}
-
 type Organization struct {
 	BaseModel
-	BaseUser
 
-	Password          string  `json:"password"`
-	PasswordResetCode *string `json:"password_reset_code"`
+	Title       string         `gorm:"size:512;index;not null" json:"title"`
+	Domain      string         `gorm:"size:512;index;unique;not null" json:"domain"`
+	Email       string         `gorm:"size:256;not null;unique;index" json:"email"`
+	Description *string        `gorm:"type:text" json:"full_name"`
+	Avatar      *string        `json:"avatar"`
+	Bio         *string        `gorm:"type:text" json:"bio"`
+	Active      bool           `json:"active"`
+	User        *[]User        `gorm:"many2many:memberships"`
+	Roles       *[]Role        `gorm:"many2many:memberships"`
+	Services    *[]Service     `gorm:"many2many:organizations_services"`
+	Permissions *[]Permissions `gorm:"foreignKey:v3"`
 
-	Role  *Role    `gorm:"foreignKey:role_id;references:id" json:"role"`
-	Token *[]Token `json:"token"`
-}
-
-type PublicOrganization struct {
-	BaseModel
-	BaseUser
-	Role  *Role    `gorm:"foreignKey:role_id;references:id" json:"role"`
-	Token *[]Token `json:"token"`
+	ModelTime
 }
