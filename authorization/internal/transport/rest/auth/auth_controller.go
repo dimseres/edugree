@@ -18,6 +18,7 @@ func InitRoutes(app *echo.Group) {
 func Login(c echo.Context) error {
 	username := c.FormValue("email")
 	password := c.FormValue("password")
+	domain := c.FormValue("domain")
 
 	if username == "" || password == "" {
 		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
@@ -38,7 +39,7 @@ func Login(c echo.Context) error {
 		})
 	}
 
-	err, token := service.CreateJwtToken(user)
+	err, token := service.CreateJwtToken(user, domain)
 
 	if err != nil {
 		return err

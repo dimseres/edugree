@@ -24,3 +24,12 @@ func (self *AuthRepository) CheckLoginData(email string) (error, *models.User) {
 	}
 	return nil, &user
 }
+
+func (self *AuthRepository) LoadUserRoleByDomain(user *models.User, domain string) error {
+	organization := models.Organization{}
+	res := self.db.Where(user).Find(&organization)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
+}

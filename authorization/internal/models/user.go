@@ -37,7 +37,8 @@ type User struct {
 	Bio               *string        `gorm:"type:text" json:"bio"`
 	Active            bool           `gorm:"not null;default:true" json:"active"`
 	Membership        []Organization `gorm:"many2many:memberships"`
-	//Role       []Role       `gorm:"many2many:memberships;foreignKey:user_id"`
+	Roles             []Role         `gorm:"many2many:memberships;"`
+	DomainRole        *Role          `gorm:"-"`
 
 	ModelTime
 }

@@ -40,7 +40,7 @@ func (self *AuthService) SignIn(email string, password string) (error, *models.U
 	return nil, userData
 }
 
-func (self *AuthService) CreateJwtToken(user *models.User) (error, string) {
+func (self *AuthService) CreateJwtToken(user *models.User, domain string) (error, string) {
 	jwtPayload := make(map[string]interface{})
 	//jwtPayload := map[string]interface{}{
 	//	"user_id": user.BaseUser.Id,
@@ -50,12 +50,12 @@ func (self *AuthService) CreateJwtToken(user *models.User) (error, string) {
 	//}
 	fmt.Println()
 	jwtPayload["user_id"] = user.Id
-	jwtPayload["name"] = user.BaseUser.FullName
+	jwtPayload["name"] = user.FullName
 
-	if user.Role != nil {
-		jwtPayload["role"] = user.Role.Id
-		jwtPayload["role_name"] = user.Role.Slug
-	}
+	//if user.Role != nil {
+	//	jwtPayload["role"] = user.Role.Id
+	//	jwtPayload["role_name"] = user.Role.Slug
+	//}
 
 	return helpers.CreateAuthToken(jwtPayload)
 }
