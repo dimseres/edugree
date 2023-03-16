@@ -36,15 +36,12 @@ func NewUserRepository() UserRepository {
 
 func (rep *UserRepository) payloadToModel(payload *UserDataPayload) models.User {
 	return models.User{
-		BaseUser: models.BaseUser{
-			Email:    payload.Email,
-			Phone:    payload.Phone,
-			FullName: payload.FullName,
-			Avatar:   payload.Avatar,
-			Bio:      payload.Bio,
-			Active:   payload.Active,
-			RoleId:   payload.RoleId,
-		},
+		Email:             payload.Email,
+		Phone:             payload.Phone,
+		FullName:          payload.FullName,
+		Avatar:            payload.Avatar,
+		Bio:               payload.Bio,
+		Active:            payload.Active,
 		Password:          payload.Password,
 		PasswordResetCode: payload.PasswordResetCode,
 	}

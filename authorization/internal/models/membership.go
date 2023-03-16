@@ -1,12 +1,10 @@
 package models
 
 type Membership struct {
-	//Id             uint `gorm:"primaryKey" json:"id"`
-	//UserId         uint `gorm:"primaryKey;autoIncrement:false" json:"user_id"`
-	//OrganizationId uint `gorm:"primaryKey;autoIncrement:false" json:"organization_id"`
-	//
-	//Organizations *[]Organization `gorm:"foreignKey:id;references:organization_id"`
-	//Users         *[]User         `gorm:"foreignKey:id;references:user_id"`
-	//
-	//ModelTime
+	UserId         uint          `gorm:"foreignKey;autoIncrement:false"`
+	OrganizationId uint          `gorm:"foreignKey;autoIncrement:false"`
+	RoleId         uint          `gorm:"foreignKey;autoIncrement:false"`
+	Organization   *Organization `gorm:"foreignKey:organization_id"`
+	Role           *Role         `gorm:"foreignKey:role_id"`
+	User           *User         `gorm:"foreignKey:user_id"`
 }
