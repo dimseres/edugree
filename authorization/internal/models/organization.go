@@ -11,7 +11,7 @@ type Organization struct {
 	Bio         *string    `gorm:"type:text" json:"bio"`
 	Active      bool       `json:"active"`
 	User        *[]User    `gorm:"many2many:memberships"`
-	Roles       *[]Role    `gorm:"many2many:memberships"`
+	Roles       *[]Role    `gorm:"many2many:roles"`
 	Services    *[]Service `gorm:"many2many:organizations_services"`
 	//Permissions *[]Permissions `gorm:"foreignKey:v3"`
 
