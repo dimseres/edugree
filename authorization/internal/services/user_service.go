@@ -16,13 +16,14 @@ func NewUserService(repository UserRepository) UserService {
 	}
 }
 
-func (self *UserService) GetUser(id uint) *models.PublicUser {
+func (self *UserService) GetUser(id uint) *models.User {
 	user := self.repository.GetUserById(id)
-	return &models.PublicUser{
-		BaseModel: user.BaseModel,
-		BaseUser:  user.BaseUser,
-		Role:      user.Role,
-	}
+	return user
+	//return &models.PublicUser{
+	//	BaseModel: user.BaseModel,
+	//	BaseUser:  user.BaseUser,
+	//	Role:      user.Role,
+	//}
 }
 
 type RegistrationData struct {

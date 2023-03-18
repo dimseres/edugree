@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"edugree_auth/internal/database"
-	users "edugree_auth/internal/repositories"
+	"authorization/internal/database"
+	users "authorization/internal/repositories"
 	"fmt"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
@@ -19,8 +19,11 @@ func init() {
 
 func TestRepository_GetUserById(t *testing.T) {
 	rep := users.NewUserRepository()
-	var id uint = 2
-	model := rep.GetUserById(id)
+	var id uint = 4
+	model, err := rep.GetUserById(id)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(model)
 	if model.BaseModel.Id == 0 {
 		t.Fatalf("User With ID: %d not found", id)

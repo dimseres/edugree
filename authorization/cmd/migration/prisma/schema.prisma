@@ -33,13 +33,13 @@ model User {
 model Membership {
   user_id         Int
   organization_id Int
-  role_id         Int
+  role_id         Int?
 
   user         User         @relation(fields: [user_id], references: [id])
   organization Organization @relation(fields: [organization_id], references: [id])
-  role         Role         @relation(fields: [role_id], references: [id])
+  role         Role?        @relation(fields: [role_id], references: [id])
 
-  @@id([user_id, organization_id, role_id])
+  @@id([user_id, organization_id])
   @@unique([user_id, organization_id, role_id])
   @@map("memberships")
 }
@@ -68,10 +68,12 @@ model Organization {
   id Int @id @default(autoincrement())
 
   title       String  @db.VarChar(512)
+  domain      String  @unique @db.VarChar(512)
   email       String  @unique @db.VarChar(256)
   description String? @db.Text
   avatar      String? @db.Text
-  domain      String  @unique
+  bio         String? @db.Text
+  active      Boolean @unique @default(true)
 
   created_at DateTime?
   updated_at DateTime?

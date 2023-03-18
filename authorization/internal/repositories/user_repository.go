@@ -59,10 +59,13 @@ func (rep *UserRepository) handleError(err error) error {
 	return nil
 }
 
-func (rep *UserRepository) GetUserById(id uint) *models.User {
+func (rep *UserRepository) GetUserById(id uint) (*models.User, error) {
 	user := models.User{}
-	rep.db.Preload("Role").Preload("Token").First(&user, id)
-	return &user
+	res := rep.db.Preload("Membership").Preload("DomainRole").First(&user, id)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return &user, nil
 }
 
 func (rep *UserRepository) CreateNewUser(payload *UserDataPayload) (error, *models.User) {

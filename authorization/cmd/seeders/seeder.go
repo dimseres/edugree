@@ -19,15 +19,22 @@ func init() {
 
 func main() {
 	connection := database.InitConnection()
-	_ = createRoles(connection)
-	user := createUsers(connection)
-	organization := createOrganization(connection, *user)
-
 	casbin.InitCasbin(connection)
-	casbin.DefineInitialPolicies(organization.Domain)
+	casbin.DefineInitialPolicies(casbin.TechincalDomain)
+
+	connection.Transaction(func(tx *gorm.DB) error {
+		roles := createRoles(connection)
+		user := createUsers(connection)
+		organization := createOrganization(connection, *user)
+		_ = addMember(connection, *user, organization, roles[0])
+		casbin.DefineInitialPolicies(organization.Domain)
+
+		return nil
+	})
+
 }
 
-func createRoles(db *gorm.DB) *[]models.Role {
+func createRoles(db *gorm.DB) []*models.Role {
 	orgDesc := "Владелец организации"
 	adminDesc := "Администратор организации"
 	moderatorDesc := "Модератор организации"
@@ -71,12 +78,12 @@ func createRoles(db *gorm.DB) *[]models.Role {
 		OrganizationId: nil,
 	}
 
-	roleArray := []models.Role{
-		owner,
-		admin,
-		moder,
-		teacher,
-		student,
+	roleArray := []*models.Role{
+		&owner,
+		&admin,
+		&moder,
+		&teacher,
+		&student,
 	}
 
 	for _, model := range roleArray {
@@ -86,7 +93,7 @@ func createRoles(db *gorm.DB) *[]models.Role {
 		}
 	}
 
-	return &roleArray
+	return roleArray
 
 	//db.Transaction(func(tx *gorm.DB) error {
 	//	for _, model := range roleArray {
@@ -101,16 +108,31 @@ func createRoles(db *gorm.DB) *[]models.Role {
 }
 
 func createOrganization(db *gorm.DB, owner models.User) models.Organization {
-	organizationMembers := []models.User{owner}
+	//organizationMembers := []models.User{owner}
 	organization := models.Organization{
 		Title:  "Example Org",
 		Domain: "example.org",
 		Email:  "example@organization.org",
 		Active: true,
-		User:   &organizationMembers,
 	}
-	db.Create(&organization)
+	res := db.Create(&organization)
+	if res.Error != nil {
+		panic(res.Error)
+	}
 	return organization
+}
+
+func addMember(db *gorm.DB, user models.User, organization models.Organization, role *models.Role) models.Membership {
+	members := models.Membership{
+		UserId:         user.Id,
+		OrganizationId: organization.Id,
+		RoleId:         role.Id,
+	}
+	res := db.Create(&members)
+	if res.Error != nil {
+		panic(res.Error)
+	}
+	return members
 }
 
 func createUsers(db *gorm.DB) *models.User {

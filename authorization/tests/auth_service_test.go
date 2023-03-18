@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"edugree_auth/internal/database"
-	"edugree_auth/internal/helpers"
-	users "edugree_auth/internal/repositories"
-	"edugree_auth/internal/services"
+	"authorization/internal/database"
+	"authorization/internal/helpers"
+	users "authorization/internal/repositories"
+	"authorization/internal/services"
 	"fmt"
 	"github.com/joho/godotenv"
 	"testing"
