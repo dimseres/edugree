@@ -23,6 +23,7 @@ func main() {
 	user := createUsers(connection)
 	organization := createOrganization(connection, *user)
 
+	casbin.InitCasbin(connection)
 	casbin.DefineInitialPolicies(organization.Domain)
 }
 

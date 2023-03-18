@@ -31,7 +31,7 @@ type User struct {
 	Email             string         `gorm:"not null;unique" json:"email"`
 	Password          string         `gorm:"not null" json:"-"`
 	PasswordResetCode *string        `gorm:"size:256" json:"-"`
-	Phone             string         `gorm:"size:128;not null;unique" json:"phone"`
+	Phone             string         `gorm:"size:256;not null;unique" json:"phone"`
 	FullName          string         `gorm:"size:512;not null" json:"full_name"`
 	Avatar            *string        `json:"avatar"`
 	Bio               *string        `gorm:"type:text" json:"bio"`

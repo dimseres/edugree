@@ -9,3 +9,123 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id Int @id @default(autoincrement())
+
+  email               String    @unique @db.VarChar(256)
+  password            String    @db.VarChar(512)
+  password_reset_code String?   @db.VarChar(256)
+  phone               String    @unique @db.VarChar(256)
+  full_name           String    @db.VarChar(128)
+  avatar              String?   @db.Text
+  bio                 String?   @db.Text
+  active              Boolean   @default(true)
+  created_at          DateTime?
+  updated_at          DateTime?
+  deleted_at          DateTime?
+
+  organizations Membership[]
+
+  @@map("users")
+}
+
+model Membership {
+  user_id         Int
+  organization_id Int
+  role_id         Int
+
+  user         User         @relation(fields: [user_id], references: [id])
+  organization Organization @relation(fields: [organization_id], references: [id])
+  role         Role         @relation(fields: [role_id], references: [id])
+
+  @@id([user_id, organization_id, role_id])
+  @@unique([user_id, organization_id, role_id])
+  @@map("memberships")
+}
+
+model Role {
+  id Int @id @default(autoincrement())
+
+  name            String        @db.VarChar(128)
+  slug            String        @unique @db.VarChar(64)
+  description     String?       @db.Text
+  is_system       Boolean       @default(false)
+  organization    Organization? @relation(fields: [organization_id], references: [id])
+  organization_id Int?
+
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime?
+
+  user Membership[]
+
+  @@index([organization_id])
+  @@map("roles")
+}
+
+model Organization {
+  id Int @id @default(autoincrement())
+
+  title       String  @db.VarChar(512)
+  email       String  @unique @db.VarChar(256)
+  description String? @db.Text
+  avatar      String? @db.Text
+  domain      String  @unique
+
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime?
+
+  members Membership[]
+  Role    Role[]
+
+  @@map("organizations")
+}
+
+model Permission {
+  id Int @id @default(autoincrement())
+
+  ptype String? @db.VarChar(512)
+  v0    String? @db.VarChar(512)
+  v1    String? @db.VarChar(512)
+  v2    String? @db.VarChar(512)
+  v3    String? @db.VarChar(512)
+  v4    String? @db.VarChar(512)
+  v5    String? @db.VarChar(512)
+
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime?
+
+  @@unique([ptype, v0, v1, v2, v3, v4, v5])
+  @@map("permissions")
+}
+
+model Service {
+  id Int @id @default(autoincrement())
+
+  title       String  @db.VarChar(256)
+  slug        String  @unique @db.VarChar(256)
+  description String? @db.Text
+
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime?
+
+  @@map("services")
+}
+
+model OrganizationService {
+  id Int @id @default(autoincrement())
+
+  title       String  @db.VarChar(256)
+  slug        String  @unique @db.VarChar(256)
+  description String? @db.Text
+
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime?
+
+  @@map("organizations_services")
+}

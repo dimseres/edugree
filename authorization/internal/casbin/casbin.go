@@ -1,6 +1,7 @@
 package casbin
 
 import (
+	"authorization/internal/models"
 	"fmt"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -28,7 +29,8 @@ func DefineInitialPolicies(domain string) error {
 }
 
 func InitCasbin(db *gorm.DB) *casbin.Enforcer {
-	adapter, err := gormadapter.NewAdapterByDB(db)
+	//adapter, err := gormadapter.NewAdapterByDB(db)
+	adapter, err := gormadapter.NewAdapterByDBWithCustomTable(db, &models.Permissions{}, "permissions")
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +45,7 @@ func InitCasbin(db *gorm.DB) *casbin.Enforcer {
 	if err != nil {
 		panic(err)
 	}
-	err = DefineInitialPolicies(TechincalDomain)
+	//err = DefineInitialPolicies(TechincalDomain)
 
 	if err != nil {
 		panic(err)
