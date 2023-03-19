@@ -69,6 +69,7 @@ model Organization {
 
   title       String  @db.VarChar(512)
   domain      String  @unique @db.VarChar(512)
+  secret_key  String  @unique @db.VarChar(512)
   email       String  @unique @db.VarChar(256)
   description String? @db.Text
   avatar      String? @db.Text
@@ -120,7 +121,7 @@ model Service {
 
 model OrganizationService {
   organization_id Int
-  service_id Int
+  service_id      Int
 
   @@id([organization_id, service_id])
   @@map("organizations_services")
