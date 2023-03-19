@@ -3,7 +3,7 @@ package services
 import "authorization/internal/models"
 
 type UserRepository interface {
-	GetUserById(id uint) *models.User
+	GetUserById(id uint) (*models.User, error)
 }
 
 type UserService struct {
@@ -17,13 +17,8 @@ func NewUserService(repository UserRepository) UserService {
 }
 
 func (self *UserService) GetUser(id uint) *models.User {
-	user := self.repository.GetUserById(id)
+	user, _ := self.repository.GetUserById(id)
 	return user
-	//return &models.PublicUser{
-	//	BaseModel: user.BaseModel,
-	//	BaseUser:  user.BaseUser,
-	//	Role:      user.Role,
-	//}
 }
 
 type RegistrationData struct {

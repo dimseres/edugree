@@ -1,18 +1,24 @@
 package auth
 
 import (
-	"authorization/internal/models"
 	"authorization/internal/repositories"
 	"authorization/internal/services"
+	"authorization/internal/transport/rest/middlewares"
+	"fmt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"time"
 )
 
 func InitRoutes(app *echo.Group) {
 	app.POST("/login", Login)
-	app.POST("/logout", Logout)
 	app.POST("/register", Register)
 	app.POST("/refresh", RefreshToken)
+
+	protected := app.Group("/")
+	protected.Use(middlewares.JwtProtect())
+	protected.POST("logout", Logout)
 }
 
 func Login(c echo.Context) error {
@@ -45,20 +51,59 @@ func Login(c echo.Context) error {
 		return err
 	}
 
+	refresh, err := service.CreateRefreshToken(token, user)
+
+	if err != nil {
+		return err
+	}
+	refreshCookie, _ := c.Cookie("refresh")
+	fmt.Println(refreshCookie)
+
+	c.SetCookie(&http.Cookie{
+		Name:  "refresh",
+		Value: refresh,
+		Path:  "/",
+		//Domain:   c.Request().Host,
+		Expires: time.Now().Add(services.REFRESH_LIFETIME),
+		//Secure:   true,
+		HttpOnly: true,
+	})
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"error": false,
-		"user": models.PublicUser{
-			BaseModel: user.BaseModel,
-			BaseUser:  user.BaseUser,
-			Role:      user.Role,
-			Token:     nil,
-		},
+		"user":  user,
 		"token": token,
 	})
 }
 
 func Logout(c echo.Context) error {
-	return nil
+	user := c.Get("user").(*jwt.Token)
+	//claims := user.Claims.(*helpers.JwtAuthClaims)
+	//userId := claims.Data.UserId
+
+	refresh, _ := c.Cookie("refresh")
+	if refresh == nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "unknown refresh token",
+		})
+	}
+
+	repository := repositories.NewAuthRepository()
+	service := services.NewAuthService(&repository)
+
+	err := service.Logout(user.Raw, refresh.Value)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"error":   false,
+		"message": "success",
+	})
 }
 
 func Register(c echo.Context) error {
@@ -66,5 +111,38 @@ func Register(c echo.Context) error {
 }
 
 func RefreshToken(c echo.Context) error {
-	return nil
+	refresh, _ := c.Cookie("refresh")
+	if refresh == nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "unknown refresh token",
+		})
+	}
+
+	repository := repositories.NewAuthRepository()
+	service := services.NewAuthService(&repository)
+
+	newToken, err := service.GenerateTokenFromRefresh(refresh.Value)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	c.SetCookie(&http.Cookie{
+		Name:  "refresh",
+		Value: newToken.Refresh,
+		Path:  "/",
+		//Domain:   c.Request().Host,
+		Expires: time.Now().Add(services.REFRESH_LIFETIME),
+		//Secure:   true,
+		HttpOnly: true,
+	})
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"error": false,
+		"user":  newToken.User,
+		"token": newToken.Token,
+	})
 }

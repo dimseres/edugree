@@ -39,8 +39,21 @@ func ComparePasswordAndHash(password string, hashedPassword string) error {
 	return nil
 }
 
+type JwtData struct {
+	UserId     uint                `json:"user_id"`
+	Name       string              `json:"name"`
+	Membership []JwtMembershipData `json:"membership"`
+}
+
+type JwtMembershipData struct {
+	Organization   *string   `json:"organization"`
+	OrganizationId *uint     `json:"organization_id"`
+	Role           *string   `json:"role"`
+	Services       *[]string `json:"services"`
+}
+
 type JwtAuthClaims struct {
-	Data interface{} `json:"data"`
+	Data JwtData `json:"data"`
 	jwt.RegisteredClaims
 }
 
@@ -52,7 +65,7 @@ func (e *JwtCreateError) Error() string {
 	return fmt.Sprintf("JWT creation error: %v", e.Message)
 }
 
-func CreateAuthToken(payload interface{}) (error, string) {
+func CreateAuthToken(payload JwtData) (error, string) {
 	lifetime, err := strconv.Atoi(os.Getenv("JWT_LIFETIME"))
 
 	if err != nil {
