@@ -26,6 +26,7 @@ model User {
   deleted_at          DateTime?
 
   organizations Membership[]
+  Token         Token[]
 
   @@map("users")
 }
@@ -126,4 +127,19 @@ model OrganizationService {
 
   @@id([organization_id, service_id])
   @@map("organizations_services")
+}
+
+model Token {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  token      String    @db.VarChar(512)
+  salt       String    @db.VarChar(512)
+  expire_at  DateTime
+  created_at DateTime?
+  updated_at DateTime?
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([token])
+  @@map("tokens")
 }
