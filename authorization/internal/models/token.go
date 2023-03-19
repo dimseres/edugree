@@ -4,19 +4,15 @@ import (
 	"time"
 )
 
-type BaseToken struct {
-	UserId     uint      `json:"user_id"`
-	Token      string    `json:"token"`
-	ExpireDate time.Time `json:"expire_date"`
-}
-
 type Token struct {
 	BaseModel
-	User User `gorm:"foreignKey:user_id;references:id" json:"user"`
-	BaseToken
-}
 
-type PublicToken struct {
-	BaseModel
-	BaseToken
+	UserId   uint      `json:"user_id"`
+	Token    string    `json:"token"`
+	Salt     string    `json:"-"`
+	ExpireAt time.Time `json:"expire_at"`
+	User     User      `gorm:"foreignKey:user_id;references:id" json:"user"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
