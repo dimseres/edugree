@@ -25,8 +25,11 @@ func main() {
 	connection.Transaction(func(tx *gorm.DB) error {
 		roles := createRoles(connection)
 		user := createUsers(connection)
+		services := createServices(connection)
 		organization := createOrganization(connection, *user)
+		organization = *bindOrganizationServices(connection, &organization, services)
 		_ = addMember(connection, *user, organization, roles[0])
+
 		casbin.DefineInitialPolicies(organization.Domain)
 
 		return nil
@@ -157,4 +160,50 @@ func createUsers(db *gorm.DB) *models.User {
 		panic(err)
 	}
 	return user
+}
+
+func createServices(db *gorm.DB) []*models.Service {
+	courseDescr := "В данном сервисе присутсвует возможность редактировать и создавать курсы, назначать ответственных"
+	courseService := models.Service{
+		Title:       "Каталог курсов",
+		Slug:        "courses",
+		Description: &courseDescr,
+		User:        nil,
+	}
+
+	messengerDescr := "Сервис отпарвки сообщений между членами организации"
+	messengerService := models.Service{
+		Title:       "Мессенджер",
+		Slug:        "messenger",
+		Description: &messengerDescr,
+		User:        nil,
+	}
+
+	services := []*models.Service{
+		&courseService,
+		&messengerService,
+	}
+
+	for _, model := range services {
+		res := db.Create(&model)
+		if res.Error != nil {
+			panic(res.Error)
+		}
+	}
+
+	return services
+}
+
+func bindOrganizationServices(db *gorm.DB, organization *models.Organization, services []*models.Service) *models.Organization {
+	updatedOrganization := organization
+	srvc := []models.Service{}
+	for _, service := range services {
+		srvc = append(srvc, *service)
+	}
+	updatedOrganization.Services = &srvc
+	res := db.Save(&organization)
+	if res.Error != nil {
+		panic(res.Error)
+	}
+	return updatedOrganization
 }

@@ -119,15 +119,9 @@ model Service {
 }
 
 model OrganizationService {
-  id Int @id @default(autoincrement())
+  organization_id Int
+  service_id Int
 
-  title       String  @db.VarChar(256)
-  slug        String  @unique @db.VarChar(256)
-  description String? @db.Text
-
-  created_at DateTime?
-  updated_at DateTime?
-  deleted_at DateTime?
-
+  @@id([organization_id, service_id])
   @@map("organizations_services")
 }
