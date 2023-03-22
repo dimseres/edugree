@@ -15,7 +15,7 @@ func NewEnforcerRepository() EnforcerRepository {
 	}
 }
 
-func (self *EnforcerRepository) EnforcePermission(sub string, obj string, act string, dom string) (bool, error) {
-	ok, err := self.enforcer.Enforce(sub, obj, act, dom)
+func (self *EnforcerRepository) EnforcePermission(sub string, obj string, act string, domain string) (bool, error) {
+	ok, err := self.enforcer.Enforce(sub, obj, act, domain)
 	return ok, err
 }

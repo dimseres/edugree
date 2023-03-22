@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"authorization/internal/dto"
 	"authorization/internal/repositories"
 	"authorization/internal/services"
+	"authorization/internal/transport/rest/forms"
 	"authorization/internal/transport/rest/middlewares"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
@@ -107,7 +109,41 @@ func Logout(c echo.Context) error {
 }
 
 func Register(c echo.Context) error {
-	return nil
+	var form forms.UserRegistrationForm
+
+	err := c.Bind(&form)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "bad request",
+		})
+	}
+	var validator = forms.NewFormValidator()
+	err = validator.Validate(&form)
+	if err != nil {
+		return err
+	}
+
+	repository := repositories.NewUserRepository()
+	service := services.NewUserService(&repository)
+
+	user, err := service.CreateUser(&dto.CreateUserDTO{
+		Email:    form.Email,
+		Phone:    form.Phone,
+		Password: form.Password,
+		FullName: form.FullName,
+	})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"error": false,
+		"user":  user,
+	})
 }
 
 func RefreshToken(c echo.Context) error {

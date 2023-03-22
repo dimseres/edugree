@@ -25,7 +25,6 @@ type UserDataPayload struct {
 	Avatar            *string
 	Bio               *string
 	Active            bool
-	RoleId            *uint
 }
 
 func NewUserRepository() UserRepository {
@@ -68,13 +67,17 @@ func (rep *UserRepository) GetUserById(id uint) (*models.User, error) {
 	return &user, nil
 }
 
-func (rep *UserRepository) CreateNewUser(payload *UserDataPayload) (error, *models.User) {
-	newUser := rep.payloadToModel(payload)
-	data := rep.db.Create(&newUser)
-	if data.Error != nil {
-		return rep.handleError(data.Error), nil
+func (rep *UserRepository) CreateNewUser(payload *models.User) (*models.User, error) {
+	var user models.User
+	_ = rep.db.Where("email = ? or phone = ?", payload.Email, payload.Phone).First(&user)
+	if user.Id > 0 {
+		return nil, errors.New("user already registered")
 	}
-	return nil, &newUser
+	data := rep.db.Create(&payload)
+	if data.Error != nil {
+		return nil, rep.handleError(data.Error)
+	}
+	return payload, nil
 }
 
 func (rep *UserRepository) CreateNewUsers(payload []*UserDataPayload) (bool, *[]models.User) {

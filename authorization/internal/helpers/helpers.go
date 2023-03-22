@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/scrypt"
 	"os"
 	"strconv"
@@ -87,4 +88,9 @@ func CreateAuthToken(payload JwtData) (error, string) {
 	}
 
 	return err, t
+}
+
+func GetValidatedForm(form any, c echo.Context) interface{} {
+
+	return form
 }
