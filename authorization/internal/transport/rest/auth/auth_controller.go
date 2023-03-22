@@ -21,6 +21,12 @@ func InitRoutes(app *echo.Group) {
 	protected := app.Group("/")
 	protected.Use(middlewares.JwtProtect())
 	protected.POST("logout", Logout)
+	protected.GET("test", TestFunc, middlewares.CasbinGuard("courses", "read"))
+}
+
+func TestFunc(c echo.Context) error {
+
+	return c.String(200, "PASSED")
 }
 
 func Login(c echo.Context) error {
