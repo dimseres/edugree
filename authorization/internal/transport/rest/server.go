@@ -4,6 +4,7 @@ import (
 	"authorization/internal/transport/rest/forms"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"os"
 )
 
 func StartHttpServer(port string) {
@@ -11,6 +12,15 @@ func StartHttpServer(port string) {
 	if port == "" {
 		port = "5000"
 	}
+	if os.Getenv("APP_ENV") == "development" {
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			//Skipper:          nil,
+			AllowOrigins:     []string{"*"},
+			AllowMethods:     []string{"*"},
+			AllowCredentials: true,
+		}))
+	}
+
 	e.Validator = forms.NewFormValidator()
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${time_rfc3339} ${method} ${uri} ${status} ${latency_human} ${bytes_in} ${bytes_out}\n",
