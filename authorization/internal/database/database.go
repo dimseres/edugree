@@ -30,7 +30,6 @@ func InitConnection() *gorm.DB {
 		panic(err)
 	}
 	db = conn
-	fmt.Println("Connected to DB")
 	return db
 }
 

@@ -15,11 +15,15 @@ func CasbinGuard(obj string, action string) echo.MiddlewareFunc {
 			user := c.Get("user").(*jwt.Token)
 			claims := user.Claims.(*helpers.JwtAuthClaims)
 
-			//domain := c.Request().Host
-			domain := "example.org"
-			//domain := "feelgoodinc"
+			var domainRole string
+			domain := c.Get("tenant").(string)
 
-			domainRole := ""
+			if domain == "" {
+				return c.JSON(http.StatusUnauthorized, echo.Map{
+					"error":   true,
+					"message": "empty domain",
+				})
+			}
 
 			for _, membership := range claims.Data.Membership {
 				if *membership.Organization == domain {

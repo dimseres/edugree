@@ -1,14 +1,12 @@
 package rest
 
 import (
-	"authorization/internal/transport/rest/auth"
-	"authorization/internal/transport/rest/permissions"
-	"authorization/internal/transport/rest/users"
+	"authorization/internal/transport/rest/controllers"
 	"github.com/labstack/echo/v4"
 )
 
 func InitRoutes(app *echo.Group) {
-	auth.InitRoutes(app.Group("/auth"))
-	permissions.InitRoutes(app.Group("/permissions"))
-	users.InitRoutes(app.Group("/users"))
+	controllers.InitAuthRoutes(app.Group("/auth"))
+	controllers.InitUserRoutes(app.Group("/users"))
+	//permissions.InitRoutes(app.Group("/permissions"))
 }

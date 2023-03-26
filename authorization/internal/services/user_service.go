@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	GetUserById(id uint) (*models.User, error)
+	LoadRelation(model interface{}, relation ...string) (interface{}, error)
 	CreateNewUser(user *models.User) (*models.User, error)
 }
 
@@ -24,6 +25,12 @@ func NewUserService(repository UserRepository) UserService {
 func (self *UserService) GetUser(id uint) *models.User {
 	user, _ := self.repository.GetUserById(id)
 	return user
+}
+
+func (self *UserService) GetUserWith(id uint, relation *[]string) *models.User {
+	var user models.User
+	_, _ = self.repository.LoadRelation(&user, *relation...)
+	return &user
 }
 
 func (self *UserService) CreateUser(userDTO *dto.CreateUserDTO) (*models.User, error) {

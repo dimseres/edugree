@@ -6,14 +6,13 @@ import (
 	"authorization/internal/models"
 	"errors"
 	"github.com/jackc/pgx/v5/pgconn"
-	"gorm.io/gorm"
 )
 
 type RepositoryInterface interface {
 }
 
 type UserRepository struct {
-	db *gorm.DB
+	BaseRepositoryHelpers
 }
 
 type UserDataPayload struct {
@@ -29,7 +28,9 @@ type UserDataPayload struct {
 
 func NewUserRepository() UserRepository {
 	return UserRepository{
-		db: database.GetConnection(),
+		BaseRepositoryHelpers{
+			db: database.InitConnection(),
+		},
 	}
 }
 
@@ -60,7 +61,7 @@ func (rep *UserRepository) handleError(err error) error {
 
 func (rep *UserRepository) GetUserById(id uint) (*models.User, error) {
 	user := models.User{}
-	res := rep.db.Preload("Membership").Preload("DomainRole").First(&user, id)
+	res := rep.db.First(&user, id)
 	if res.Error != nil {
 		return nil, res.Error
 	}

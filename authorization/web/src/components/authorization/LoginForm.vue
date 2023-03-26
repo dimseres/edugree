@@ -1,20 +1,17 @@
 <template>
   <h2 class="mt-6 text-center text-2xl font-medium tracking-tight text-gray-900 text-blue">Введите логин и пароль</h2>
-  <!--          <p class="mt-2 text-center text-sm text-gray-600">-->
-  <!--            Или-->
-  <!--            {{ ' ' }}-->
-  <!--            <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">зарегистрируйтесь</a>-->
-  <!--          </p>-->
-  <form class="mt-8 space-y-6" action="#" method="POST">
+  <form class="mt-8 space-y-6" @submit.prevent="onSubmit">
     <input type="hidden" name="remember" value="true"/>
     <div class="-space-y-px rounded-md shadow-sm">
       <div>
         <input id="email-address" name="email" type="email" autocomplete="email" required
+               v-model="form.email"
                class="p-2 border relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                placeholder="Ваша почта или почта организации"/>
       </div>
       <div>
         <input id="password" name="password" type="password" autocomplete="current-password" required
+               v-model="form.password"
                class="p-2 border relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                placeholder="Пароль"/>
       </div>
@@ -28,7 +25,8 @@
       </div>
 
       <div class="text-sm">
-        <router-link :to="{name: 'PasswordReset'}" class="font-medium text-gray hover:text-indigo-500">Забыли пароль?</router-link>
+        <router-link :to="{name: 'PasswordReset'}" class="font-medium text-gray hover:text-indigo-500">Забыли пароль?
+        </router-link>
       </div>
     </div>
 
@@ -40,14 +38,36 @@
             </span>
         Войти
       </button>
+      <router-link :to="{name: 'Registration'}"
+                   class="mt-3 group relative flex w-full justify-center rounded-md text-blue py-2 px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue">
+        Зарегистрироваться
+      </router-link>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import {LockClosedIcon} from '@heroicons/vue/20/solid'
-</script>
+import {LockClosedIcon} from '@heroicons/vue/20/solid';
+import {login} from '../../services/auth.api.vue';
+import {ref} from "vue";
+import {useToast} from "vue-toastification";
 
+const toast = useToast()
+
+const form = ref({
+  email: "test1@example.net",
+  password: "admin"
+})
+
+const onSubmit = async () => {
+  const result = await login(form.value)
+  if (result.error) {
+    toast.error(result.message)
+  }
+}
+
+
+</script>
 <style lang="ts" scoped>
 
 </style>

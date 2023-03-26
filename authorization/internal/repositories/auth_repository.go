@@ -3,17 +3,16 @@ package repositories
 import (
 	"authorization/internal/database"
 	"authorization/internal/models"
-	"gorm.io/gorm"
 	"time"
 )
 
 type AuthRepository struct {
-	db *gorm.DB
+	BaseRepositoryHelpers
 }
 
 func NewAuthRepository() AuthRepository {
 	return AuthRepository{
-		db: database.GetConnection(),
+		BaseRepositoryHelpers{db: database.GetConnection()},
 	}
 }
 
@@ -48,23 +47,6 @@ func (self *AuthRepository) RegisterRefreshToken(user *models.User, token string
 		return res.Error
 	}
 	return nil
-}
-
-func (self *AuthRepository) LoadRelation(model interface{}, relation ...string) (interface{}, error) {
-	tx := self.db
-	for _, relate := range relation {
-		tx = tx.Preload(relate)
-		if tx.Error != nil {
-			return nil, tx.Error
-		}
-	}
-
-	res := tx.First(model)
-	if res.Error != nil {
-		return nil, res.Error
-	}
-
-	return model, nil
 }
 
 func (self *AuthRepository) GetRefreshToken(token string) (*models.Token, error) {

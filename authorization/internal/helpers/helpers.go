@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"authorization/internal/transport/rest/forms"
 	"encoding/hex"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/scrypt"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -93,4 +95,20 @@ func CreateAuthToken(payload JwtData) (error, string) {
 func GetValidatedForm(form any, c echo.Context) interface{} {
 
 	return form
+}
+
+func EchoControllerValidationHelper(c echo.Context, form interface{}) error {
+	err := c.Bind(form)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "bad request",
+		})
+	}
+	var validator = forms.NewFormValidator()
+	err = validator.Validate(form)
+	if err != nil {
+		return err
+	}
+	return nil
 }

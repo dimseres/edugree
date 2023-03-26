@@ -11,10 +11,10 @@ import (
 
 // REFRESH_LIFETIME One week
 const REFRESH_LIFETIME = time.Hour * 24 * 168
+const JWT_LIFETIME = time.Second * 900 // JWT_LIFETIME lifetime of jwt token
 
 type AuthRepository interface {
 	CheckLoginData(email string) (error, *models.User)
-	//LoadRelation(user *models.User, relation ...string) (*models.User, error)
 	LoadRelation(model interface{}, relation ...string) (interface{}, error)
 	RegisterRefreshToken(user *models.User, token string, salt string, lifeTime time.Duration) error
 	GetRefreshToken(token string) (*models.Token, error)
