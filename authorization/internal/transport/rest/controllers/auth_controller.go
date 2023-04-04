@@ -243,9 +243,11 @@ func GetPermissionList(c echo.Context) error {
 
 	membership := claims.Data.Membership
 	valid := false
+	var role *string
 	for _, member := range membership {
 		if *member.Organization == organization {
 			valid = true
+			role = member.Role
 		}
 	}
 
@@ -256,13 +258,18 @@ func GetPermissionList(c echo.Context) error {
 		})
 	}
 
-	casb, err := casbin.GetEnforcer().GetAllDomains()
-
-	if err != nil {
-		panic(err)
-	}
+	casb := casbin.GetEnforcer().GetPermissionsForUser(*role, organization)
 
 	fmt.Println(userId, organization, casb)
 
-	return nil
+	perms := make(map[string][]string)
+	for _, permission := range casb {
+		obj, act := permission[1], permission[2]
+		perms[obj] = append(perms[obj], act)
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"error": false,
+		"data":  perms,
+	})
 }
