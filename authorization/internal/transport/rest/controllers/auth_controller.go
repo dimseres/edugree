@@ -9,7 +9,6 @@ import (
 	"authorization/internal/transport/rest/forms"
 	"authorization/internal/transport/rest/middlewares"
 	"authorization/internal/transport/rest/responses"
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -238,7 +237,6 @@ func GetPermissionList(c echo.Context) error {
 	token := c.Get("user").(*jwt.Token)
 	claims := token.Claims.(*helpers.JwtAuthClaims)
 
-	userId := claims.Data.UserId
 	organization := c.Get("tenant").(string)
 
 	membership := claims.Data.Membership
@@ -259,8 +257,6 @@ func GetPermissionList(c echo.Context) error {
 	}
 
 	casb := casbin.GetEnforcer().GetPermissionsForUser(*role, organization)
-
-	fmt.Println(userId, organization, casb)
 
 	perms := make(map[string][]string)
 	for _, permission := range casb {
