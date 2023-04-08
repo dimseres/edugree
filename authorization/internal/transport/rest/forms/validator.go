@@ -38,7 +38,7 @@ func (self *FormValidator) Validate(i interface{}) error {
 				}
 				return echo.NewHTTPError(http.StatusUnprocessableEntity, echo.Map{
 					"error":   true,
-					"message": out[0].Param + " " + out[1].Message,
+					"message": out[0].Param + " " + out[0].Message,
 					"errors":  out,
 				})
 			}

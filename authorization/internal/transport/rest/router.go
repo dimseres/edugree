@@ -8,5 +8,6 @@ import (
 func InitRoutes(app *echo.Group) {
 	controllers.InitAuthRoutes(app.Group("/auth"))
 	controllers.InitUserRoutes(app.Group("/users"))
+	controllers.InitOrganizationRoutes(app.Group("/organization"))
 	//permissions.InitRoutes(app.Group("/permissions"))
 }

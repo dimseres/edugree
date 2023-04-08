@@ -151,7 +151,7 @@ func createUsers(db *gorm.DB) *models.User {
 		panic(err)
 	}
 
-	err, user := userRepo.CreateNewUser(&repositories.UserDataPayload{
+	user, err := userRepo.CreateNewUser(&models.User{
 		Email:             "test1@example.net",
 		Password:          hashPassword,
 		PasswordResetCode: nil,
@@ -160,7 +160,6 @@ func createUsers(db *gorm.DB) *models.User {
 		Avatar:            nil,
 		Bio:               nil,
 		Active:            false,
-		RoleId:            nil,
 	})
 	if err != nil {
 		panic(err)

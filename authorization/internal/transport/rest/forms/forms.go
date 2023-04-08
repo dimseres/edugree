@@ -15,3 +15,10 @@ type UserLoginForm struct {
 type SetTenantForm struct {
 	TenantId uint `form:"tenant_id" json:"tenant_id" validate:"required"`
 }
+
+type OrganizationCreate struct {
+	Title       string `json:"title" form:"title" validate:"required"`
+	Domain      string `json:"domain" form:"domain" validate:"required"`
+	Email       string `json:"email" form:"email" validate:"required,email"`
+	Description string `json:"description" form:"title"`
+}

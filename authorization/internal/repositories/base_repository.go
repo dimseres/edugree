@@ -24,3 +24,15 @@ func (self *BaseRepositoryHelpers) LoadRelation(model interface{}, relation ...s
 
 	return model, nil
 }
+
+func (self *BaseRepositoryHelpers) StartTransaction() {
+	self.db = self.db.Begin()
+}
+
+func (self *BaseRepositoryHelpers) EndTransaction() {
+	self.db = self.db.Commit()
+}
+
+func (self *BaseRepositoryHelpers) RollbackTransaction() {
+	self.db = self.db.Rollback()
+}

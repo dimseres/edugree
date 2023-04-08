@@ -112,3 +112,16 @@ func EchoControllerValidationHelper(c echo.Context, form interface{}) error {
 	}
 	return nil
 }
+
+func NewError(message string) *CustomError {
+	err := CustomError{err: message}
+	return &err
+}
+
+type CustomError struct {
+	err string
+}
+
+func (e *CustomError) Error() string {
+	return e.err
+}
