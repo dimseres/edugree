@@ -15,6 +15,7 @@ func init() {
 	}
 }
 
+// start service
 func main() {
 	connection := database.InitConnection()
 	casbin2.InitCasbin(connection)
