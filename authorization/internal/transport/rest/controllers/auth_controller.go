@@ -223,7 +223,7 @@ func SetTenant(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"error":   true,
-			"message": err,
+			"message": err.Error(),
 		})
 	}
 
