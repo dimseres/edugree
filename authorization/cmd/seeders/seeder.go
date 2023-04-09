@@ -114,15 +114,20 @@ func createRoles(db *gorm.DB) []*models.Role {
 func createOrganization(db *gorm.DB, owner models.User) models.Organization {
 	//organizationMembers := []models.User{owner}
 	uid, err := uuid.NewRandom()
+	_uuid, err := uuid.NewUUID()
+	if err != nil {
+		panic(err)
+	}
 	if err != nil {
 		panic(err)
 	}
 	organization := models.Organization{
-		Title:     "Example Org",
-		Domain:    "example.org",
-		Email:     "example@organization.org",
-		SecretKey: uid.String(),
-		Active:    true,
+		Title:      "Example Org",
+		Domain:     "example.org",
+		Email:      "example@organization.org",
+		SecretKey:  uid.String(),
+		TenantUuid: _uuid.String(),
+		Active:     true,
 	}
 	res := db.Create(&organization)
 	if res.Error != nil {

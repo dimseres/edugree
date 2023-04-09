@@ -5,6 +5,7 @@ import (
 	"authorization/internal/helpers"
 	"authorization/internal/models"
 	"authorization/internal/transport/rest/forms"
+	"github.com/google/uuid"
 )
 
 type OrganizationRepository interface {
@@ -40,10 +41,15 @@ func (self *OrganizationService) CreateOrganization(form *forms.OrganizationCrea
 	}
 
 	var organization models.Organization
+	_uuid, err := uuid.NewUUID()
+	if err != nil {
+		return nil, err
+	}
 	organization.Title = form.Title
 	organization.Email = form.Email
 	organization.Domain = form.Domain
 	organization.Description = &form.Description
+	organization.TenantUuid = _uuid.String()
 	_, err = self.repository.CreateOrganization(&organization)
 
 	if err != nil {
