@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  auth:
+    build:
+      context: ./authorization
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 7001:7001
+    networks:
+      - app_network
+
+  db:
+    image: "postgres"
+    environment:
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    ports:
+      - 5432:7001
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+volumes:
+  db_volume:
+
+networks:
+  app_network:
+    driver: "bridge"
