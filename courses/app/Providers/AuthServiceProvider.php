@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PHPUnit\TextUI\Application;
 
@@ -23,8 +26,12 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Auth::extend('jwt', function (Application $app, string $name, array $config) {
-//           return new
+        Auth::viaRequest('jwt', function (Request $request) {
+            $guid = $request->header('X-REQUEST-ID');
+            $tokenPayload = JWT::decode($request->bearerToken(), new Key($guid.env("GATEWAY_KEY"), 'HS256'));
+            dd($tokenPayload);
+            $tokenPayload = $request->bearerToken();
+            dd(base64_decode($tokenPayload));
         });
     }
 }
