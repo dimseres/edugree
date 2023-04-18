@@ -48,6 +48,12 @@ type JwtData struct {
 	Membership []JwtMembershipData `json:"membership"`
 }
 
+type JwtServiceData struct {
+	UserId     uint              `json:"user_id"`
+	Name       string            `json:"name"`
+	Membership JwtMembershipData `json:"membership"`
+}
+
 type JwtMembershipData struct {
 	Organization   *string   `json:"organization"`
 	OrganizationId *uint     `json:"organization_id"`
@@ -57,6 +63,11 @@ type JwtMembershipData struct {
 
 type JwtAuthClaims struct {
 	Data JwtData `json:"data"`
+	jwt.RegisteredClaims
+}
+
+type JwtServiceAuthClaims struct {
+	Data JwtServiceData `json:"data"`
 	jwt.RegisteredClaims
 }
 
@@ -90,6 +101,40 @@ func CreateAuthToken(payload JwtData) (error, string) {
 	}
 
 	return err, t
+}
+
+// GetServiceJwtToken
+// генерируем краткосрочный токен с выбранной организацией
+func GetServiceJwtToken(commonToken *JwtAuthClaims, domain string, requestUuid string) (string, error) {
+	memb := JwtMembershipData{}
+	for _, member := range commonToken.Data.Membership {
+		if *member.Organization == domain {
+			memb.Services = member.Services
+			memb.Organization = member.Organization
+			memb.Role = member.Role
+			memb.OrganizationId = member.OrganizationId
+		}
+	}
+	data := JwtServiceData{
+		UserId:     commonToken.Data.UserId,
+		Name:       commonToken.Data.Name,
+		Membership: memb,
+	}
+
+	claims := JwtServiceAuthClaims{
+		Data: data,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Second * time.Duration(10))),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	t, err := token.SignedString([]byte(requestUuid + os.Getenv("GATEWAY_KEY")))
+	if err != nil {
+		return "", nil
+	}
+
+	return t, nil
 }
 
 func GetValidatedForm(form any, c echo.Context) interface{} {
