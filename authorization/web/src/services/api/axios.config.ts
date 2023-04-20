@@ -18,7 +18,7 @@ axios.interceptors.request.use((request: InternalAxiosRequestConfig): any => {
 
 axios.interceptors.response.use((response: AxiosResponse<any, any>): AxiosResponse<any, any> => {
     return response
-}, async (response) => {
+}, async (response: any) => {
     const lastReq = lastRequest.pop()
 
     if (response.status === 401) {

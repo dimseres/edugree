@@ -207,7 +207,10 @@ func SetTenant(c echo.Context) error {
 	err := helpers.EchoControllerValidationHelper(c, &form)
 
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
 	}
 
 	repository := repositories.NewMembershipRepository()

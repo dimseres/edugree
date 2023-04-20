@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { state } from 'vue-tsc/out/shared'
 
 export interface IOrganization {
     id: number,
@@ -39,6 +40,14 @@ export const useUserStore = defineStore("user", {
             user: null,
             active_tenant: window.localStorage.getItem("tenant"),
             tenant_role: null
+        }
+    },
+    getters: {
+        getOrganizationList(): IUserMembership[]|null {
+            if (this.user) {
+                return this.user.membership
+            }
+            return null;
         }
     },
     actions: {
