@@ -21,7 +21,7 @@ type OrganizationRepository struct {
 func NewOrganizationRepository() OrganizationRepository {
 	return OrganizationRepository{
 		BaseRepositoryHelpers{
-			db: database.InitConnection(),
+			db: database.GetConnection(),
 		},
 	}
 }

@@ -12,7 +12,7 @@ type MembershipRepository struct {
 func NewMembershipRepository() MembershipRepository {
 	return MembershipRepository{
 		BaseRepositoryHelpers{
-			db: database.InitConnection(),
+			db: database.GetConnection(),
 		},
 	}
 }

@@ -29,7 +29,7 @@ type UserDataPayload struct {
 func NewUserRepository() UserRepository {
 	return UserRepository{
 		BaseRepositoryHelpers{
-			db: database.InitConnection(),
+			db: database.GetConnection(),
 		},
 	}
 }
