@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Service\Rabbit\MessageHandlerService;
+use App\Service\Amqp\MessageHandlerService;
 use Illuminate\Console\Command;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 class AmqpListenCommand extends Command

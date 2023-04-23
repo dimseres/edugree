@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Service\Rabbit\Handlers;
+namespace App\Service\Amqp\Handlers;
 
-use App\Service\Rabbit\HandlerDto;
-use App\Service\Rabbit\IMessageHandler;
+use App\Service\Amqp\HandlerDto;
+use App\Service\Amqp\IMessageHandler;
 
 class CreateOrganizationHandler implements IMessageHandler
 {

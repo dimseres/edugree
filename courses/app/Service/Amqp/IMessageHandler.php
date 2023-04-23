@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Rabbit;
+namespace App\Service\Amqp;
 
 interface IMessageHandler
 {

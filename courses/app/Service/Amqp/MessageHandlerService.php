@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Service\Rabbit;
+namespace App\Service\Amqp;
 
-use App\Service\Rabbit\Handlers\CreateOrganizationHandler;
+use App\Service\Amqp\Handlers\CreateOrganizationHandler;
 
 class MessageHandlerService
 {
+    // USE ONLY JOBS FOR HANDLE MESSAGE
     private $messages = [
         'organization.create' => CreateOrganizationHandler::class,
         'member.add' => CreateOrganizationHandler::class,
