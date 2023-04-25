@@ -29,7 +29,6 @@ export async function login(form: LoginFormDTO): Promise<IApiResponse> {
         }
 
         const { setUser } = useUserStore()
-        debugger
         setUser(data.user)
 
         return {
@@ -42,7 +41,15 @@ export async function login(form: LoginFormDTO): Promise<IApiResponse> {
 }
 
 export async function refresh() {
-    await axios.post('/auth/refresh')
+    try {
+        const {data} = await axios.post('/auth/refresh')
+        if (data.error) {
+            return false
+        }
+        return true
+    } catch (e) {
+        return false
+    }
 }
 
 export function logout() {

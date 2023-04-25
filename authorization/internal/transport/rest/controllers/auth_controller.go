@@ -12,7 +12,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"time"
 )
 
 func InitAuthRoutes(app *echo.Group) {
@@ -80,7 +79,7 @@ func Login(c echo.Context) error {
 		return err
 	}
 
-	SetAuthCookies(c, token, refresh)
+	helpers.SetAuthCookies(c, token, refresh)
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"error": false,
@@ -113,7 +112,7 @@ func Logout(c echo.Context) error {
 		})
 	}
 
-	SetAuthCookies(c, "-", "-")
+	helpers.SetAuthCookies(c, "-", "-")
 	return c.JSON(http.StatusOK, echo.Map{
 		"error":   false,
 		"message": "success",
@@ -171,34 +170,12 @@ func RefreshToken(c echo.Context) error {
 		})
 	}
 
-	SetAuthCookies(c, newToken.Token, newToken.Refresh)
+	helpers.SetAuthCookies(c, newToken.Token, newToken.Refresh)
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"error": false,
 		"user":  responses.NewUserResponse(newToken.User),
 		"token": newToken.Token,
-	})
-}
-
-func SetAuthCookies(c echo.Context, jwtToken string, refreshToken string) {
-	c.SetCookie(&http.Cookie{
-		Name:  "_ref",
-		Value: refreshToken,
-		Path:  "/",
-		//Domain:   c.Request().Host,
-		Expires: time.Now().Add(services.REFRESH_LIFETIME),
-		//Secure:   true,
-		HttpOnly: true,
-	})
-
-	c.SetCookie(&http.Cookie{
-		Name:  "_token",
-		Value: jwtToken,
-		Path:  "/",
-		//Domain:   c.Request().Host,
-		Expires: time.Now().Add(services.JWT_LIFETIME),
-		//Secure:   true,
-		HttpOnly: true,
 	})
 }
 

@@ -10,9 +10,6 @@ import (
 )
 
 // REFRESH_LIFETIME One week
-const REFRESH_LIFETIME = time.Hour * 24 * 168
-const JWT_LIFETIME = time.Second * 900 // JWT_LIFETIME lifetime of jwt token
-
 type AuthRepository interface {
 	CheckLoginData(email string) (error, *models.User)
 	LoadRelation(model interface{}, relation ...string) (interface{}, error)
@@ -109,7 +106,7 @@ func (self *AuthService) CreateRefreshToken(token string, user *models.User) (st
 	}
 
 	token, err = helpers.CreatePasswordHash(token + uid.String())
-	err = self.repository.RegisterRefreshToken(user, token, uid.String(), REFRESH_LIFETIME)
+	err = self.repository.RegisterRefreshToken(user, token, uid.String(), helpers.REFRESH_LIFETIME)
 	if err != nil {
 		return "", err
 	}

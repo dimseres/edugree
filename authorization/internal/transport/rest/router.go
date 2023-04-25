@@ -12,6 +12,7 @@ func InitRoutes(app *echo.Group) {
 	controllers.InitAuthRoutes(app.Group("/auth"))
 	controllers.InitUserRoutes(app.Group("/users"))
 	controllers.InitOrganizationRoutes(app.Group("/organization"))
+	controllers.InitServiceMessagingController(app.Group("/messaging"))
 
 	tenant := app.Group("")
 	tenant.Use(middlewares.JwtProtect())

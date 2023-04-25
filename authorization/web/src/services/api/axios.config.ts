@@ -18,15 +18,17 @@ axios.interceptors.request.use((request: InternalAxiosRequestConfig): any => {
 
 axios.interceptors.response.use((response: AxiosResponse<any, any>): AxiosResponse<any, any> => {
     return response
-}, async (response: any) => {
+}, async ({response}: any) => {
     const lastReq = lastRequest.pop()
 
     if (response.status === 401) {
         if (lastReq && lastReq.url === lastReq.baseURL + "/auth/refresh") {
             return response
         }
-
-        return await refresh()
+        const tokenTaken = await refresh()
+        if (!tokenTaken) {
+            return response
+        }
     }
 
     return response

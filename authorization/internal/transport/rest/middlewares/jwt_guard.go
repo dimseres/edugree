@@ -16,10 +16,25 @@ func JwtProtect() echo.MiddlewareFunc {
 		},
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 		ErrorHandler: func(c echo.Context, err error) error {
+			//authRepository := repositories.NewAuthRepository()
+			//authService := services.NewAuthService(&authRepository)
+			//refreshToken, err := c.Cookie("_ref")
+			//if err != nil {
 			return c.JSON(http.StatusUnauthorized, echo.Map{
 				"error":   true,
 				"message": "Unauthorized",
 			})
+			//}
+			//tokens, err := authService.GenerateTokenFromRefresh(refreshToken.String())
+			//if err != nil {
+			//	return c.JSON(http.StatusUnauthorized, echo.Map{
+			//		"error":   true,
+			//		"message": "Unauthorized",
+			//	})
+			//}
+			//helpers.SetAuthCookies(c, tokens.Token, tokens.Refresh)
+			//
+			//return nil
 		},
 	}
 

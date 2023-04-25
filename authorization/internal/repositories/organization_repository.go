@@ -75,3 +75,13 @@ func (self *OrganizationRepository) AttachOrganizationOwner(orgId uint, userId u
 
 	return nil
 }
+
+func (self *OrganizationRepository) GetOrganizationWithMembers(orgId uint) (*models.Organization, error) {
+	var org models.Organization
+	resp := self.db.Preload("Members").Preload("Members.User").Preload("Members.Role").First(&org, orgId)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+
+	return &org, nil
+}
