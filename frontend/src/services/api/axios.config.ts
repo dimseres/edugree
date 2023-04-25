@@ -1,4 +1,4 @@
-import _axios, {AxiosResponse, InternalAxiosRequestConfig} from "axios";
+import _axios, {AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 import {login, refresh} from "./auth.api.vue";
 
 export const axios = _axios.create({
