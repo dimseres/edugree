@@ -34,7 +34,6 @@ export const router = createRouter({
         },
         {
             path: '/',
-            redirect: '/monitoring',
             name: 'Home',
             component: () => import('../views/Home.vue'),
             meta: {
@@ -42,9 +41,12 @@ export const router = createRouter({
             },
             children: [
                 {
-                    path: 'monitoring',
-                    name: 'Monitoring',
-                    component: () => import('../views/Monitoring.vue'),
+                    path: '/users',
+                    name: 'Users',
+                    meta: {
+                        guard: [new AuthGuard(['owner', 'administrator', 'moderator'])],
+                    },
+                    component: () => import('../views/Users.vue'),
                 },
             ],
         },
