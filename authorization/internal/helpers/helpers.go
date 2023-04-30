@@ -3,6 +3,7 @@ package helpers
 import (
 	"authorization/internal/transport/rest/forms"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -12,6 +13,12 @@ import (
 	"strconv"
 	"time"
 )
+
+var cache CacheService
+
+func Init() {
+	cache = NewCacheService()
+}
 
 func CreatePasswordHash(password string) (string, error) {
 	firstSalt, err := scrypt.Key([]byte(password), []byte(os.Getenv("SALT")), 2048, 4, 2, 32)
@@ -194,4 +201,27 @@ func SetAuthCookies(c echo.Context, jwtToken string, refreshToken string) {
 		//Secure:   true,
 		HttpOnly: true,
 	})
+}
+
+func SetTenantData(key string, value interface{}) bool {
+	return cache.SetData("tenant", key, value)
+}
+
+func GetTenantData(key string) interface{} {
+	return cache.GetData("tenant", key)
+}
+
+func ToJson(data interface{}) []byte {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	return bytes
+}
+
+func FromJson(value interface{}, data []byte) {
+	err := json.Unmarshal(data, &value)
+	if err != nil {
+		panic(err)
+	}
 }

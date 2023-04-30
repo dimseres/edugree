@@ -49,7 +49,7 @@ func (self *OrganizationRepository) CheckOrganization(email string, domain strin
 func (self *OrganizationRepository) GetOrganization(id uint) (*models.Organization, error) {
 	var org models.Organization
 
-	resp := self.db.Find(&org, id)
+	resp := self.db.First(&org, "id = ?", id)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}

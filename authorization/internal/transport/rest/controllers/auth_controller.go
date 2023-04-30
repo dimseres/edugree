@@ -129,7 +129,7 @@ func Register(c echo.Context) error {
 	}
 
 	repository := repositories.NewUserRepository()
-	service := services.NewUserService(&repository)
+	service := services.NewUserService(&repository, nil)
 
 	user, err := service.CreateUser(&dto.CreateUserDTO{
 		Email:    form.Email,
@@ -206,6 +206,17 @@ func SetTenant(c echo.Context) error {
 			"message": err.Error(),
 		})
 	}
+
+	rep := repositories.NewCacheRepository()
+	err = rep.SetTenantInfo(member.Organization.Domain, member.Organization)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+	c.Response().Header().Set("X-ORG", member.Organization.Domain)
+	//helpers.SetTenantData(c.Get("tenant").(string), &member.Organization)
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"error": false,

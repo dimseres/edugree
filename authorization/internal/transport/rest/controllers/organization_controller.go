@@ -75,10 +75,8 @@ func GetOrganization(c echo.Context) error {
 	service := services.NewOrganizationService(&repo)
 
 	org, err := service.GetOrganization(uint(id))
-	repo.EndTransaction()
 
 	if err != nil {
-		repo.RollbackTransaction()
 		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
 			"error":   true,
 			"message": err.Error(),
@@ -86,7 +84,6 @@ func GetOrganization(c echo.Context) error {
 	}
 
 	if org.Id == 0 {
-		repo.RollbackTransaction()
 		return c.JSON(http.StatusNotFound, echo.Map{
 			"error":   true,
 			"message": "not found",

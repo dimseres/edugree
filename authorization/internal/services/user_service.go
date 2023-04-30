@@ -10,21 +10,33 @@ type UserRepository interface {
 	GetUserById(id uint) (*models.User, error)
 	LoadRelation(model interface{}, relation ...string) (interface{}, error)
 	CreateNewUser(user *models.User) (*models.User, error)
+	GetUsersWithPagination(orgid uint, page int, perpage int) (*[]models.User, error)
 }
 
 type UserService struct {
 	repository UserRepository
+	BaseService
 }
 
-func NewUserService(repository UserRepository) UserService {
+func NewUserService(repository UserRepository, tenantContext *TenantContext) UserService {
 	return UserService{
-		repository: repository,
+		repository:  repository,
+		BaseService: BaseService{tenantContext: tenantContext},
 	}
 }
 
 func (self *UserService) GetUser(id uint) *models.User {
 	user, _ := self.repository.GetUserById(id)
 	return user
+}
+
+func (self *UserService) GetUsersWithPagination(page int, perpage int) (*[]models.User, error) {
+	orgID := self.tenantContext.Id
+	users, err := self.repository.GetUsersWithPagination(orgID, page, perpage)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (self *UserService) GetUserWith(id uint, relation *[]string) *models.User {

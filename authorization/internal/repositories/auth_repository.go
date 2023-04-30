@@ -8,11 +8,13 @@ import (
 
 type AuthRepository struct {
 	BaseRepositoryHelpers
+	cache CacheRepository
 }
 
 func NewAuthRepository() AuthRepository {
 	return AuthRepository{
 		BaseRepositoryHelpers{db: database.GetConnection()},
+		NewCacheRepository(),
 	}
 }
 

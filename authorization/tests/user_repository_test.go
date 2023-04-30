@@ -14,7 +14,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	database.InitConnection()
+	database.InitPgConnection()
 }
 
 func TestRepository_GetUserById(t *testing.T) {

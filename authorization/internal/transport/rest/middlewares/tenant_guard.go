@@ -4,15 +4,14 @@ import (
 	"authorization/internal/helpers"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 func TenantGuard(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		tenant := c.Get("tenant")
-		if tenant == "" {
+		tenant, tenantId := c.Get("tenant"), c.Get("tenant_id")
+		if tenant == "" || tenantId == "" {
 			return c.JSON(http.StatusNotFound, echo.Map{
 				"error":   true,
 				"message": "empty tenant",
@@ -38,7 +37,8 @@ func TenantGuard(next echo.HandlerFunc) echo.HandlerFunc {
 			})
 		}
 
-		_uuid, err := uuid.NewRandom()
+		requestId := c.Request().Header.Get("X-REQUEST-ID")
+		organizationToken, err := helpers.GetServiceJwtToken(claims, tenant.(string), requestId)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, echo.Map{
 				"error":   true,
@@ -46,14 +46,6 @@ func TenantGuard(next echo.HandlerFunc) echo.HandlerFunc {
 			})
 		}
 
-		organizationToken, err := helpers.GetServiceJwtToken(claims, tenant.(string), _uuid.String())
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, echo.Map{
-				"error":   true,
-				"message": "server error",
-			})
-		}
-		c.Request().Header.Set("X-REQUEST-ID", _uuid.String())
 		c.Request().Header.Set("Authorization", "Bearer "+organizationToken)
 
 		return next(c)

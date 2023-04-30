@@ -11,7 +11,7 @@ type RedisConnectionConfig struct {
 var redisConn *redis.Client
 
 func InitRedisConnection(config *RedisConnectionConfig) *redis.Client {
-	redisConn := redis.NewClient(&redis.Options{
+	redisConn = redis.NewClient(&redis.Options{
 		Addr:     config.Host,
 		Password: config.Password, // no password set
 		DB:       config.DB,       // use default DB

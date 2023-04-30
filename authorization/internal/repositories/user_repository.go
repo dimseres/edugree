@@ -13,6 +13,7 @@ type RepositoryInterface interface {
 
 type UserRepository struct {
 	BaseRepositoryHelpers
+	cache CacheRepository
 }
 
 type UserDataPayload struct {
@@ -31,6 +32,7 @@ func NewUserRepository() UserRepository {
 		BaseRepositoryHelpers{
 			db: database.GetConnection(),
 		},
+		NewCacheRepository(),
 	}
 }
 
@@ -66,6 +68,22 @@ func (rep *UserRepository) GetUserById(id uint) (*models.User, error) {
 		return nil, res.Error
 	}
 	return &user, nil
+}
+
+func (rep *UserRepository) GetUsersWithPagination(orgId uint, page int, perPage int) (*[]models.User, error) {
+	pagination := PaginationConfig{
+		Page:    page,
+		PerPage: perPage,
+	}
+	//var membership models.Organization
+	var users []models.User
+	var total int64
+	res := rep.db.Scopes(rep.Paginate(&pagination)).Preload("Membership", "organization_id = ?", orgId).Preload("Membership.Role").Take(&users).Count(&total)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &users, nil
 }
 
 func (rep *UserRepository) CreateNewUser(payload *models.User) (*models.User, error) {
