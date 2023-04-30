@@ -27,7 +27,7 @@ func ListUsers(c echo.Context) error {
 	})
 	page, _ := strconv.Atoi(c.QueryParams().Get("page"))
 
-	users, err := userService.GetUsersWithPagination(page, 25)
+	data, err := userService.GetUsersWithPagination(page, 25)
 	if err != nil {
 		return c.JSON(500, echo.Map{
 			"error":   true,
@@ -37,7 +37,9 @@ func ListUsers(c echo.Context) error {
 
 	return c.JSON(200, echo.Map{
 		"error": false,
-		"data":  users,
+		"total": data.Total,
+		"pages": data.MaxPage,
+		"data":  data.Data,
 	})
 }
 

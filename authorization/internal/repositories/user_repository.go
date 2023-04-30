@@ -70,7 +70,7 @@ func (rep *UserRepository) GetUserById(id uint) (*models.User, error) {
 	return &user, nil
 }
 
-func (rep *UserRepository) GetUsersWithPagination(orgId uint, page int, perPage int) (*[]models.User, error) {
+func (rep *UserRepository) GetUsersWithPagination(orgId uint, page int, perPage int) (*[]models.User, int64, error) {
 	pagination := PaginationConfig{
 		Page:    page,
 		PerPage: perPage,
@@ -78,12 +78,16 @@ func (rep *UserRepository) GetUsersWithPagination(orgId uint, page int, perPage 
 	//var membership models.Organization
 	var users []models.User
 	var total int64
-	res := rep.db.Scopes(rep.Paginate(&pagination)).Preload("Membership", "organization_id = ?", orgId).Preload("Membership.Role").Take(&users).Count(&total)
+	res := rep.db.Scopes(rep.Paginate(&pagination)).
+		Preload("Membership", "organization_id = ?", orgId).
+		Preload("Membership.Role").
+		Find(&users).
+		Count(&total)
 	if res.Error != nil {
-		return nil, res.Error
+		return nil, 0, res.Error
 	}
 
-	return &users, nil
+	return &users, total, nil
 }
 
 func (rep *UserRepository) CreateNewUser(payload *models.User) (*models.User, error) {

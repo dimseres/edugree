@@ -4,13 +4,14 @@ import (
 	"authorization/internal/dto"
 	"authorization/internal/helpers"
 	"authorization/internal/models"
+	"authorization/internal/structs"
 )
 
 type UserRepository interface {
 	GetUserById(id uint) (*models.User, error)
 	LoadRelation(model interface{}, relation ...string) (interface{}, error)
 	CreateNewUser(user *models.User) (*models.User, error)
-	GetUsersWithPagination(orgid uint, page int, perpage int) (*[]models.User, error)
+	GetUsersWithPagination(orgid uint, page int, perpage int) (*[]models.User, int64, error)
 }
 
 type UserService struct {
@@ -30,13 +31,19 @@ func (self *UserService) GetUser(id uint) *models.User {
 	return user
 }
 
-func (self *UserService) GetUsersWithPagination(page int, perpage int) (*[]models.User, error) {
+func (self *UserService) GetUsersWithPagination(page int, perpage int) (*structs.WithPagination, error) {
 	orgID := self.tenantContext.Id
-	users, err := self.repository.GetUsersWithPagination(orgID, page, perpage)
+	users, total, err := self.repository.GetUsersWithPagination(orgID, page, perpage)
 	if err != nil {
 		return nil, err
 	}
-	return users, nil
+	maxPages := total/int64(perpage) + 1
+
+	return &structs.WithPagination{
+		Total:   total,
+		MaxPage: maxPages,
+		Data:    &users,
+	}, nil
 }
 
 func (self *UserService) GetUserWith(id uint, relation *[]string) *models.User {
