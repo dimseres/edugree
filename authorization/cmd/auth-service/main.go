@@ -6,6 +6,7 @@ import (
 	"authorization/internal/transport/rest"
 	"fmt"
 	"github.com/joho/godotenv"
+	"os"
 )
 
 func init() {
@@ -17,7 +18,11 @@ func init() {
 
 // start service
 func main() {
-	connection := database.InitConnection()
+	connection := database.InitPgConnection()
+	database.InitRedisConnection(&database.RedisConnectionConfig{
+		Host:     os.Getenv("REDIS_HOST"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+	})
 	casbin2.InitCasbin(connection)
 
 	fmt.Println(connection)

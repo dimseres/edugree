@@ -12,7 +12,7 @@ import (
 
 var db *gorm.DB
 
-func InitConnection() *gorm.DB {
+func InitPgConnection() *gorm.DB {
 	fmt.Println("Try to Database connect")
 	logger := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{

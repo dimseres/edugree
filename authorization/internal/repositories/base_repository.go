@@ -8,6 +8,11 @@ type BaseRepositoryHelpers struct {
 	db *gorm.DB
 }
 
+type PaginationConfig struct {
+	Page    int
+	PerPage int
+}
+
 func (self *BaseRepositoryHelpers) LoadRelation(model interface{}, relation ...string) (interface{}, error) {
 	tx := self.db
 	for _, relate := range relation {
@@ -35,4 +40,23 @@ func (self *BaseRepositoryHelpers) EndTransaction() {
 
 func (self *BaseRepositoryHelpers) RollbackTransaction() {
 	self.db = self.db.Rollback()
+}
+
+func (self BaseRepositoryHelpers) Paginate(config *PaginationConfig) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		page := config.Page
+		if page <= 1 {
+			page = 1
+		}
+		perPage := config.PerPage
+		switch {
+		case perPage > 100:
+			perPage = 100
+		case perPage < 10:
+			perPage = 10
+		}
+
+		offset := (page - 1) * perPage
+		return db.Offset(offset).Limit(perPage)
+	}
 }

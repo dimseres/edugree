@@ -13,7 +13,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	database.InitConnection()
+	database.InitPgConnection()
 }
 
 func TestService_SignIn(t *testing.T) {
