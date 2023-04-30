@@ -19,7 +19,7 @@ func init() {
 }
 
 func main() {
-	connection := database.InitConnection()
+	connection := database.InitPgConnection()
 	casbin.InitCasbin(connection)
 	casbin.DefineInitialPolicies(casbin.TechincalDomain)
 
