@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"authorization/internal/constants"
 	"authorization/internal/transport/rest/forms"
 	"encoding/hex"
 	"encoding/json"
@@ -178,16 +179,13 @@ func (e *CustomError) Error() string {
 	return e.err
 }
 
-const REFRESH_LIFETIME = time.Hour * 24 * 7
-const JWT_LIFETIME = time.Second * 900 // JWT_LIFETIME lifetime of jwt token
-
 func SetAuthCookies(c echo.Context, jwtToken string, refreshToken string) {
 	c.SetCookie(&http.Cookie{
 		Name:  "_ref",
 		Value: refreshToken,
 		Path:  "/",
 		//Domain:   c.Request().Host,
-		Expires: time.Now().Add(REFRESH_LIFETIME),
+		Expires: time.Now().Add(constants.REFRESH_LIFETIME),
 		//Secure:   true,
 		HttpOnly: true,
 	})
@@ -197,7 +195,7 @@ func SetAuthCookies(c echo.Context, jwtToken string, refreshToken string) {
 		Value: jwtToken,
 		Path:  "/",
 		//Domain:   c.Request().Host,
-		Expires: time.Now().Add(JWT_LIFETIME),
+		Expires: time.Now().Add(constants.JWT_LIFETIME),
 		//Secure:   true,
 		HttpOnly: true,
 	})
