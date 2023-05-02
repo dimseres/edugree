@@ -16,16 +16,9 @@ func ListenQueues(login string, password string, host string) {
 		Exclusive:    false,
 		NoWait:       false,
 	}
-	customQueue := QueueConfig{
-		Name:         "custom_queue",
-		Durable:      false,
-		UnusedDelete: false,
-		Exclusive:    false,
-		NoWait:       false,
-	}
+
 	authQueueChannel, customQueueChannel := make(chan Message), make(chan Message)
 	queue.ListenQueue(&authQueue, authQueueChannel)
-	queue.ListenQueue(&customQueue, customQueueChannel)
 
 	fmt.Println("AmqpListener Started press ctrl + c to exit")
 	for {
