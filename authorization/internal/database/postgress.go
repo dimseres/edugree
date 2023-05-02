@@ -1,6 +1,7 @@
 package database
 
 import (
+	"authorization/config"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,7 +15,7 @@ var db *gorm.DB
 
 func InitPgConnection() *gorm.DB {
 	fmt.Println("Try to Database connect")
-	logger := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+	logger := logger.New(log.New(config.GetLogger().Out, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
 			SlowThreshold:             time.Second,   // Slow SQL threshold
 			LogLevel:                  logger.Silent, // Log level
@@ -27,6 +28,7 @@ func InitPgConnection() *gorm.DB {
 		Logger: logger,
 	})
 	if err != nil {
+		config.GetLogger().Error(err)
 		panic(err)
 	}
 	db = conn
