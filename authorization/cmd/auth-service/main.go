@@ -1,6 +1,7 @@
 package main
 
 import (
+	"authorization/config"
 	casbin2 "authorization/internal/casbin"
 	"authorization/internal/database"
 	"authorization/internal/transport/rest"
@@ -18,6 +19,8 @@ func init() {
 
 // start service
 func main() {
+	file := config.InitLogger()
+	defer file.Close()
 	connection := database.InitPgConnection()
 	database.InitRedisConnection(&database.RedisConnectionConfig{
 		Host:     os.Getenv("REDIS_HOST"),
