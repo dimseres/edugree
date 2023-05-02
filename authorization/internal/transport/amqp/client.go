@@ -19,7 +19,7 @@ type QueueMessage struct {
 
 func (client *Client) SendMessage(config *QueueConfig, message *QueueMessage) {
 	channel, err := client.connection.Channel()
-	failOnError(err, "Failed to open chanel")
+	failOnFireError(message.Type, err, message)
 	queue, err := channel.QueueDeclare(
 		config.Name,
 		config.Durable,
@@ -28,7 +28,7 @@ func (client *Client) SendMessage(config *QueueConfig, message *QueueMessage) {
 		config.NoWait,
 		nil,
 	)
-	failOnError(err, "Failed to declare Queue")
+	failOnFireError(message.Type, err, message)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -37,7 +37,7 @@ func (client *Client) SendMessage(config *QueueConfig, message *QueueMessage) {
 		Body:        []byte(message.Message),
 	})
 
-	failOnError(err, "Failed to Publish a message")
+	failOnFireError(message.Type, err, message)
 }
 
 func NewAmqpClient(config *Config) (*Client, error) {

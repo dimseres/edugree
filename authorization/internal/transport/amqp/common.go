@@ -1,6 +1,9 @@
 package amqp
 
-import "log"
+import (
+	"authorization/config"
+	"authorization/internal/constants"
+)
 
 type Config struct {
 	Login    string
@@ -16,8 +19,20 @@ type QueueConfig struct {
 	NoWait       bool
 }
 
+var EventQueueMap = map[string][]string{
+	constants.CREATE_ORGANIZATION_EVENT: {"course_queue"},
+	constants.CREATE_USERS:              {"course_queue"},
+}
+
+func failOnFireError(event string, err error, message *QueueMessage) {
+	if err != nil {
+		config.GetLogger().Error(err, message.Type, message.Message)
+	}
+}
+
 func failOnError(err error, msg string) {
 	if err != nil {
-		log.Panicf("%s: %s", msg, err)
+		config.GetLogger().Error(err, msg)
+		//log.Panicf("%s: %s", msg, err)
 	}
 }
