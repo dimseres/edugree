@@ -1,6 +1,7 @@
 package services
 
 import (
+	"authorization/internal/constants"
 	"authorization/internal/helpers"
 	"authorization/internal/models"
 	"fmt"
@@ -106,7 +107,7 @@ func (self *AuthService) CreateRefreshToken(token string, user *models.User) (st
 	}
 
 	token, err = helpers.CreatePasswordHash(token + uid.String())
-	err = self.repository.RegisterRefreshToken(user, token, uid.String(), helpers.REFRESH_LIFETIME)
+	err = self.repository.RegisterRefreshToken(user, token, uid.String(), constants.REFRESH_LIFETIME)
 	if err != nil {
 		return "", err
 	}
