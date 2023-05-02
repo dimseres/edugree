@@ -73,6 +73,11 @@ func (self *UserService) CreateUser(userDTO *dto.CreateUserDTO) (*models.User, e
 	return savedUser, nil
 }
 
+//func (self *UserService) InviteUsers() {
+//
+//	go FireEvent(constants.CREATE_USERS, &user)
+//}
+
 type RegistrationData struct {
 	Email    string
 	Password string
