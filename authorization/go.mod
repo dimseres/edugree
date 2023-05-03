@@ -18,7 +18,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	golang.org/x/crypto v0.7.0
 	gorm.io/driver/postgres v1.4.6
-	gorm.io/gorm v1.24.3
+	gorm.io/gorm v1.25.0
 )
 
 require (

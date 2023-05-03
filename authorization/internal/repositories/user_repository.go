@@ -79,8 +79,7 @@ func (rep *UserRepository) GetUsersWithPagination(orgId uint, page int, perPage 
 	var users []models.User
 	var total int64
 	res := rep.db.Scopes(rep.Paginate(&pagination)).
-		Preload("Membership", "organization_id = ?", orgId).
-		Preload("Membership.Role").
+		Joins("Membership").
 		Find(&users).
 		Count(&total)
 	if res.Error != nil {

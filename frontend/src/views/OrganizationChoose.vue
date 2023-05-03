@@ -45,12 +45,15 @@
 import AuthTemplate from '../components/templates/AuthTemplate.vue'
 import { IUserMembership, useUserStore } from '../store/user.store'
 import { useRouter } from 'vue-router'
+import {setTenant} from "../services/api/auth.api.vue"
 
 const { getOrganizationList, pickTenant: _pickTennant } = useUserStore()
 
 const router = useRouter();
 
 const pickTenant = async (tenant: IUserMembership) => {
+    const data = await setTenant(tenant.organization.id)
+    debugger
     _pickTennant(tenant)
     await router.push("/")
 }

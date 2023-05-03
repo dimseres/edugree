@@ -1,13 +1,20 @@
-import _axios, {AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import _axios, { AxiosResponse, CreateAxiosDefaults, InternalAxiosRequestConfig } from 'axios'
 import {login, refresh} from "./auth.api.vue";
 
 export const axios = _axios.create({
     baseURL: import.meta.env.VITE_BASE_API ?? import.meta.env.BASE_URL,
     headers: {
-        "x-org": ""
+        common: {
+            "X-Org" : window.localStorage.getItem('tenant')
+        }
     },
     withCredentials: true,
 })
+
+export function setXOrg(org: string) {
+    debugger
+    axios.defaults.headers.common["X-Org"] = org
+}
 
 let lastRequest: InternalAxiosRequestConfig[] = [];
 

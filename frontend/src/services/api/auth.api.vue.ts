@@ -1,5 +1,6 @@
-import { axios } from './axios.config'
+import { axios, setXOrg } from './axios.config'
 import { useUserStore } from '../../store/user.store'
+import { POSITION, useToast } from 'vue-toastification'
 
 
 export interface IApiResponse {
@@ -17,6 +18,8 @@ interface ErrorDataDTO {
     error: boolean,
     message: string,
 }
+
+const toasted = useToast()
 
 export async function login(form: LoginFormDTO): Promise<IApiResponse> {
     try {
@@ -60,24 +63,6 @@ export function signIn() {
 
 }
 
-export async function setTenant() {
-    try {
-        const { data } = await axios.get('/auth/setTenant')
-        if (data.error) {
-            return {
-                error: true,
-                message: data.message
-            }
-        }
-        return {
-            error: false,
-            payload: data.data
-        }
-    } catch (e) {
-
-    }
-}
-
 export async function getProfile(): Promise<IApiResponse> {
     try {
         const { data } = await axios.get('/users/profile')
@@ -106,5 +91,22 @@ function formatErrorRequest(e: any): IApiResponse {
     return {
         error: true,
         message: e.message,
+    }
+}
+
+export async function setTenant(tenantId: number) {
+    try {
+        const {data} = await axios.post("/auth/setTenant", {
+            tenant_id: tenantId
+        })
+        if (data.error) {
+            toasted.error(data.message, {position: POSITION.BOTTOM_RIGHT})
+            return null
+        }
+        setXOrg(data.data.organization.domain)
+
+        return data
+    } catch (e: any) {
+        toasted.error(e, {position: POSITION.BOTTOM_RIGHT})
     }
 }
