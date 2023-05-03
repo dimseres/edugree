@@ -5,8 +5,8 @@ import (
 	"transaction/constants"
 )
 
-func Init() {
-	amqp.RegisterEventHandler(constants.CREATE_ORGANIZATION_EVENT, func(c amqp.Message) error {
+func RegisterEvents() {
+	amqp.RegisterEventHandler(constants.CREATE_ORGANIZATION_EVENT, func(message amqp.Message) error {
 		return nil
 	})
 }
