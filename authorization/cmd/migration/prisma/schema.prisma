@@ -27,6 +27,7 @@ model User {
 
   organizations Membership[]
   Token         Token[]
+  Invites OrganizationInvite[]
 
   @@map("users")
 }
@@ -84,9 +85,29 @@ model Organization {
 
   members Membership[]
   Role    Role[]
+  Invites OrganizationInvite[]
 
   @@index([secret_key, tenant_uuid])
   @@map("organizations")
+}
+
+model OrganizationInvite {
+  id Int @id @default(autoincrement())
+
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  organization_id Int
+
+  user User @relation(fields: [user_id], references: [id])
+  user_id         Int
+  link String @db.VarChar(512)
+  status Int
+
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime?
+
+  @@unique([link])
+  @@map("organization_invite")
 }
 
 model Permission {
