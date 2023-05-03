@@ -1,6 +1,8 @@
 package amqp
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func ListenQueues(login string, password string, host string) {
 	conf := Config{
@@ -9,24 +11,20 @@ func ListenQueues(login string, password string, host string) {
 		Host:     host,
 	}
 	queue := NewAmqpReceiver(&conf)
-	authQueue := QueueConfig{
-		Name:         "auth_queue",
-		Durable:      false,
+	sagaQueue := QueueConfig{
+		Name:         "saga_coordinator",
+		Durable:      true,
 		UnusedDelete: false,
 		Exclusive:    false,
 		NoWait:       false,
 	}
 
-	authQueueChannel, customQueueChannel := make(chan Message), make(chan Message)
-	queue.ListenQueue(&authQueue, authQueueChannel)
+	sagaQueueChannel := make(chan Message)
+	queue.ListenQueue(&sagaQueue, sagaQueueChannel)
 
 	fmt.Println("AmqpListener Started press ctrl + c to exit")
 	for {
-		select {
-		case authMessage := <-authQueueChannel:
-			fmt.Println("MESSAGE FROM AUTH QUEUE \n", authMessage.Message)
-		case customMessage := <-customQueueChannel:
-			fmt.Println(customMessage.Message)
-		}
+		message := <-sagaQueueChannel
+		go HandleMessage(message)
 	}
 }
