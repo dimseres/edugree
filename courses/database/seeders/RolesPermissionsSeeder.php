@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -31,5 +32,10 @@ class RolesPermissionsSeeder extends Seeder
         ]);
         $editCourse = Permission::create(['name' => 'edit course']);
         $deleteCourse = Permission::create(['name' => 'delete course']);
+
+        if (getenv("APP_ENV") === 'development') {
+            $user = User::query()->where('email', 'test@example.com')->first();
+            $user?->assignRole($owner);
+        }
     }
 }
