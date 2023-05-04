@@ -55,7 +55,7 @@ export const useUserStore = defineStore("user", {
             this.user = user
         },
 
-        pickTenant(membership: IUserMembership) {
+            pickTenant(membership: IUserMembership) {
             window.localStorage.setItem("tenant", membership.organization.domain)
             window.localStorage.setItem("tenant_role", membership.role.slug)
             this.active_tenant = membership.organization.domain
