@@ -5,7 +5,7 @@
                 <div class='absolute inset-y-0 left-0 flex items-center sm:hidden'>
                     <!-- Mobile menu button-->
                     <DisclosureButton
-                        class='inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'>
+                        class='inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'>
                         <span class='sr-only'>Open main menu</span>
                         <Bars3Icon v-if='!open' class='block h-6 w-6' aria-hidden='true' />
                         <XMarkIcon v-else class='block h-6 w-6' aria-hidden='true' />
@@ -19,7 +19,7 @@
                     <div class='hidden sm:ml-6 sm:block'>
                         <div class='flex space-x-4'>
                             <router-link v-for='item in navigation' class='page-link' :key='item.name' :to='item.href'
-                                         :class="['text-gray-300 hover:bg-gray-700 hover:text-blue', 'rounded-md px-3 py-2 text-sm font-medium tracking-wide']"
+                                         :class="['text-gray-700 hover:text-purple-500', 'rounded-md px-3 py-2 text-sm font-medium tracking-wide']"
                                          :aria-current="item.current ? 'page' : undefined">
                                 <div class='flex'>
                                     <component :is='item.icon' class='w-4 mr-1' />
@@ -31,7 +31,7 @@
                 </div>
                 <div class='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
                     <button type='button'
-                            class='rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
+                            class='rounded-full p-1 text-gray-400 hover:text-purple focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-purple-200'>
                         <span class='sr-only'>View notifications</span>
                         <BellIcon class='h-6 w-6' aria-hidden='true' />
                     </button>
@@ -79,7 +79,7 @@
         <DisclosurePanel class='sm:hidden'>
             <div class='space-y-1 px-2 pt-2 pb-3'>
                 <DisclosureButton v-for='item in navigation' :key='item.name' as='a' :href='item.href'
-                                  :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']"
+                                  :class="[item.current ? 'bg-gray-500 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']"
                                   :aria-current="item.current ? 'page' : undefined">{{ item.name }}
                 </DisclosureButton>
             </div>
@@ -100,7 +100,7 @@ const navigation = [
         roles: ['owner', 'administrator', 'manager'],
     },
     {
-        name: 'Организации',
+        name: 'Организация',
         href: '/organizations',
         current: false,
         icon: BriefcaseIcon,
@@ -121,7 +121,7 @@ const navigation = [
 
 &
 .router-link-exact-active {
-    color: theme('colors.blue');
+    color: theme('colors.purple.500');
 }
 
 }

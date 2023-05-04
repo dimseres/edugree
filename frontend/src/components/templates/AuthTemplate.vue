@@ -1,5 +1,5 @@
 <template>
-  <div class="authorization-wrapper h-screen bg-gray-light">
+  <div class="authorization-wrapper h-screen bg-gray-50">
     <slot />
   </div>
 </template>

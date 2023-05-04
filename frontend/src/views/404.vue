@@ -4,7 +4,7 @@
       <div class="w-full">
         <h1 class="text-4xl inline-block px-10 bg-white">404 Такой страницы нет :(</h1>
         <p class="mt-0 text-md px-10 bg-white mt-3">скорее всего опечатка в адресе</p>
-        <router-link :to="link" class="mt-0 cursor-pointer text-sm ml-10 px-10 py-2 inline-block mt-3 text-white bg-gray-dark" >Назад</router-link>
+        <router-link :to="link" class="mt-0 cursor-pointer text-sm ml-10 px-10 py-2 inline-block mt-3 text-white bg-gray-500" >Назад</router-link>
       </div>
     </div>
   </auth-template>

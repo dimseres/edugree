@@ -8,11 +8,11 @@
   }
 
   @keyframes bg-color {
-    0% { background-color: theme("colors.blue"); }
-    20% { background-color: theme("colors.red"); }
-    40% { background-color: theme("colors.orange"); }
-    60% { background-color: theme("colors.yellow"); }
-    80% { background-color: theme("colors.green"); }
-    100% { background-color: theme("colors.gray"); }
+    0% { background-color: theme("colors.purple.500"); }
+    20% { background-color: theme("colors.red.500"); }
+    40% { background-color: theme("colors.orange.500"); }
+    60% { background-color: theme("colors.yellow.500"); }
+    80% { background-color: theme("colors.green.500"); }
+    100% { background-color: theme("colors.gray.500"); }
   }
 }

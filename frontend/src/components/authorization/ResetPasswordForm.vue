@@ -1,5 +1,5 @@
 <template>
-  <h2 class="mt-6 text-center text-2xl font-medium tracking-tight text-gray-900 text-blue">Введите вашу почту</h2>
+  <h2 class="mt-6 text-center text-2xl font-medium tracking-tight text-gray-900">Введите вашу почту</h2>
   <!--          <p class="mt-2 text-center text-sm text-gray-600">-->
   <!--            Или-->
   <!--            {{ ' ' }}-->
@@ -14,9 +14,9 @@
     </div>
     <div class="mt-auto">
       <button type="submit"
-              class="border bg-blue group relative flex w-full justify-center rounded-md text-white py-2 px-3 text-sm font-semibold text-white hover:bg-white hover:border hover:text-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue">
+              class="border bg-blue-500 group relative flex w-full justify-center rounded-md text-white py-2 px-3 text-sm font-semibold text-white hover:bg-white hover:border hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-              <LockClosedIcon class="h-5 w-5 text-white group-hover:text-blue" aria-hidden="true"/>
+              <LockClosedIcon class="h-5 w-5 text-white group-hover:text-blue-500" aria-hidden="true"/>
             </span>
         Войти
       </button>

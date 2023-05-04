@@ -12,7 +12,6 @@ export const axios = _axios.create({
 })
 
 export function setXOrg(org: string) {
-    debugger
     axios.defaults.headers.common["X-Org"] = org
 }
 
