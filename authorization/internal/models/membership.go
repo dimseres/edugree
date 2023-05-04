@@ -6,5 +6,5 @@ type Membership struct {
 	RoleId         uint          `gorm:"foreignKey;autoIncrement:false" json:"role_id"`
 	Organization   *Organization `json:"organization"`
 	Role           *Role         `json:"role"`
-	User           *User         `json:"user"`
+	User           User          `json:"user"`
 }

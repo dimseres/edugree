@@ -62,7 +62,7 @@ func (self *AuthService) CreateJwtToken(user *models.User, domain string) (error
 
 	var memberships []helpers.JwtMembershipData
 
-	for _, member := range *user.Membership {
+	for _, member := range user.Membership {
 		var allowedServices []string
 
 		if member.Organization.Services != nil {

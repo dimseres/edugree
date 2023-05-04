@@ -75,15 +75,34 @@ func (rep *UserRepository) GetUsersWithPagination(orgId uint, page int, perPage 
 		Page:    page,
 		PerPage: perPage,
 	}
-	//var membership models.Organization
+	var membership []models.Membership
 	var users []models.User
 	var total int64
-	res := rep.db.Scopes(rep.Paginate(&pagination)).
-		Joins("Membership").
-		Find(&users).
-		Count(&total)
+
+	//var result []struct {
+	//	Id                uint64
+	//	Email             string            `gorm:"not null;unique" json:"email"`
+	//	Password          string            `gorm:"not null" json:"-"`
+	//	PasswordResetCode *string           `gorm:"size:256" json:"-"`
+	//	Phone             string            `gorm:"size:256;not null;unique" json:"phone"`
+	//	FullName          string            `gorm:"size:512;not null" json:"full_name"`
+	//	Avatar            *string           `json:"avatar"`
+	//	Bio               *string           `gorm:"type:text" json:"bio"`
+	//	Active            bool              `gorm:"not null;default:true" json:"active"`
+	//	Membership        models.Membership `json:"membership"`
+	//}
+
+	// TODO сделать запрос из members и сопоставить роль и пользователя в ответе
+	//result := map[string]interface{}{}
+
+	res := rep.db.Scopes(rep.Paginate(&pagination)).Joins("User").Joins("Role").Find(&membership, "memberships.organization_id = ?", orgId)
 	if res.Error != nil {
 		return nil, 0, res.Error
+	}
+
+	for _, member := range membership {
+		member.User.DomainRole = member.Role
+		users = append(users, member.User)
 	}
 
 	return &users, total, nil

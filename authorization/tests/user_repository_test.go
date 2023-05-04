@@ -2,6 +2,7 @@ package tests
 
 import (
 	"authorization/internal/database"
+	"authorization/internal/models"
 	users "authorization/internal/repositories"
 	"fmt"
 	"github.com/joho/godotenv"
@@ -37,7 +38,7 @@ func TestRepository_CreateNewUser(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	mock := users.UserDataPayload{
+	mock := models.User{
 		Email:             "test@mail.com",
 		Password:          string(hashed),
 		PasswordResetCode: nil,
@@ -46,10 +47,9 @@ func TestRepository_CreateNewUser(t *testing.T) {
 		Avatar:            nil,
 		Bio:               nil,
 		Active:            false,
-		RoleId:            nil,
 	}
 	rep := users.NewUserRepository()
-	err, model := rep.CreateNewUser(&mock)
+	model, err := rep.CreateNewUser(&mock)
 	if err != nil {
 		t.Fatal("User wasnt created", err.Error())
 	} else {
@@ -67,7 +67,6 @@ func TestRepository_UpdateUser(t *testing.T) {
 		Avatar:            nil,
 		Bio:               nil,
 		Active:            false,
-		RoleId:            nil,
 	}
 	rep := users.NewUserRepository()
 	var id uint = 3
@@ -86,4 +85,15 @@ func TestRepository_DeleteUser(t *testing.T) {
 		panic(err)
 	}
 	fmt.Println(success)
+}
+
+func TestRepository_GetOrganizationMembers(t *testing.T) {
+	rep := users.NewUserRepository()
+	data, _, err := rep.GetUsersWithPagination(1, 1, 10)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(*data) == 0 {
+		t.Error("empty result")
+	}
 }
