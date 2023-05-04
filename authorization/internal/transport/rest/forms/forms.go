@@ -22,3 +22,16 @@ type OrganizationCreate struct {
 	Email       string `json:"email" form:"email" validate:"required,email"`
 	Description string `json:"description" form:"title"`
 }
+
+type ChangeRoleCreate struct {
+	Role string `json:"role" form:"role" validate:"required"`
+}
+
+type MemberInviteForm struct {
+	Email string `json:"email" form:"email" validate:"required,email"`
+	Role  string `json:"role" form:"role" validate:"required"`
+}
+
+type InviteMembersForm struct {
+	Members []MemberInviteForm `json:"members" form:"members" validate:"required,dive,required"`
+}

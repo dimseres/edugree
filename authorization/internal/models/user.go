@@ -39,7 +39,7 @@ type User struct {
 	//Membership        []Organization `gorm:"many2many:memberships"`
 	Membership []Membership `json:"membership"`
 
-	DomainRole *Role `gorm:"many2many:memberships" json:"domain_role"`
+	DomainRole *Role `gorm:"-:all" json:"domain_role"`
 
 	ModelTime
 }

@@ -4,6 +4,7 @@ import (
 	"authorization/internal/constants"
 	"authorization/internal/database"
 	"authorization/internal/models"
+	"authorization/internal/transport/rest/forms"
 	"errors"
 )
 
@@ -49,6 +50,35 @@ func (self *MembershipRepository) DeleteMember(memberId uint, organizationId uin
 	resp = self.db.Delete(&member, "user_id = ?", memberId)
 	if resp.Error != nil {
 		return resp.Error
+	}
+
+	return nil
+}
+
+func (self *MembershipRepository) InviteMembers(members []forms.MemberInviteForm, organizationId uint) error {
+	lim := 100
+	var chunk []forms.MemberInviteForm
+	for idx, member := range members {
+		chunk = append(chunk, member)
+		if idx%lim == 0 {
+			self.inviteMemberFromMail(chunk)
+			chunk = make([]forms.MemberInviteForm, 1)
+		}
+	}
+
+	return nil
+}
+
+func (self *MembershipRepository) inviteMemberFromMail(members []forms.MemberInviteForm) error {
+	var emails, roles []string
+	for _, member := range members {
+		emails = append(emails, member.Email)
+		roles = append(roles, member.Role)
+	}
+	var users []models.User
+	res := self.db.Where("email IN ?", emails).Find(&users)
+	if res.Error != nil {
+		return res.Error
 	}
 
 	return nil

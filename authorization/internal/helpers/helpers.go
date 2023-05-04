@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/scrypt"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -221,5 +222,69 @@ func FromJson(value interface{}, data []byte) {
 	err := json.Unmarshal(data, &value)
 	if err != nil {
 		panic(err)
+	}
+}
+
+func ReadDataFromBody(reader io.ReadCloser) ([]byte, error) {
+	var bodyByte []byte
+
+	var readed int
+	for {
+		buf := make([]byte, 1)
+		_readed, err := reader.Read(buf)
+		bodyByte = append(bodyByte, buf...)
+		readed += _readed
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return nil, err
+		}
+	}
+
+	return bodyByte, nil
+}
+
+func ValidateJsonForm(reader io.ReadCloser, form interface{}) error {
+	body, err := ReadDataFromBody(reader)
+	if err != nil {
+		return echo.NewHTTPError(500, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	err = json.Unmarshal(body, &form)
+	if err != nil {
+		return echo.NewHTTPError(500, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	var validator = forms.NewFormValidator()
+	err = validator.Validate(form)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetDomainContext(c echo.Context) *TenantContext {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*JwtAuthClaims)
+
+	var domainRole string
+	domain := c.Get("tenant").(string)
+
+	for _, membership := range claims.Data.Membership {
+		if *membership.Organization == domain {
+			domainRole = *membership.Role
+		}
+	}
+	return &TenantContext{
+		Id:     c.Get("tenant_id").(uint),
+		Domain: c.Get("tenant").(string),
+		UserId: claims.Data.UserId,
+		Role:   domainRole,
 	}
 }

@@ -2,10 +2,12 @@ package casbin
 
 import "authorization/internal/constants"
 
-const ObjUsers = "users"
+const ObjMembership = "membership"
+const ObjOrganization = "organization"
 const ObjRoles = "roles"
 const ObjServices = "services"
-const ObjCourses = "courses"
+
+//const ObjCourses = "courses"
 
 const ActCreate = "create"
 const ActRead = "read"
@@ -22,10 +24,10 @@ var subjects = []string{
 }
 
 var objects = []string{
-	ObjUsers,
+	ObjMembership,
 	ObjRoles,
 	ObjServices,
-	ObjCourses,
+	//ObjCourses,
 }
 
 var actions = []string{
@@ -37,19 +39,20 @@ var actions = []string{
 
 var rolePolicies = map[string]map[string][]string{
 	constants.SubOwner: {
-		ObjUsers:    {ActCreate, ActRead, ActUpdate, ActDelete, ActModifyAdmin},
-		ObjRoles:    {ActCreate, ActRead, ActUpdate, ActDelete},
-		ObjCourses:  {ActCreate, ActRead, ActUpdate, ActDelete},
-		ObjServices: {ActCreate, ActRead, ActUpdate, ActDelete},
+		ObjMembership: {ActCreate, ActRead, ActUpdate, ActDelete, ActModifyAdmin},
+		ObjRoles:      {ActCreate, ActRead, ActUpdate, ActDelete},
+		//ObjCourses:    {ActCreate, ActRead, ActUpdate, ActDelete},
+		ObjServices:     {ActCreate, ActRead, ActUpdate, ActDelete},
+		ObjOrganization: {ActUpdate, ActDelete},
 	},
 	constants.SubAdmin: {
-		ObjUsers:   {ActCreate, ActRead, ActUpdate, ActDelete},
-		ObjCourses: {ActCreate, ActRead, ActUpdate, ActDelete},
+		ObjMembership: {ActCreate, ActRead, ActUpdate, ActDelete},
+		//ObjCourses:    {ActCreate, ActRead, ActUpdate, ActDelete},
 	},
 	constants.SubModer: {
-		ObjCourses: {ActCreate, ActRead, ActUpdate, ActDelete},
+		//ObjCourses: {ActCreate, ActRead, ActUpdate, ActDelete},
 	},
 	constants.SubStudent: {
-		ObjCourses: {ActRead},
+		//ObjCourses: {ActRead},
 	},
 }

@@ -1,10 +1,14 @@
 package services
 
-type TenantContext struct {
-	Id     uint
-	Domain string
-}
+import "authorization/internal/helpers"
+
+//type TenantContext struct {
+//	Id     uint
+//	Domain string
+//	UserId uint
+//	Role   string
+//}
 
 type BaseService struct {
-	tenantContext *TenantContext
+	tenantContext *helpers.TenantContext
 }

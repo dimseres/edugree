@@ -19,7 +19,7 @@ type UserService struct {
 	BaseService
 }
 
-func NewUserService(repository UserRepository, tenantContext *TenantContext) UserService {
+func NewUserService(repository UserRepository, tenantContext *helpers.TenantContext) UserService {
 	return UserService{
 		repository:  repository,
 		BaseService: BaseService{tenantContext: tenantContext},

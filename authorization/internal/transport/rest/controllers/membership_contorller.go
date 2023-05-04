@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"authorization/internal/helpers"
 	"authorization/internal/repositories"
 	"authorization/internal/services"
+	"authorization/internal/transport/rest/forms"
 	"authorization/internal/transport/rest/middlewares"
 	"github.com/labstack/echo/v4"
 	"strconv"
@@ -12,7 +14,9 @@ func InitMembershipRoutes(app *echo.Group) {
 	protected := app.Group("/")
 	protected.Use(middlewares.JwtProtect())
 	protected.GET("users", ListUsers, middlewares.TenantGuard, middlewares.CasbinGuard("users", "read"))
-	protected.DELETE("users/:id", RemoveMember, middlewares.TenantGuard, middlewares.CasbinGuard("users", "read"))
+	protected.DELETE("users/:id", RemoveMember, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "delete"))
+	protected.POST("users/invite", InviteMembers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
+	protected.PATCH("users/:id/role", ChangeMemberRole, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "update"))
 }
 
 func RemoveMember(c echo.Context) error {
@@ -24,7 +28,7 @@ func RemoveMember(c echo.Context) error {
 		})
 	}
 	repository := repositories.NewMembershipRepository()
-	membershipService := services.NewMembershipService(&repository, &services.TenantContext{
+	membershipService := services.NewMembershipService(&repository, &helpers.TenantContext{
 		Id:     c.Get("tenant_id").(uint),
 		Domain: c.Get("tenant").(string),
 	})
@@ -47,7 +51,7 @@ func RemoveMember(c echo.Context) error {
 
 func ListUsers(c echo.Context) error {
 	repository := repositories.NewUserRepository()
-	userService := services.NewUserService(&repository, &services.TenantContext{
+	userService := services.NewUserService(&repository, &helpers.TenantContext{
 		Id:     c.Get("tenant_id").(uint),
 		Domain: c.Get("tenant").(string),
 	})
@@ -67,4 +71,25 @@ func ListUsers(c echo.Context) error {
 		"pages": data.MaxPage,
 		"data":  data.Data,
 	})
+}
+
+func InviteMembers(c echo.Context) error {
+	var form forms.InviteMembersForm
+	bodyReader := c.Request().Body
+
+	err := helpers.ValidateJsonForm(bodyReader, &form)
+	if err != nil {
+		return err
+	}
+
+	repo := repositories.NewMembershipRepository()
+	service := services.NewMembershipService(&repo, helpers.GetDomainContext(c))
+	_, err = service.InviteMembers(&form)
+
+	return nil
+}
+
+func ChangeMemberRole(c echo.Context) error {
+
+	return nil
 }
