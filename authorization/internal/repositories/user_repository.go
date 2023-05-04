@@ -95,7 +95,7 @@ func (rep *UserRepository) GetUsersWithPagination(orgId uint, page int, perPage 
 	// TODO сделать запрос из members и сопоставить роль и пользователя в ответе
 	//result := map[string]interface{}{}
 
-	res := rep.db.Scopes(rep.Paginate(&pagination)).Joins("User").Joins("Role").Find(&membership, "memberships.organization_id = ?", orgId)
+	res := rep.db.Scopes(rep.Paginate(&pagination)).Joins("User").Joins("Role").Find(&membership, "memberships.organization_id = ?", orgId).Count(&total)
 	if res.Error != nil {
 		return nil, 0, res.Error
 	}

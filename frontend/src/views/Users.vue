@@ -1,6 +1,6 @@
 <template>
     <div class='users'>
-        <h1 class='text-2xl font-bold mb-2'>Пользователи</h1>
+        <h1 class='text-2xl text-gray-700 font-bold mb-2'>Пользователи</h1>
         <div class='control-bar flex justify-between'>
             <div class='w-1/4 flex'>
                 <input id='email' name='email' type='email' autocomplete='email' required=''
@@ -8,8 +8,9 @@
                 <button class='bg-gray-50 px-6 rounded-r-md'>поиск</button>
             </div>
             <div>
-                <button class='h-full bg-blue-500 text-sm text-white px-6 py-1 rounded-md mr-2 flex items-center'>
-                    <PlusIcon class='h-4' />
+                <button
+                    class='h-full bg-purple-500 hover:bg-purple-700 text-sm text-white px-6 py-1 rounded-md mr-2 flex items-center'>
+                    <PlusIcon class='h-4 text-white' />
                     добавить
                 </button>
             </div>
@@ -17,80 +18,123 @@
         <div class='search mt-6'>
 
         </div>
-        <div class='p-3 mt-3 shadow-2xl rounded-md'>
+        <div class='p-3 mt-3 border border-gray-100 rounded-md'>
             <table class='w-full' v-if='users'>
-                <thead class='text-left'>
+                <thead class='text-left text-gray-700 bg-gray-100'>
                 <tr class='border-b border-gray-50 uppercase text-sm'>
-                    <th class='w-[100px]'>id</th>
-                    <th>телефон</th>
-                    <th>фио</th>
-                    <th>почта</th>
-                    <th>роль</th>
+                    <th class='p-2 w-[80px]'>id</th>
+                    <th class='p-2'>телефон</th>
+                    <th class='p-2'>фио</th>
+                    <th class='p-2'>почта</th>
+                    <th class='p-2'>роль</th>
+                    <th class='p-2'></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for='user in users' :key='user.id' class='border-b border-gray-50 hover:bg-gray-50 transition last:border-none'>
+                <tr v-for='user in users' :key='user.id'
+                    class='border-b text-gray-800 border-gray-50 hover:bg-gray-50 transition last:border-none font-light text-sm'>
                     <td class='p-2'>{{ user.id }}</td>
                     <td class='p-2'>{{ user.phone }}</td>
                     <td class='p-2'>{{ user.full_name }}</td>
                     <td class='p-2'>{{ user.email }}</td>
-                    <td class='p-2'><span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">{{ user.domain_role.title }}</span></td>
-                    <td class='p-2'></td>
+                    <td class='p-2'>
+                        <div class='flex'>
+                        <span
+                            class='bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300'>
+                        <StarIcon v-if='user.domain_role.slug === "owner"'
+                                  class='inline w-[16px] text-yellow' /> {{ user.domain_role.title }}</span>
+                        </div>
+                    </td>
+                    <td class='w-[30px]'>
+                        <Menu as='div' class='relative ml-3'>
+                            <div class='w-[30px] h-[30px]'>
+                                <MenuButton
+                                    class='flex rounded-full bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
+                                    <span class='sr-only'>Open user menu</span>
+                                    <EllipsisVerticalIcon class='w-full'></EllipsisVerticalIcon>
+                                    <!--                                    <img class='h-8 w-8 rounded-full'-->
+                                    <!--                                         src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'-->
+                                    <!--                                         alt='' />-->
+                                </MenuButton>
+                            </div>
+                            <transition enter-active-class='transition ease-out duration-100'
+                                        enter-from-class='transform opacity-0 scale-95'
+                                        enter-to-class='transform opacity-100 scale-100'
+                                        leave-active-class='transition ease-in duration-75'
+                                        leave-from-class='transform opacity-100 scale-100'
+                                        leave-to-class='transform opacity-0 scale-95'>
+                                <MenuItems
+                                    v-if='user.domain_role.slug !== "owner"'
+                                    class='absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                                    <MenuItem v-slot='{ active }'>
+                                        <a href='#'
+                                           :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Сменить
+                                            роль</a>
+                                    </MenuItem>
+                                    <MenuItem
+                                        v-slot='{ active }'>
+                                        <a href='#'
+                                           class='text-red'
+                                           :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Удалить</a>
+                                    </MenuItem>
+                                </MenuItems>
+                            </transition>
+                        </Menu>
+                    </td>
                 </tr>
                 </tbody>
             </table>
+            <div class='flex justify-center text-2xl font-bold' v-else>
+                <h3>Нет данных</h3>
+            </div>
 
-            <div class='mt-6'>
-                <nav class='isolate inline-flex -space-x-px rounded-md shadow-sm' aria-label='Pagination'>
-                    <a href='#'
-                       class='relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-50 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'>
-                        <span class='sr-only'>Previous</span>
-                        <ChevronLeftIcon class='h-5 w-5' aria-hidden='true' />
-                    </a>
-                    <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
-                    <a href='#' aria-current='page'
-                       class='relative z-10 inline-flex items-center bg-gray px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>1</a>
-                    <a href='#'
-                       class='relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-50 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'>2</a>
-                    <a href='#'
-                       class='relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-50 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex'>3</a>
-                    <span
-                        class='relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-50 focus:outline-offset-0'>...</span>
-                    <a href='#'
-                       class='relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-50 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex'>8</a>
-                    <a href='#'
-                       class='relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-50 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'>9</a>
-                    <a href='#'
-                       class='relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-50 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'>10</a>
-                    <a href='#'
-                       class='relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-50 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'>
-                        <span class='sr-only'>Next</span>
-                        <ChevronRightIcon class='h-5 w-5' aria-hidden='true' />
-                    </a>
-                </nav>
+            <div class='mt-2' v-if='Object.keys(pagination) && pagination.pages > 1'>
+                <Pagination v-model='currentPage' :pagination='pagination' />
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@heroicons/vue/24/solid'
-import { onMounted, ref } from 'vue'
+import { EllipsisVerticalIcon, PlusIcon, StarIcon } from '@heroicons/vue/24/solid'
+import { defineComponent, onMounted, ref, watch } from 'vue'
 import { fetchOrganizationMembers } from '../services/api/membership.api'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import Pagination from '../components/pagination/Pagination.vue'
+import { useRoute } from 'vue-router'
+import { router } from '../routes/routes'
 
+const route = useRoute()
 
 const users = ref([])
 const pagination = ref({})
+const currentPage = ref(route.query.page ?? 1)
 
-onMounted(async () => {
-    const data = await fetchOrganizationMembers({})
+defineComponent({ Pagination })
+
+watch(currentPage, async (newVal, oldVal) => {
+    await router.push({
+        replace: true,
+        query: { page: newVal },
+    })
+    await fetchUsers()
+})
+
+const fetchUsers = async () => {
+    const data = await fetchOrganizationMembers({page: currentPage.value as number})
+    console.log('----------', data)
     if (!data.error) {
         users.value = data.data
+
         pagination.value = {
             total: data.total,
             pages: data.pages,
         }
     }
+}
+
+onMounted(async () => {
+    await fetchUsers()
 })
 
 </script>
