@@ -2,6 +2,12 @@ package constants
 
 import "time"
 
+const SubOwner = "owner"
+const SubAdmin = "administrator"
+const SubModer = "moderator"
+const SubTeacher = "teacher"
+const SubStudent = "student"
+
 const REFRESH_LIFETIME = time.Hour * 24 * 7
 const JWT_LIFETIME = time.Second * 900 // JWT_LIFETIME lifetime of jwt token
 

@@ -12,6 +12,37 @@ func InitMembershipRoutes(app *echo.Group) {
 	protected := app.Group("/")
 	protected.Use(middlewares.JwtProtect())
 	protected.GET("users", ListUsers, middlewares.TenantGuard, middlewares.CasbinGuard("users", "read"))
+	protected.DELETE("users/:id", RemoveMember, middlewares.TenantGuard, middlewares.CasbinGuard("users", "read"))
+}
+
+func RemoveMember(c echo.Context) error {
+	userId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(422, echo.Map{
+			"error":   true,
+			"message": "wrong id",
+		})
+	}
+	repository := repositories.NewMembershipRepository()
+	membershipService := services.NewMembershipService(&repository, &services.TenantContext{
+		Id:     c.Get("tenant_id").(uint),
+		Domain: c.Get("tenant").(string),
+	})
+	err = membershipService.DeleteMember(uint(userId))
+	if err != nil {
+		errCode := 422
+		if err.Error() == "record not found" {
+			errCode = 404
+		}
+		return c.JSON(errCode, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+	return c.JSON(200, echo.Map{
+		"error":   false,
+		"message": "ok",
+	})
 }
 
 func ListUsers(c echo.Context) error {

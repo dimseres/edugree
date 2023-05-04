@@ -2,6 +2,7 @@ package main
 
 import (
 	"authorization/internal/casbin"
+	"authorization/internal/constants"
 	"authorization/internal/database"
 	"authorization/internal/helpers"
 	"authorization/internal/models"
@@ -48,35 +49,35 @@ func createRoles(db *gorm.DB) []*models.Role {
 	owner := models.Role{
 		Name:           "Владелец",
 		Description:    &orgDesc,
-		Slug:           casbin.SubOwner,
+		Slug:           constants.SubOwner,
 		IsSystem:       true,
 		OrganizationId: nil,
 	}
 
 	admin := models.Role{
 		Name:           "Администратор",
-		Slug:           casbin.SubAdmin,
+		Slug:           constants.SubAdmin,
 		Description:    &adminDesc,
 		IsSystem:       true,
 		OrganizationId: nil,
 	}
 	moder := models.Role{
 		Name:           "Модератор",
-		Slug:           casbin.SubModer,
+		Slug:           constants.SubModer,
 		Description:    &moderatorDesc,
 		IsSystem:       true,
 		OrganizationId: nil,
 	}
 	teacher := models.Role{
 		Name:           "Преподаватель",
-		Slug:           casbin.SubTeacher,
+		Slug:           constants.SubTeacher,
 		Description:    &teacherDesc,
 		IsSystem:       true,
 		OrganizationId: nil,
 	}
 	student := models.Role{
 		Name:           "Студент",
-		Slug:           casbin.SubStudent,
+		Slug:           constants.SubStudent,
 		Description:    &studentDesc,
 		IsSystem:       true,
 		OrganizationId: nil,

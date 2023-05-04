@@ -191,7 +191,7 @@ func SetTenant(c echo.Context) error {
 	}
 
 	repository := repositories.NewMembershipRepository()
-	service := services.NewMembershipService(&repository)
+	service := services.NewMembershipService(&repository, nil)
 
 	token := c.Get("user").(*jwt.Token)
 	claims := token.Claims.(*helpers.JwtAuthClaims)

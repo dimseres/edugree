@@ -1,10 +1,6 @@
 package casbin
 
-const SubOwner = "owner"
-const SubAdmin = "administrator"
-const SubModer = "moderator"
-const SubTeacher = "teacher"
-const SubStudent = "student"
+import "authorization/internal/constants"
 
 const ObjUsers = "users"
 const ObjRoles = "roles"
@@ -18,11 +14,11 @@ const ActDelete = "delete"
 const ActModifyAdmin = "modify_admin"
 
 var subjects = []string{
-	SubOwner,
-	SubAdmin,
-	SubModer,
-	SubTeacher,
-	SubStudent,
+	constants.SubOwner,
+	constants.SubAdmin,
+	constants.SubModer,
+	constants.SubTeacher,
+	constants.SubStudent,
 }
 
 var objects = []string{
@@ -40,20 +36,20 @@ var actions = []string{
 }
 
 var rolePolicies = map[string]map[string][]string{
-	SubOwner: {
+	constants.SubOwner: {
 		ObjUsers:    {ActCreate, ActRead, ActUpdate, ActDelete, ActModifyAdmin},
 		ObjRoles:    {ActCreate, ActRead, ActUpdate, ActDelete},
 		ObjCourses:  {ActCreate, ActRead, ActUpdate, ActDelete},
 		ObjServices: {ActCreate, ActRead, ActUpdate, ActDelete},
 	},
-	SubAdmin: {
+	constants.SubAdmin: {
 		ObjUsers:   {ActCreate, ActRead, ActUpdate, ActDelete},
 		ObjCourses: {ActCreate, ActRead, ActUpdate, ActDelete},
 	},
-	SubModer: {
+	constants.SubModer: {
 		ObjCourses: {ActCreate, ActRead, ActUpdate, ActDelete},
 	},
-	SubStudent: {
+	constants.SubStudent: {
 		ObjCourses: {ActRead},
 	},
 }
