@@ -1,5 +1,8 @@
 <template>
     <div class='users'>
+        <ModalWrapper v-if='activeComponent' @close='activeComponent = null' :title='modalTitle'>
+            <component :is='activeComponent' v-bind='modalComponentProps'></component>
+        </ModalWrapper>
         <h1 class='text-2xl text-gray-700 font-bold mb-2'>Пользователи</h1>
         <div class='control-bar flex justify-between'>
             <div class='w-1/4 flex'>
@@ -9,6 +12,7 @@
             </div>
             <div>
                 <button
+                    @click='openInviteUsersModal'
                     class='h-full bg-purple-500 hover:bg-purple-700 text-sm text-white px-6 py-1 rounded-md mr-2 flex items-center'>
                     <PlusIcon class='h-4 text-white' />
                     добавить
@@ -107,12 +111,17 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import Pagination from '../components/pagination/Pagination.vue'
 import { useRoute } from 'vue-router'
 import { router } from '../routes/routes'
+import ModalWrapper from '../components/modals/ModalWrapper.vue'
+import InviteUserModal from '../components/modals/users/InviteUserModal.vue'
 
 const route = useRoute()
 
 const users = ref([])
 const pagination = ref({})
 const currentPage = ref(route.query.page ?? 1)
+const activeComponent = ref()
+const modalTitle = ref()
+const modalComponentProps = ref()
 
 defineComponent({ Pagination })
 
@@ -126,7 +135,6 @@ watch(currentPage, async (newVal, oldVal) => {
 
 const fetchUsers = async () => {
     const data = await fetchOrganizationMembers({page: currentPage.value as number})
-    console.log('----------', data)
     if (!data.error) {
         users.value = data.data
 
@@ -140,6 +148,24 @@ const fetchUsers = async () => {
 onMounted(async () => {
     await fetchUsers()
 })
+
+const inviteUsers = () => {
+    alert("OK")
+}
+
+activeComponent.value = InviteUserModal
+modalTitle.value = "Добавление участников"
+modalComponentProps.value = {
+    accept: inviteUsers
+}
+
+const openInviteUsersModal = () => {
+    activeComponent.value = InviteUserModal
+    modalTitle.value = "Добавление участников"
+    modalComponentProps.value = {
+        accept: inviteUsers
+    }
+}
 
 </script>
 
