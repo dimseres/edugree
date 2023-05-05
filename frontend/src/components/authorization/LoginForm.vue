@@ -1,18 +1,18 @@
 <template>
-    <h2 class='mt-6 text-center text-2xl font-medium tracking-tight text-gray-700'>Введите логин и пароль</h2>
+    <h2 class='mt-6 text-center text-2xl font-black tracking-tight text-gray-500'>Введите логин и пароль</h2>
     <form class='mt-8 space-y-6' @submit.prevent='onSubmit'>
         <input type='hidden' name='remember' value='true' />
         <div class='-space-y-px rounded-md shadow-sm'>
             <div>
                 <input id='email-address' name='email' type='email' autocomplete='email' required
                        v-model='form.email'
-                       class='focus:outline-none p-2 border relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6'
+                       class='focus:outline-none p-3 border relative block w-full rounded-t-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6'
                        placeholder='Ваша почта или почта организации' />
             </div>
             <div>
                 <input id='password' name='password' type='password' autocomplete='current-password' required
                        v-model='form.password'
-                       class='focus:outline-none p-2 border relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6'
+                       class='focus:outline-none p-3 border relative block w-full rounded-b-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6'
                        placeholder='Пароль' />
             </div>
         </div>

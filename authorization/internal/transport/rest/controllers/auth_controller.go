@@ -128,6 +128,13 @@ func Register(c echo.Context) error {
 		return err
 	}
 
+	if form.Password != form.RepeatPassword {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error":   true,
+			"message": "password don't match",
+		})
+	}
+
 	repository := repositories.NewUserRepository()
 	service := services.NewUserService(&repository, nil)
 
@@ -143,6 +150,21 @@ func Register(c echo.Context) error {
 			"message": err.Error(),
 		})
 	}
+
+	authRepository := repositories.NewAuthRepository()
+	authService := services.NewAuthService(&authRepository)
+	domain := c.Get("tenant").(string)
+
+	err, token := authService.CreateJwtToken(user, domain)
+	if err != nil {
+		return err
+	}
+	refresh, err := authService.CreateRefreshToken(token, user)
+	if err != nil {
+		return err
+	}
+
+	helpers.SetAuthCookies(c, token, refresh)
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"error": false,

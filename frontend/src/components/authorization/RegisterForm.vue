@@ -1,64 +1,82 @@
 <template>
-  <h2 class="mt-6 text-center text-2xl font-medium tracking-tight text-gray-900">Регистрация</h2>
-  <form class="mt-8 space-y-6" action="#" method="POST">
+  <h2 class="mt-6 text-center text-2xl font-black tracking-tight text-gray-500">Регистрация</h2>
+  <form class="mt-8 space-y-6" @submit.prevent='register'>
     <input type="hidden" name="remember" value="true"/>
     <div class="-space-y-px rounded-md shadow-sm">
       <div>
-        <input id="email-address" name="email" type="email" autocomplete="email" required
-               class="p-2 border relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        <input id="email-address" v-model='email' name="email" type="email" autocomplete="email" required
+               class="focus:outline-none p-3 border relative block w-full rounded-t-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                placeholder="Ваша почта"/>
       </div>
       <div>
-        <input id="email-address" name="phone" type="tel" autocomplete="email" required
-               class="p-2 border relative block w-full border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        <input id="phone" v-model='phone' name="phone" type="tel" autocomplete="email" required
+               class="focus:outline-none p-3 border relative block w-full border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                placeholder="Телефон"/>
       </div>
       <div>
-        <input id="email-address" name="email" type="email" autocomplete="email" required
-               class="p-2 border relative block w-full border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        <input id="name" v-model='fullName' name="name" type="text" autocomplete="email" required
+               class="focus:outline-none p-3 border relative block w-full border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                placeholder="Фамилия Имя Отчество"/>
       </div>
       <div>
-        <input id="email-address" name="password" type="password" autocomplete="email" required
-               class="p-2 border relative block w-full border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        <input id="password" v-model='password' name="password" type="password" autocomplete="email" required
+               class="focus:outline-none p-3 border relative block w-full border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                placeholder="Пароль"/>
       </div>
       <div>
-        <input id="password" name="password_confirm" type="password" autocomplete="current-password" required
-               class="p-2 border relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        <input id="password_confirm" v-model='repeatPassword' name="password_confirm" type="password" autocomplete="current-password" required
+               class="focus:outline-none p-3 border relative block w-full rounded-b-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                placeholder="Пароль еще раз"/>
       </div>
     </div>
 
-    <div class="flex items-center justify-between">
-      <div class="flex items-center">
-        <input id="remember-me" name="remember-me" type="checkbox"
-               class="h-4 w-4 rounded border-blue-500 text-indigo-600 focus:ring-indigo-600"/>
-        <label for="remember-me" class="ml-2 block text-sm text-gray-900">Запомнить</label>
-      </div>
-
-      <div class="text-sm">
-        <router-link :to="{name: 'PasswordReset'}" class="font-medium text-gray-200 hover:text-indigo-500">Забыли пароль?
-        </router-link>
-      </div>
-    </div>
-
-    <div class="mt-auto">
+    <div class="mt-8">
       <button type="submit"
-              class="border bg-blue-500 group relative flex w-full justify-center rounded-md text-white py-2 px-3 text-sm font-semibold text-white hover:bg-white hover:border hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+              class="border bg-purple-500 group relative flex w-full justify-center rounded-md text-white py-2 px-3 text-sm font-semibold text-white hover:bg-white hover:border hover:text-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500">
         Зарегистрироваться
       </button>
-      <router-link :to="{name: 'Login'}" class="mt-3 group relative flex w-full justify-center rounded-md text-blue-500 py-2 px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+      <router-link :to="{name: 'Login'}" class="mt-3 group relative flex w-full justify-center rounded-md text-purple-500 py-2 px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500">
         У меня уже есть аккаунт
       </router-link>
     </div>
+    <div class='text-red text-xs' v-if='errorString'>{{ errorString }}</div>
   </form>
 </template>
 
 <script setup lang="ts">
-import {LockClosedIcon} from '@heroicons/vue/20/solid'
+import { ref } from 'vue'
+import { signIn } from '../../services/api/auth.api.vue'
+import { useRouter } from 'vue-router'
+import { POSITION, useToast } from 'vue-toastification'
 
 const baseApi = import.meta.env.VITE_BASE_API
+
+const email = ref("")
+const phone = ref("")
+const fullName = ref("")
+const password = ref("")
+const repeatPassword = ref("")
+
+const errorString = ref("")
+
+const router = useRouter()
+const toasted = useToast()
+
+const register = async () => {
+  const result = await signIn({
+    email: email.value,
+    phone: phone.value,
+    full_name: fullName.value,
+    password: password.value,
+    repeat_password: repeatPassword.value
+  })
+  if (result.error) {
+    errorString.value = result.message
+  }
+  await router.push('/')
+  toasted.success("Добро пожаловать", {position: POSITION.BOTTOM_RIGHT})
+}
+
 </script>
 <style lang="ts" scoped>
 

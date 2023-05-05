@@ -14,14 +14,22 @@ export class AuthGuard implements IRouteGuard {
         const { user, pickTenant, tenant_role, setUser } = useUserStore()
         if (user) {
             if (!tenant_role && window.localStorage.getItem('tenant')) {
-                for (const membership of user.membership) {
-                    if (membership.organization.domain === window.localStorage.getItem('tenant')) {
-                        pickTenant(membership)
-                        return await this.routeAllowed(route)
+                if (user.membership) {
+                    for (const membership of user.membership) {
+                        if (membership.organization.domain === window.localStorage.getItem('tenant')) {
+                            pickTenant(membership)
+                            return await this.routeAllowed(route)
+                        }
                     }
                 }
             }
             if (route.name === 'OrganizationChoose') {
+                return {
+                    success: true,
+                }
+            }
+
+            if (route.name === 'Home') {
                 return {
                     success: true,
                 }

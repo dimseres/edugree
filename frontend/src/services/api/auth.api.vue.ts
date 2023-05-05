@@ -59,8 +59,35 @@ export function logout() {
 
 }
 
-export function signIn() {
+export interface ISignForm {
+    email: string
+    phone: string
+    full_name: string
+    password: string
+    repeat_password: string
+}
 
+export async function signIn(form: ISignForm) {
+    try {
+        const {data} = await axios.post("/auth/register", form)
+        if (data.error) {
+            return data
+        }
+
+        const { setUser } = useUserStore()
+        debugger
+        setUser(data.user)
+
+        return data.user
+    } catch (e) {
+        if (e.response) {
+            return {
+                error: e.response.error,
+                message: e.response.message
+            }
+        }
+        return e
+    }
 }
 
 export async function getProfile(): Promise<IApiResponse> {
