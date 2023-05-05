@@ -7,6 +7,7 @@ import (
 	"authorization/internal/transport/rest/forms"
 	"authorization/internal/transport/rest/middlewares"
 	"github.com/labstack/echo/v4"
+	"net/http"
 	"strconv"
 )
 
@@ -15,7 +16,10 @@ func InitMembershipRoutes(app *echo.Group) {
 	protected.Use(middlewares.JwtProtect())
 	protected.GET("users", ListUsers, middlewares.TenantGuard, middlewares.CasbinGuard("users", "read"))
 	protected.DELETE("users/:id", RemoveMember, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "delete"))
-	protected.POST("users/invite", InviteMembers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
+	protected.POST("invites", InviteMembers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
+	protected.GET("invites", GetInviteList, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "read"))
+	protected.GET("invites/:link/join", JoinOrganization, middlewares.TenantGuard)
+	protected.DELETE("invites/:link", GetInviteList, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "delete"))
 	protected.PATCH("users/:id/role", ChangeMemberRole, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "update"))
 }
 
@@ -87,6 +91,52 @@ func InviteMembers(c echo.Context) error {
 	_, err = service.InviteMembers(&form)
 
 	return nil
+}
+
+func GetInviteList(c echo.Context) error {
+	repo := repositories.NewMembershipRepository()
+	service := services.NewMembershipService(&repo, helpers.GetDomainContext(c))
+
+	page, _ := strconv.Atoi(c.QueryParams().Get("page"))
+
+	res, err := service.GetInviteList(page, 25)
+	if err != nil {
+		return c.JSON(500, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(200, echo.Map{
+		"error": false,
+		"data":  res,
+	})
+}
+
+func JoinOrganization(c echo.Context) error {
+	link := c.Param("link")
+	action := c.QueryParam("action")
+	if link == "" {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "wrong link",
+		})
+	}
+	repo := repositories.NewMembershipRepository()
+	service := services.NewMembershipService(&repo, helpers.GetDomainContext(c))
+
+	res, err := service.JoinOrganization(link, action)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "wrong link",
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"error": true,
+		"data":  res,
+	})
 }
 
 func ChangeMemberRole(c echo.Context) error {

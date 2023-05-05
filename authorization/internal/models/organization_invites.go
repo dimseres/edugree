@@ -23,15 +23,15 @@ func (s InviteStatus) String() string {
 type OrganizationInvite struct {
 	BaseModel
 
-	OrganizationId uint
-	UserId         uint
-	RoleId         uint
-	Link           string
-	Status         int
+	OrganizationId uint   `json:"organization_id"`
+	UserId         uint   `json:"user_id"`
+	RoleId         uint   `json:"role_id"`
+	Link           string `json:"link"`
+	Status         int    `json:"status"`
 
-	User         User
-	Organization Organization
-	Role         Role
+	User         User         `json:"user"`
+	Organization Organization `json:"organization"`
+	Role         Role         `json:"role"`
 	//Permissions *[]Permissions `gorm:"foreignKey:v3"`
 
 	ModelTime

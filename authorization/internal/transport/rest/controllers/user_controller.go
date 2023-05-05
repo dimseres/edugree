@@ -32,6 +32,14 @@ func Profile(c echo.Context) error {
 		"Membership.Organization.Services",
 	})
 
+	invites, err := service.GetInvites(userId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
 	if user.Id == 0 {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"error":   true,
@@ -40,7 +48,8 @@ func Profile(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"error": false,
-		"user":  responses.NewUserResponse(user),
+		"error":   false,
+		"user":    responses.NewUserResponse(user),
+		"invites": invites,
 	})
 }

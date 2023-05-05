@@ -12,6 +12,8 @@ type MembershipRepository interface {
 	LoadRelation(model interface{}, relation ...string) (interface{}, error)
 	DeleteMember(memberId uint, organizationId uint) error
 	InviteMembers(members []forms.MemberInviteForm, roles []string, organizationId uint) error
+	GetInviteList(page int, perPage int, orgId uint) (*[]models.OrganizationInvite, error)
+	RejectOrAcceptInvite(userId uint, link string, action string) (*models.OrganizationInvite, error)
 }
 
 type MembershipService struct {
@@ -62,4 +64,15 @@ func (self *MembershipService) InviteMembers(form *forms.InviteMembersForm) (boo
 	}
 
 	return false, nil
+}
+
+func (self *MembershipService) GetInviteList(page int, perPage int) (*[]models.OrganizationInvite, error) {
+	return self.repository.GetInviteList(page, perPage, self.tenantContext.Id)
+}
+
+func (self *MembershipService) JoinOrganization(link string, action string) (*models.OrganizationInvite, error) {
+	if action != models.ORG_ACCEPTED.String() || action != models.ORG_ACCEPTED.String() {
+		return nil, errors.New("wrong action")
+	}
+	return self.repository.RejectOrAcceptInvite(self.tenantContext.UserId, link, action)
 }

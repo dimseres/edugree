@@ -12,6 +12,7 @@ type UserRepository interface {
 	LoadRelation(model interface{}, relation ...string) (interface{}, error)
 	CreateNewUser(user *models.User) (*models.User, error)
 	GetUsersWithPagination(orgid uint, page int, perpage int) (*[]models.User, int64, error)
+	GetUserInvites(userId uint) (*[]models.OrganizationInvite, error)
 }
 
 type UserService struct {
@@ -71,6 +72,11 @@ func (self *UserService) CreateUser(userDTO *dto.CreateUserDTO) (*models.User, e
 		return nil, err
 	}
 	return savedUser, nil
+}
+
+func (self *UserService) GetInvites(userId uint) (*[]models.OrganizationInvite, error) {
+	invites, err := self.repository.GetUserInvites(userId)
+	return invites, err
 }
 
 //func (self *UserService) InviteUsers() {

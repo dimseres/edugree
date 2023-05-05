@@ -153,3 +153,14 @@ func (rep *UserRepository) DeleteUser(id uint) (error, bool) {
 	}
 	return nil, true
 }
+
+func (self *UserRepository) GetUserInvites(userId uint) (*[]models.OrganizationInvite, error) {
+	var invites []models.OrganizationInvite
+	var total int64
+	res := self.db.Preload("Organization").Preload("Role").Where("user_id = ? AND status = ?", userId, models.ORG_INIVITED).Find(&invites).Count(&total)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &invites, nil
+}

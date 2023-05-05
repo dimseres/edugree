@@ -288,3 +288,10 @@ func GetDomainContext(c echo.Context) *TenantContext {
 		Role:   domainRole,
 	}
 }
+
+func GetJwtClaims(c echo.Context) *JwtAuthClaims {
+	token := c.Get("user").(*jwt.Token)
+	claims := token.Claims.(*JwtAuthClaims)
+
+	return claims
+}
