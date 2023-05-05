@@ -40,7 +40,7 @@
                 Войти
             </button>
             <router-link :to="{name: 'Registration'}"
-                         class='mt-3 group relative flex w-full justify-center rounded-md text-purple-500 py-2 px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500'>
+                         class='mt-3 border group relative flex w-full justify-center rounded-md text-purple-500 py-2 px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500'>
                 Зарегистрироваться
             </router-link>
         </div>
@@ -72,7 +72,8 @@ const onSubmit = async () => {
             toast.error(result.message)
         }
     }
-    if (!state.tenant_role) {
+
+    if (!state.tenant_role && state.getOrganizationList) {
         await router.push({ name: 'OrganizationChoose' })
     } else {
         await router.push('/')

@@ -57,9 +57,11 @@ export class AuthGuard implements IRouteGuard {
 
         setUser(profile.payload)
 
-        return {
-            success: true,
-        }
+        return await this.routeAllowed(route)
+
+        // return {
+        //     success: true,
+        // }
     }
 
     private isRoleGranted(role: string) {

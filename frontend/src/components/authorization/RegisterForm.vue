@@ -35,7 +35,7 @@
               class="border bg-purple-500 group relative flex w-full justify-center rounded-md text-white py-2 px-3 text-sm font-semibold text-white hover:bg-white hover:border hover:text-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500">
         Зарегистрироваться
       </button>
-      <router-link :to="{name: 'Login'}" class="mt-3 group relative flex w-full justify-center rounded-md text-purple-500 py-2 px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500">
+      <router-link :to="{name: 'Login'}" class="mt-3 border group relative flex w-full justify-center rounded-md text-purple-500 py-2 px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500">
         У меня уже есть аккаунт
       </router-link>
     </div>

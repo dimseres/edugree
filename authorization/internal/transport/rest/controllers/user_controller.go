@@ -26,11 +26,13 @@ func Profile(c echo.Context) error {
 	claims := token.Claims.(*helpers.JwtAuthClaims)
 
 	userId := claims.Data.UserId
-	user := service.GetUserWith(userId, &[]string{
-		"Membership",
-		"Membership.Role",
-		"Membership.Organization.Services",
-	})
+	user, err := service.GetUserProfile(userId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
 
 	invites, err := service.GetInvites(userId)
 	if err != nil {

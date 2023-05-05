@@ -14,7 +14,7 @@ import (
 func InitMembershipRoutes(app *echo.Group) {
 	protected := app.Group("/")
 	protected.Use(middlewares.JwtProtect())
-	protected.GET("users", ListUsers, middlewares.TenantGuard, middlewares.CasbinGuard("users", "read"))
+	protected.GET("users", ListUsers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "read"))
 	protected.DELETE("users/:id", RemoveMember, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "delete"))
 	protected.POST("invites", InviteMembers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
 	protected.GET("invites", GetInviteList, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "read"))

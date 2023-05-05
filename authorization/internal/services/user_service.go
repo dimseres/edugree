@@ -13,6 +13,7 @@ type UserRepository interface {
 	CreateNewUser(user *models.User) (*models.User, error)
 	GetUsersWithPagination(orgid uint, page int, perpage int) (*[]models.User, int64, error)
 	GetUserInvites(userId uint) (*[]models.OrganizationInvite, error)
+	GetUserProfile(userId uint) (*models.User, error)
 }
 
 type UserService struct {
@@ -77,6 +78,10 @@ func (self *UserService) CreateUser(userDTO *dto.CreateUserDTO) (*models.User, e
 func (self *UserService) GetInvites(userId uint) (*[]models.OrganizationInvite, error) {
 	invites, err := self.repository.GetUserInvites(userId)
 	return invites, err
+}
+
+func (self *UserService) GetUserProfile(userId uint) (*models.User, error) {
+	return self.repository.GetUserProfile(userId)
 }
 
 //func (self *UserService) InviteUsers() {

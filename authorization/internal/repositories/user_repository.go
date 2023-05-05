@@ -164,3 +164,18 @@ func (self *UserRepository) GetUserInvites(userId uint) (*[]models.OrganizationI
 
 	return &invites, nil
 }
+
+func (self *UserRepository) GetUserProfile(userId uint) (*models.User, error) {
+	//user, err := self.GetUserById(userId)
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	var user *models.User
+	res := self.db.Preload("Membership").Preload("Membership.Role").Preload("Membership.Organization.Services").Find(&user, userId)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return user, nil
+}

@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
-import { state } from 'vue-tsc/out/shared'
 
 export interface IOrganization {
     id: number,
     title: string,
     domain: string,
-    avatar: string|null
+    avatar: string | null
 }
 
 export interface IRole {
@@ -29,37 +28,37 @@ export interface IUser {
 }
 
 interface IUserState {
-    user: IUser|null,
-    active_tenant: string|null,
-    tenant_role: string|null
+    user: IUser | null,
+    active_tenant: string | null,
+    tenant_role: string | null
 }
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
     state: (): IUserState => {
         return {
             user: null,
-            active_tenant: window.localStorage.getItem("tenant"),
-            tenant_role: null
+            active_tenant: window.localStorage.getItem('tenant'),
+            tenant_role: null,
         }
     },
     getters: {
-        getOrganizationList(): IUserMembership[]|null {
+        getOrganizationList(): IUserMembership[] | null {
             if (this.user) {
                 return this.user.membership
             }
-            return null;
-        }
+            return null
+        },
     },
     actions: {
         setUser(user: IUser) {
             this.user = user
         },
 
-            pickTenant(membership: IUserMembership) {
-            window.localStorage.setItem("tenant", membership.organization.domain)
-            window.localStorage.setItem("tenant_role", membership.role.slug)
+        pickTenant(membership: IUserMembership) {
+            window.localStorage.setItem('tenant', membership.organization.domain)
+            window.localStorage.setItem('tenant_role', membership.role.slug)
             this.active_tenant = membership.organization.domain
             this.tenant_role = membership.role.slug
-        }
-    }
+        },
+    },
 })

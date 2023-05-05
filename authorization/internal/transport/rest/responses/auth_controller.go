@@ -55,7 +55,7 @@ func NewUserResponse(user *models.User) *UserLoginResponse {
 	response.Bio = user.Bio
 
 	if user.Membership != nil {
-		for _, member := range user.Membership {
+		for _, member := range *user.Membership {
 			_member := new(MembershipResponse)
 			if member.Role != nil {
 				_member.Role = &RoleResponse{

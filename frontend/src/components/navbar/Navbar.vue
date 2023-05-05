@@ -87,9 +87,15 @@
 
 <script lang='ts' setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { Bars3Icon, BellIcon, BriefcaseIcon, CircleStackIcon, UserIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { Bars3Icon, BellIcon, BriefcaseIcon, PlusIcon, CircleStackIcon, UserIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { useUserStore } from '../../store/user.store'
+import { computed } from 'vue'
 
-const navigation = [
+const {user, tenant_role} = useUserStore()
+
+const userWithoutMembership = !user.membership
+
+const _navigation = [
     {
         name: 'Пользователи',
         href: '/users',
@@ -112,6 +118,25 @@ const navigation = [
         roles: ['owner', 'administrator', 'manager'],
     },
 ]
+
+const emptyMemberNavigation = [
+    {
+        name: 'Создать организацию',
+        href: '/organizations/create',
+        current: false,
+        icon: PlusIcon,
+    },
+]
+
+const navigation = computed(() => {
+    if (userWithoutMembership) {
+        return emptyMemberNavigation
+    }
+    return _navigation.filter((item) => {
+        return item.roles && item.roles.includes(tenant_role)
+    })
+})
+
 </script>
 
 <style lang='scss'>
