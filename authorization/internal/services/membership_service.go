@@ -11,7 +11,7 @@ type MembershipRepository interface {
 	GetMembershipData(organizationId uint, userId uint) (*models.Membership, error)
 	LoadRelation(model interface{}, relation ...string) (interface{}, error)
 	DeleteMember(memberId uint, organizationId uint) error
-	InviteMembers(members []forms.MemberInviteForm, organizationId uint) error
+	InviteMembers(members []forms.MemberInviteForm, roles []string, organizationId uint) error
 }
 
 type MembershipService struct {
@@ -56,7 +56,7 @@ func (self *MembershipService) InviteMembers(form *forms.InviteMembersForm) (boo
 		}
 	}
 
-	err := self.repository.InviteMembers(form.Members, self.tenantContext.Id)
+	err := self.repository.InviteMembers(form.Members, availableRoles, self.tenantContext.Id)
 	if err != nil {
 		return false, err
 	}

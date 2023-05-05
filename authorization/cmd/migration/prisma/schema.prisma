@@ -27,7 +27,7 @@ model User {
 
   organizations Membership[]
   Token         Token[]
-  Invites OrganizationInvite[]
+  Invites       OrganizationInvite[]
 
   @@map("users")
 }
@@ -61,6 +61,7 @@ model Role {
   deleted_at DateTime?
 
   user Membership[]
+  invitedRoles OrganizationInvite[]
 
   @@index([organization_id])
   @@map("roles")
@@ -97,17 +98,21 @@ model OrganizationInvite {
   organization    Organization @relation(fields: [organization_id], references: [id])
   organization_id Int
 
-  user User @relation(fields: [user_id], references: [id])
-  user_id         Int
-  link String @db.VarChar(512)
-  status Int
+  role Role @relation(fields: [role_id], references: [id])
+  role_id Int
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id Int
+
+  link    String @db.VarChar(512)
+  status  Int
 
   created_at DateTime?
   updated_at DateTime?
   deleted_at DateTime?
 
   @@unique([link])
-  @@map("organization_invite")
+  @@map("organization_invites")
 }
 
 model Permission {
