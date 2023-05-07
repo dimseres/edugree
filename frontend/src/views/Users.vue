@@ -106,13 +106,14 @@
 <script setup lang='ts'>
 import { EllipsisVerticalIcon, PlusIcon, StarIcon } from '@heroicons/vue/24/solid'
 import { defineComponent, onMounted, ref, watch } from 'vue'
-import { fetchOrganizationMembers } from '../services/api/membership.api'
+import { fetchOrganizationMembers, inviteUsers } from '../services/api/membership.api'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import Pagination from '../components/pagination/Pagination.vue'
 import { useRoute } from 'vue-router'
 import { router } from '../routes/routes'
 import ModalWrapper from '../components/modals/ModalWrapper.vue'
 import InviteUserModal from '../components/modals/users/InviteUserModal.vue'
+import { POSITION, useToast } from 'vue-toastification'
 
 const route = useRoute()
 
@@ -149,21 +150,23 @@ onMounted(async () => {
     await fetchUsers()
 })
 
-const inviteUsers = () => {
-    alert("OK")
+const toast = useToast()
+
+const sendInviteUser = async (users) => {
+    const result = await inviteUsers(users)
+    if (result.error) {
+        toast.error(result.message, {position: POSITION.BOTTOM_RIGHT})
+    } else {
+        toast.success("Успешно", {position: POSITION.BOTTOM_RIGHT})
+    }
 }
 
-activeComponent.value = InviteUserModal
-modalTitle.value = "Добавление участников"
-modalComponentProps.value = {
-    accept: inviteUsers
-}
 
 const openInviteUsersModal = () => {
     activeComponent.value = InviteUserModal
     modalTitle.value = "Добавление участников"
     modalComponentProps.value = {
-        accept: inviteUsers
+        accept: sendInviteUser
     }
 }
 

@@ -18,3 +18,32 @@ export async function fetchOrganizationMembers(params: IOrganizationFetchParams)
 
     }
 }
+
+export async function getInviteConstants() {
+    try {
+        const {data} = await axios.get("/membership/invites/create")
+        return data
+    } catch (e) {
+        if (e.response) {
+            toasted.error(e.response.message, {position: POSITION.BOTTOM_RIGHT})
+        }
+        console.error(e)
+    }
+}
+
+export interface IInviteUserList {
+    role: string,
+    email: string
+}
+
+export async function inviteUsers(userList: IInviteUserList[]) {
+    try {
+        const {data} = await axios.post("/membership/invites", {members: userList})
+        return data
+    } catch (e) {
+        if (e.response) {
+            toasted.error(e.response.message, {position: POSITION.BOTTOM_RIGHT})
+        }
+        console.error(e)
+    }
+}

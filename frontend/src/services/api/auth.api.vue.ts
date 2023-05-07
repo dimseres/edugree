@@ -101,7 +101,10 @@ export async function getProfile(): Promise<IApiResponse> {
         }
         return {
             error: false,
-            payload: data.user,
+            payload: {
+                user: data.user,
+                invites: data.invites
+            },
         }
     } catch (e: any) {
         return formatErrorRequest(e)

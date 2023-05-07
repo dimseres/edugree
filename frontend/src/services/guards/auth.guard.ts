@@ -1,6 +1,7 @@
 import type { IRouteGuard } from '../../routes/routes'
 import { IUser, useUserStore } from '../../store/user.store'
 import { getProfile } from '../api/auth.api.vue'
+import { useNotificationStore } from '../../store/notification.store'
 
 export class AuthGuard implements IRouteGuard {
     protected roles: string[] | null
@@ -12,6 +13,7 @@ export class AuthGuard implements IRouteGuard {
     async routeAllowed(route: any) {
         let message = 'вы не авторизованы'
         const { user, pickTenant, tenant_role, setUser } = useUserStore()
+        const { setInvites } = useNotificationStore()
         if (user) {
             if (!tenant_role && window.localStorage.getItem('tenant')) {
                 if (user.membership) {
@@ -55,7 +57,14 @@ export class AuthGuard implements IRouteGuard {
             }
         }
 
-        setUser(profile.payload)
+        setUser(profile.payload.user)
+        setInvites(profile.payload.invites)
+        // const notificationKeys = ['invites']
+        // for (const key of notificationKeys) {
+        //     if (profile.payload[key]) {
+        //         setInvites()
+        //     }
+        // }
 
         return await this.routeAllowed(route)
 

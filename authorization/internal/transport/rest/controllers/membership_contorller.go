@@ -17,6 +17,7 @@ func InitMembershipRoutes(app *echo.Group) {
 	protected.GET("users", ListUsers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "read"))
 	protected.DELETE("users/:id", RemoveMember, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "delete"))
 	protected.POST("invites", InviteMembers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
+	protected.GET("invites/create", GetInvitesConstants, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
 	protected.GET("invites", GetInviteList, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "read"))
 	protected.GET("invites/:link/join", JoinOrganization, middlewares.TenantGuard)
 	protected.DELETE("invites/:link", GetInviteList, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "delete"))
@@ -142,4 +143,31 @@ func JoinOrganization(c echo.Context) error {
 func ChangeMemberRole(c echo.Context) error {
 
 	return nil
+}
+
+func GetInvitesConstants(c echo.Context) error {
+	tenant := helpers.GetDomainContext(c)
+	availableRoles, ok := helpers.GetCreateAvailableRoles(tenant.Role)
+	if !ok {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": "Unknown role",
+		})
+	}
+
+	repo := repositories.NewRoleRepository()
+	res, err := repo.GetRolesBySlug(availableRoles)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"error": false,
+		"data": map[string]interface{}{
+			"roles": res,
+		},
+	})
 }

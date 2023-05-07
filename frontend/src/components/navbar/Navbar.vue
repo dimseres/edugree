@@ -30,11 +30,7 @@
                     </div>
                 </div>
                 <div class='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
-                    <button type='button'
-                            class='rounded-full p-1 text-gray-400 hover:text-purple focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-purple-200'>
-                        <span class='sr-only'>View notifications</span>
-                        <BellIcon class='h-6 w-6' aria-hidden='true' />
-                    </button>
+                    <Notification/>
 
                     <!-- Profile dropdown -->
                     <Menu as='div' class='relative ml-3'>
@@ -90,6 +86,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, BriefcaseIcon, PlusIcon, CircleStackIcon, UserIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useUserStore } from '../../store/user.store'
 import { computed } from 'vue'
+import Notification from './notification/Notification.vue'
 
 const {user, tenant_role} = useUserStore()
 

@@ -5,6 +5,7 @@ import (
 	"authorization/internal/helpers"
 	"authorization/internal/models"
 	"authorization/internal/structs"
+	"authorization/internal/transport/rest/responses"
 )
 
 type UserRepository interface {
@@ -75,9 +76,22 @@ func (self *UserService) CreateUser(userDTO *dto.CreateUserDTO) (*models.User, e
 	return savedUser, nil
 }
 
-func (self *UserService) GetInvites(userId uint) (*[]models.OrganizationInvite, error) {
+type InviteList struct {
+	Organization models.Organization
+	Role         models.Role
+}
+
+func (self *UserService) GetInvites(userId uint) (*[]responses.UserInvites, error) {
 	invites, err := self.repository.GetUserInvites(userId)
-	return invites, err
+	if err != nil {
+		return nil, err
+	}
+	var inviteList []responses.UserInvites
+	for _, invite := range *invites {
+		inviteList = append(inviteList, responses.NewUserInvites(&invite))
+	}
+
+	return &inviteList, err
 }
 
 func (self *UserService) GetUserProfile(userId uint) (*models.User, error) {

@@ -1,6 +1,9 @@
 package responses
 
-import "authorization/internal/models"
+import (
+	"authorization/internal/models"
+	"time"
+)
 
 type ServiceResponse struct {
 	Id    uint   `json:"id"`
@@ -115,4 +118,49 @@ func NewSetTenantResponse(member *models.Membership) *SetTenantResponse {
 	}
 
 	return response
+}
+
+type InviteRole struct {
+	Id          uint    `json:"id"`
+	Name        string  `json:"title"`
+	Slug        string  `json:"slug"`
+	Description *string `json:"description"`
+}
+
+type InviteOrganization struct {
+	Id          uint    `json:"id"`
+	Title       string  `json:"title"`
+	Domain      string  `json:"domain"`
+	Email       string  `json:"email"`
+	Description *string `json:"description"`
+}
+
+type UserInvites struct {
+	Id           uint               `json:"id"`
+	Organization InviteOrganization `json:"organization"`
+	Role         InviteRole         `json:"role"`
+	CreatedAt    time.Time          `json:"created_at"`
+	Link         string             `json:"link"`
+}
+
+func NewUserInvites(invite *models.OrganizationInvite) UserInvites {
+	var out UserInvites
+	out.Organization = InviteOrganization{
+		Id:          invite.Organization.Id,
+		Title:       invite.Organization.Title,
+		Domain:      invite.Organization.Domain,
+		Email:       invite.Organization.Email,
+		Description: invite.Organization.Description,
+	}
+	out.Role = InviteRole{
+		Id:          invite.Role.Id,
+		Name:        invite.Role.Name,
+		Slug:        invite.Role.Slug,
+		Description: invite.Role.Description,
+	}
+	out.CreatedAt = invite.CreatedAt
+	out.Id = invite.Id
+	out.Link = invite.Link
+
+	return out
 }

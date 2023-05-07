@@ -45,23 +45,15 @@ const remove = (idx) => {
                     <MinusIcon />
                 </button>
             </div>
-            <!--            <input class='border px-3 py-1' type='email' v-model='invitor.email'>-->
-            <!--            <select v-model='invitor.role' class='border px-3 py-1'>-->
-            <!--                <option disabled>роль</option>-->
-            <!--                <option v-for='role in roleList'>{{ role.name }}</option>-->
-            <!--            </select>-->
 
         </div>
 
-        <div class='flex items-center'>
+        <div class='flex items-center mt-3'>
             <div class='relative w-[450px] border py-1 flex items-center'>
                 <input placeholder='email участника' class='px-3 py-1 w-[250px] focus:outline-none' type='email'
                        v-model='addedUser.email'>
                 <Dropdown :options='roleList' v-model='addedUser.role'></Dropdown>
             </div>
-            <!--            <select v-model='addedUser.role' class='border px-3 py-1'>-->
-            <!--            <option v-for='role in roleList'>{{ role.name }}</option>-->
-            <!--        </select>-->
             <button class='ml-3 w-[30px] h-[30px] block text-sm px-2 py-1 bg-gray-100 rounded' @click='addUser'>
                 <PlusIcon />
             </button>
