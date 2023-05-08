@@ -18,7 +18,7 @@ class ApiGatewayMiddleware
     {
         $gatewayKey = $request->header('X-ACCESS-KEY');
         $guidKey = $request->header('X-REQUEST-ID');
-        if (!$gatewayKey !== env('') || !$guidKey) {
+        if ($gatewayKey !== env('GATEWAY_KEY') || !$guidKey) {
             return \response()->json([
                 "error" => true,
                 "message" => "access denied"

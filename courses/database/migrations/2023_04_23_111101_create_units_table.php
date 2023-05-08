@@ -9,16 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+//    protected $connection = 'tenant';
     public function up(): void
     {
-        Schema::create('units', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->foreignId('module_id')->constrained('modules');
-            $table->integer('position')->nullable();
-            $table->timestamps();
-        });
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::connection('tenant')->create('units', function (Blueprint $table) {
+                $table->id();
+                $table->string('title');
+                $table->text('description')->nullable();
+                $table->foreignId('module_id')->constrained('modules');
+                $table->integer('position')->nullable();
+                $table->timestamps();
+            });
+        }
+
     }
 
     /**
@@ -26,6 +30,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('units');
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::dropIfExists('units');
+        }
     }
 };

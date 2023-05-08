@@ -9,12 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+//    protected $connection = 'tenant';
     public function up(): void
     {
-        Schema::create('step_tasks', function (Blueprint $table) {
-            $table->foreignId('step_id')->constrained('steps');
-            $table->foreignId('task_id')->constrained('knowledge');
-        });
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::connection('tenant')->create('step_tasks', function (Blueprint $table) {
+                $table->foreignId('step_id')->constrained('steps');
+                $table->foreignId('task_id')->constrained('knowledge');
+            });
+        }
+
     }
 
     /**
@@ -22,6 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('step_tasks');
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::dropIfExists('step_tasks');
+        }
     }
 };

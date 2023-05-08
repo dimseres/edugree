@@ -9,15 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+//    protected $connection = 'tenant';
     public function up(): void
     {
-        Schema::create('files', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('path');
-            $table->morphs('entity');
-            $table->timestamps();
-        });
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::connection('tenant')->create('files', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->text('path');
+                $table->morphs('entity');
+                $table->timestamps();
+            });
+        }
+
     }
 
     /**
@@ -25,6 +29,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('files');
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::dropIfExists('files');
+        }
     }
 };

@@ -9,15 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+//    protected $connection = 'tenant';
     public function up(): void
     {
-        Schema::create('user_progress', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_course_id')->constrained('user_courses');
-            $table->morphs('progress');
-            $table->smallInteger('status');
-            $table->timestamps();
-        });
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::connection('tenant')->create('user_progress', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_course_id')->constrained('user_courses');
+                $table->morphs('progress');
+                $table->smallInteger('status');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -25,6 +28,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_progress');
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::dropIfExists('user_progress');
+        }
     }
 };

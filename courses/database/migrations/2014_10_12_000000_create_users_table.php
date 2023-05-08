@@ -8,17 +8,20 @@ return new class extends Migration {
     /**
      * Run the migrations.
      */
+//    protected $connection = 'tenant';
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->primary()->unique();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->unique();
-            $table->text('bio')->unique();
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::connection('tenant')->create('users', function (Blueprint $table) {
+                $table->unsignedBigInteger('id')->primary()->unique();
+                $table->string('name');
+                $table->string('email')->unique();
+                $table->string('phone')->unique();
+                $table->text('bio')->nullable();
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -26,6 +29,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::dropIfExists('users');
+        }
     }
 };

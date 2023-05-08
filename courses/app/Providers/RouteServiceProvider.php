@@ -31,6 +31,12 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api/v1')
                 ->group(base_path('routes/api.php'));
         });
+
+        $this->routes(function (Request $request) {
+            Route::middleware('integration')
+                ->prefix('integration')
+                ->group(base_path('routes/integration.php'));
+        });
     }
 
     /**
