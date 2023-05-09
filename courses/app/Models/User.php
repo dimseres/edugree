@@ -12,12 +12,15 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    const ROLE_OWNER = 'owner';
+    const ROLE_ADMIN = 'administrator';
+    const ROLE_MODERATOR = 'moderator';
+    const ROLE_TEACHER = 'teacher';
+    const ROLE_STUDENT = 'student';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $guard_name = 'api';
+
+    protected $connection = 'tenant';
     protected $fillable = [
         'id',
         'name',
@@ -26,21 +29,11 @@ class User extends Authenticatable
         'phone',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];

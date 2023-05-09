@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Module extends Model
 {
     use HasFactory;
-
+    protected $connection = 'tenant';
     public function courses() {
         $this->belongsTo(Course::class);
     }
