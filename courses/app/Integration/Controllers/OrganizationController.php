@@ -84,7 +84,7 @@ class OrganizationController
         $userData = $request->input('user');
 
         $service->switchConnection($dbName);
-
+//
         try {
             DB::beginTransaction();
             $user = User::query()->create([
