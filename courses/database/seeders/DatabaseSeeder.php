@@ -13,12 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (getenv("APP_ENV") === "development") {
-            \App\Models\User::factory()->create([
-                'id' => 1,
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-            ]);
-        }
+//        if (getenv("APP_ENV") === "development") {
+//            \App\Models\User::factory()->create([
+//                'id' => 1,
+//                'name' => 'Test User',
+//                'email' => 'test@example.com',
+//            ]);
+//        }
+        (new RolesPermissionsSeeder())->run();
     }
 }

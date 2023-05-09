@@ -5,12 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Course extends Model
+class Permission extends \Spatie\Permission\Models\Permission
 {
-    use HasFactory;
-
     protected $connection = 'tenant';
-    public function modules() {
-        $this->hasMany(Module::class);
-    }
 }
