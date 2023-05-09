@@ -15,7 +15,7 @@ import (
 func InitOrganizationRoutes(app *echo.Group) {
 	protected := app.Group("/")
 	protected.Use(middlewares.JwtProtect())
-	protected.POST("", CreateOrganization)
+	protected.POST("create", CreateOrganization)
 	protected.GET(":id", GetOrganization)
 }
 
@@ -27,14 +27,14 @@ func CreateOrganization(c echo.Context) error {
 		return err
 	}
 
-	repository := repositories.NewOrganizationRepository()
+	repository := repositories.NewOrganizationRepository(c.Request().Header.Get("X-REQUEST-ID"))
 	service := services.NewOrganizationService(&repository)
 
 	token := c.Get("user").(*jwt.Token)
 	claims := token.Claims.(*helpers.JwtAuthClaims)
 
 	userId := claims.Data.UserId
-	repository.StartTransaction()
+	//repository.StartTransaction()
 	//defer func() {
 	//	if r := recover(); r != nil {
 	//		repository.RollbackTransaction()
@@ -43,14 +43,14 @@ func CreateOrganization(c echo.Context) error {
 	organization, err := service.CreateOrganization(&form, userId)
 
 	if err != nil {
-		repository.RollbackTransaction()
+		//repository.RollbackTransaction()
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"error":   true,
 			"message": err.Error(),
 		})
 	}
 
-	repository.EndTransaction()
+	//repository.EndTransaction()
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"id":          organization.Id,
@@ -71,11 +71,10 @@ func GetOrganization(c echo.Context) error {
 		})
 	}
 
-	repo := repositories.NewOrganizationRepository()
+	repo := repositories.NewOrganizationRepository(c.Request().Header.Get("X-REQUEST-ID"))
 	service := services.NewOrganizationService(&repo)
 
 	org, err := service.GetOrganization(uint(id))
-
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
 			"error":   true,

@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"net/url"
+	"os"
 )
 
 func InitRoutes(app *echo.Group) {
@@ -19,7 +20,7 @@ func InitRoutes(app *echo.Group) {
 	tenant.Use(middlewares.JwtProtect())
 	tenant.Use(middlewares.TenantGuard)
 
-	courseUrl, err := url.Parse("http://localhost:8000")
+	courseUrl, err := url.Parse(os.Getenv("COURSE_URL"))
 	if err != nil {
 		panic(err)
 	}

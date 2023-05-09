@@ -5,7 +5,8 @@ import (
 )
 
 type BaseRepositoryHelpers struct {
-	db *gorm.DB
+	db          *gorm.DB
+	requestUuid string
 }
 
 type PaginationConfig struct {
@@ -40,6 +41,10 @@ func (self *BaseRepositoryHelpers) EndTransaction() {
 
 func (self *BaseRepositoryHelpers) RollbackTransaction() {
 	self.db = self.db.Rollback()
+}
+
+func (self *BaseRepositoryHelpers) GetDb() *gorm.DB {
+	return self.db
 }
 
 func (self BaseRepositoryHelpers) Paginate(config *PaginationConfig) func(db *gorm.DB) *gorm.DB {

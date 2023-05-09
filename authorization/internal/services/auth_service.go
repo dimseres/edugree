@@ -80,6 +80,7 @@ func (self *AuthService) CreateJwtToken(user *models.User, domain string) (error
 		if member.Organization != nil {
 			membershipRole.Organization = &member.Organization.Domain
 			membershipRole.OrganizationId = &member.OrganizationId
+			membershipRole.TenantUuid = &member.Organization.TenantUuid
 		}
 
 		if member.Organization != nil {

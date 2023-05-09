@@ -14,6 +14,9 @@ type MembershipRepository interface {
 	InviteMembers(members []forms.MemberInviteForm, roles []string, organizationId uint) error
 	GetInviteList(page int, perPage int, orgId uint) (*[]models.OrganizationInvite, error)
 	RejectOrAcceptInvite(userId uint, link string, action string) (*models.OrganizationInvite, error)
+	StartTransaction()
+	EndTransaction()
+	RollbackTransaction()
 }
 
 type MembershipService struct {
@@ -74,5 +77,14 @@ func (self *MembershipService) JoinOrganization(link string, action string) (*mo
 	if action != models.ORG_ACCEPTED.String() || action != models.ORG_ACCEPTED.String() {
 		return nil, errors.New("wrong action")
 	}
-	return self.repository.RejectOrAcceptInvite(self.tenantContext.UserId, link, action)
+	org, err := self.repository.RejectOrAcceptInvite(self.tenantContext.UserId, link, action)
+	if err != nil {
+		return nil, err
+	}
+
+	return org, err
+}
+
+func (self *MembershipService) JoinDomainOrganization() {
+
 }

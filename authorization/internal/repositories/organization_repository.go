@@ -12,24 +12,37 @@ package repositories
 import (
 	"authorization/internal/database"
 	"authorization/internal/models"
+	"bytes"
+	"encoding/json"
+	"errors"
+	"io"
+	"net/http"
+	"os"
+	"time"
 )
 
 type OrganizationRepository struct {
 	BaseRepositoryHelpers
 }
 
-func NewOrganizationRepository() OrganizationRepository {
+func NewOrganizationRepository(requestUuid string) OrganizationRepository {
 	return OrganizationRepository{
 		BaseRepositoryHelpers{
-			db: database.GetConnection(),
+			db:          database.GetConnection(),
+			requestUuid: requestUuid,
 		},
 	}
 }
 
-func (self *OrganizationRepository) CreateOrganization(organization *models.Organization) (*models.Organization, error) {
+func (self *OrganizationRepository) CreateOrganization(organization *models.Organization, ownerId uint) (*models.Organization, error) {
 	res := self.db.Create(&organization)
 	if res.Error != nil {
 		return nil, res.Error
+	}
+
+	err := self.CreateTenantOrganization(organization, ownerId)
+	if err != nil {
+		return nil, err
 	}
 
 	return organization, nil
@@ -84,4 +97,70 @@ func (self *OrganizationRepository) GetOrganizationWithMembers(orgId uint) (*mod
 	}
 
 	return &org, nil
+}
+
+func (self *OrganizationRepository) CreateTenantOrganization(organization *models.Organization, userId uint) error {
+	var user models.User
+	self.db.Where("id = ?", userId).First(&user)
+
+	orgData := map[string]interface{}{
+		"id":          organization.Id,
+		"name":        organization.Title,
+		"domain":      organization.Domain,
+		"tenant_uuid": organization.TenantUuid,
+		"owner": map[string]interface{}{
+			"id":    user.Id,
+			"name":  user.FullName,
+			"email": user.Email,
+			"phone": user.Phone,
+		},
+	}
+
+	postBody, _ := json.Marshal(orgData)
+	responseBody := bytes.NewBuffer(postBody)
+
+	url := os.Getenv("COURSE_URL") + "/organization/create"
+	if self.requestUuid == "" {
+		return errors.New("empty request-id")
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, responseBody)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("X-ACCESS-KEY", os.Getenv("GATEWAY_KEY"))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-REQUEST-ID", self.requestUuid)
+
+	client := &http.Client{
+		Timeout: time.Second * 30,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	responseStructure := struct {
+		Error   bool   `json:"error"`
+		Message string `json:"message"`
+	}{}
+	if resp.StatusCode >= 400 {
+		body, err := io.ReadAll(resp.Body)
+		json.Unmarshal(body, &responseStructure)
+
+		if err != nil {
+			return err
+		}
+
+		if responseStructure.Error && responseStructure.Message != "" {
+			return errors.New(responseStructure.Message)
+		}
+
+		return errors.New(resp.Status)
+	}
+
+	return nil
 }

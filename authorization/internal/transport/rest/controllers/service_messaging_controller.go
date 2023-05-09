@@ -22,7 +22,7 @@ func GetOrganizationData(c echo.Context) error {
 		})
 	}
 
-	repository := repositories.NewOrganizationRepository()
+	repository := repositories.NewOrganizationRepository(c.Request().Header.Get("X-Request-ID"))
 	org, err := repository.GetOrganizationWithMembers(uint(orgId))
 	if err != nil {
 		return c.JSON(404, echo.Map{

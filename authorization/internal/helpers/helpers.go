@@ -65,6 +65,7 @@ type JwtServiceData struct {
 
 type JwtMembershipData struct {
 	Organization   *string   `json:"organization"`
+	TenantUuid     *string   `json:"tenant_uuid"`
 	OrganizationId *uint     `json:"organization_id"`
 	Role           *string   `json:"role"`
 	Services       *[]string `json:"services"`
@@ -133,7 +134,7 @@ func GetServiceJwtToken(commonToken *JwtAuthClaims, domain string, requestUuid s
 	claims := JwtServiceAuthClaims{
 		Data: data,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Second * time.Duration(10))),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Second * 15)),
 		},
 	}
 
