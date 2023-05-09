@@ -15,12 +15,12 @@ class OrganizationController
     {
         $orgName = $request->input('name');
         $orgDomain = $request->input('domain');
-        $orgUuid = $request->input('tenant_uuid');
+        $orgUuid = str_replace('-', '', $request->input('tenant_uuid'));
         $orgId = $request->input('id');
 
         $owner = $request->input('owner');
 
-        $dbName = "tenant_".$orgDomain;
+        $dbName = "tenant_".$orgUuid;
 
         try {
             $serviceOrganization = Organization::query()
