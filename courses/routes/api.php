@@ -18,7 +18,5 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 Route::middleware('auth')->group(function () {
-    Route::get("/", function () {
-        return [];
-    });
+    Route::resource("/courses", \App\Http\Controllers\CourseController::class);
 });
