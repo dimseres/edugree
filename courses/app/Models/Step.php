@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Step extends Model
 {
     use HasFactory;
-
+    protected $connection = 'tenant';
     public function unit() {
         $this->belongsTo(Unit::class);
     }

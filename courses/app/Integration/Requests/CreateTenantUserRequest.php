@@ -4,7 +4,8 @@ namespace App\Integration\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateOrganizationRequest extends FormRequest
+class
+CreateTenantUserRequest extends FormRequest
 {
 
     /**
@@ -15,15 +16,14 @@ class CreateOrganizationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'numeric'],
-            'name' => ['required'],
             'domain' => ['required'],
             'tenant_uuid' => ['required'],
-            'owner' => ['required', 'array'],
-            'owner.id' => ['required', 'numeric'],
-            'owner.name' => ['required','string'],
-            'owner.email' => ['required', 'email'],
-            'owner.phone' => ['required'],
+            'user' => ['required', 'array'],
+            'user.id' => ['required', 'numeric'],
+            'user.name' => ['required','string'],
+            'user.email' => ['required', 'email'],
+            'user.phone' => ['required'],
+            'user.role' => ['required'],
         ];
     }
 }

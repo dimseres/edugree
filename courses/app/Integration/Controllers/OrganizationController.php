@@ -15,7 +15,7 @@ class OrganizationController
     {
         $orgName = $request->input('name');
         $orgDomain = $request->input('domain');
-        $orgUuid = $request->input('tenantUuid');
+        $orgUuid = $request->input('tenant_uuid');
         $orgId = $request->input('id');
 
         $owner = $request->input('owner');
@@ -39,7 +39,7 @@ class OrganizationController
             try {
                 DB::beginTransaction();
                 $user = Owner::query()->create($owner);
-                Organization::query()->create([
+                $organization = Organization::query()->create([
                     'id' => $orgId,
                     'owner_id' => $user->id,
                     'name' => $orgName,
@@ -58,6 +58,8 @@ class OrganizationController
             DB::statement("CREATE DATABASE {$dbName}");
             $service->switchConnection($dbName);
             $service->runMigration($dbName);
+            $service->runSeeders();
+            $service->setInitialData($owner, $organization);
 
             return [
                 "error" => false,
@@ -73,5 +75,32 @@ class OrganizationController
             ];
         }
 
+    }
+
+    public function createTenantUser(CreateOrganizationRequest $request, TenantInitService $service)
+    {
+        $orgDomain = $request->input('domain');
+        $dbName = "tenant_".$orgDomain;
+        $userData = $request->input('user');
+
+        $service->switchConnection($dbName);
+
+        try {
+            DB::beginTransaction();
+            $user = User::query()->create([
+                'id' => $userData['id'],
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'phone' => $userData['phone'],
+            ]);
+
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return [
+                'error' => true,
+                'message' => $exception->getMessage()
+            ];
+        }
     }
 }

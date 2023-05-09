@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Knowledge extends Model
 {
     use HasFactory;
-
+    protected $connection = 'tenant';
     public function module() {
         $this->belongsTo(Module::class);
     }
