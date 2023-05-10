@@ -1,4 +1,4 @@
-import { axios, setXOrg } from './axios.config'
+import { axios, AxiosClient } from './axios.config'
 import { useUserStore } from '../../store/user.store'
 import { POSITION, useToast } from 'vue-toastification'
 
@@ -138,7 +138,7 @@ export async function setTenant(tenantId: number) {
             toasted.error(data.message, {position: POSITION.BOTTOM_RIGHT})
             return null
         }
-        setXOrg(data.data.organization.domain)
+        AxiosClient.setXOrg(data.data.organization.domain)
 
         return data
     } catch (e: any) {
