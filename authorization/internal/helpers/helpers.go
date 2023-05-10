@@ -296,3 +296,22 @@ func GetJwtClaims(c echo.Context) *JwtAuthClaims {
 
 	return claims
 }
+
+func GetPublicUploadPath() string {
+	return "storage/public/"
+}
+
+func MakeAbsoluteStaticUrl(path string) string {
+	return os.Getenv("APP_URL") + "/public/" + path
+}
+
+func CreateFolder(dirname string) error {
+	_, err := os.Stat(dirname)
+	if os.IsNotExist(err) {
+		errDir := os.MkdirAll(dirname, 0755)
+		if errDir != nil {
+			return errDir
+		}
+	}
+	return nil
+}

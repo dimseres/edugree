@@ -10,6 +10,7 @@ import (
 )
 
 func InitRoutes(app *echo.Group) {
+	controllers.InitUploadRoutes(app.Group("/uploads"))
 	controllers.InitAuthRoutes(app.Group("/auth"))
 	controllers.InitUserRoutes(app.Group("/users"))
 	controllers.InitOrganizationRoutes(app.Group("/organization"))
