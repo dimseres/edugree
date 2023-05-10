@@ -48,6 +48,16 @@ export const router = createRouter({
                     },
                     component: () => import('../views/Users.vue'),
                 },
+                {
+                    path: '/organizations',
+                    name: 'Organizations',
+                    component: () => import('../views/Organization.vue')
+                },
+                {
+                    path: '/organizations/create',
+                    name: 'OrganizationCreate',
+                    component: () => import('../views/OrganizationCreate.vue')
+                },
             ],
         },
         {

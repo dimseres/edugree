@@ -107,21 +107,14 @@ const _navigation = [
         icon: BriefcaseIcon,
         roles: ['owner', 'administrator', 'manager'],
     },
-    {
-        name: 'Сервисы',
-        href: '/services',
-        current: false,
-        icon: CircleStackIcon,
-        roles: ['owner', 'administrator', 'manager'],
-    },
 ]
 
 const emptyMemberNavigation = [
     {
-        name: 'Создать организацию',
-        href: '/organizations/create',
+        name: 'Организации',
+        href: '/organizations',
         current: false,
-        icon: PlusIcon,
+        icon: BriefcaseIcon,
     },
 ]
 
