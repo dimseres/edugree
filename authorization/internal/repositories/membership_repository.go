@@ -21,7 +21,7 @@ func NewMembershipRepository() MembershipRepository {
 	}
 }
 
-func (self *MembershipRepository) GetMembershipData(organizationId uint, userId uint) (*models.Membership, error) {
+func (self *MembershipRepository) GetMembershipData(userId uint, organizationId uint) (*models.Membership, error) {
 	var member models.Membership
 	res := self.db.Where("user_id = ? and organization_id = ?", userId, organizationId).
 		Preload("Role").
