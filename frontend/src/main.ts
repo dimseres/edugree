@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 import { router } from './routes/routes'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
+import 'vue-advanced-cropper/dist/style.css';
 
 
 const pinia = createPinia()
