@@ -16,8 +16,8 @@
 <!--                    </div>-->
                 </div>
                 <div v-else>
-                    <h2 class='text-gray-500'>
-                        <ExclamationCircleIcon />
+                    <h2 class='text-gray-500 flex items-center'>
+                        <ExclamationTriangleIcon class='h-[20px] mr-2'/>
                         Вы пока не состоите ни в одной организации
                     </h2>
                 </div>
@@ -35,7 +35,7 @@
 import { IUserMembership, useUserStore } from '../store/user.store'
 import { useRouter } from 'vue-router'
 import { setTenant } from '../services/api/auth.api.vue'
-import { ExclamationCircleIcon, PlusIcon } from '@heroicons/vue/24/solid'
+import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import OrganizationCardExtended from '../components/organization/OrganizationCardExtended.vue'
 import ModalWrapper from '../components/modals/ModalWrapper.vue'
 import { ref } from 'vue'

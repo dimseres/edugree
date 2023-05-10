@@ -1,11 +1,11 @@
 <script lang='ts' setup>
-import { PhotoIcon } from '@heroicons/vue/24/solid'
-import ImageUpload from '../components/ImageUpload/ImageUpload.vue'
 import ImageCropperAvatar from '../components/modals/ImageCropper/ImageCropperAvatar.vue'
 import ImageCropperCover from '../components/modals/ImageCropper/ImageCropperCover.vue'
 import ModalWrapper from '../components/modals/ModalWrapper.vue'
 import { reactive, ref, watch } from 'vue'
-import ImageUploadCover from '../components/ImageUpload/ImageUploadCover.vue'
+import { createOrganization } from '../services/api/organization.api'
+import { useRouter } from 'vue-router'
+import { usePreloaderStore } from '../store/preloader.store'
 
 const image = ref()
 
@@ -26,6 +26,8 @@ const cover = ref()
 const coverOut = ref()
 const croppedCover = ref()
 const coverImage = ref()
+
+const {incrementRequest, decrementRequest} = usePreloaderStore()
 
 watch(avatar, (newValue) => {
     if (newValue.src) {
@@ -76,6 +78,8 @@ const coverUploaded = (file) => {
     debugger
 }
 
+const router = useRouter()
+
 const form = reactive({
     title: null,
     domain: null,
@@ -83,13 +87,22 @@ const form = reactive({
     description: null,
 })
 
+const createOrg = async () => {
+    incrementRequest()
+    const data = createOrganization(form)
+    if (data.data) {
+        await router.go(0)
+    }
+    decrementRequest()
+}
+
 </script>
 <template>
     <ModalWrapper title='Выберите секцию' v-if='showModal' @close='toggleModal'>
-        <component :is='modalComponent' :image='image' @saveImage='modalSaveFunc'/>
-<!--        <ImageCropperAvatar :image='image' @saveImage='saveCroppedImage'></ImageCropperAvatar>-->
+        <component :is='modalComponent' :image='image' @saveImage='modalSaveFunc' />
+        <!--        <ImageCropperAvatar :image='image' @saveImage='saveCroppedImage'></ImageCropperAvatar>-->
     </ModalWrapper>
-    <div class='flex justify-center'>
+    <form class='flex justify-center' @submit.prevent='createOrg'>
         <div class='container w-1/3'>
             <div class='border-b border-gray-900/10 pb-12'>
                 <h2 class='text-2xl text-gray-700 font-semibold leading-7'>Создание организации</h2>
@@ -97,12 +110,14 @@ const form = reactive({
 
                 <div class='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
                     <div class='sm:col-span-4'>
-                        <label for='username' class='block text-sm font-medium leading-6 text-gray-900'>Название организации</label>
+                        <label for='username' class='block text-sm font-medium leading-6 text-gray-900'>Название
+                            организации</label>
                         <div class='mt-2'>
                             <div
                                 class='flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
                                 <input type='text' name='username' id='username'
                                        v-model='form.title'
+                                       required
                                        class='block flex-1 border-0 bg-transparent py-2 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6'
                                        placeholder='Супер классная организация' />
                             </div>
@@ -111,12 +126,14 @@ const form = reactive({
                     </div>
 
                     <div class='sm:col-span-4'>
-                        <label for='username' class='block text-sm font-medium leading-6 text-gray-900'>Домен</label>
+                        <label for='username'
+                               class='block text-sm font-medium leading-6 text-gray-900'>Домен</label>
                         <div class='mt-2'>
                             <div
                                 class='flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
                                 <input type='text' name='domain' id='domain' autocomplete='domain'
                                        v-model='form.domain'
+                                       required
                                        class='block flex-1 border-0 bg-transparent py-2 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6'
                                        placeholder='super.org' />
                             </div>
@@ -125,12 +142,14 @@ const form = reactive({
                     </div>
 
                     <div class='sm:col-span-4'>
-                        <label for='username' class='block text-sm font-medium leading-6 text-gray-900'>Email</label>
+                        <label for='username'
+                               class='block text-sm font-medium leading-6 text-gray-900'>Email</label>
                         <div class='mt-2'>
                             <div
                                 class='flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
                                 <input type='text' name='username' id='username' autocomplete='username'
                                        v-model='form.email'
+                                       required
                                        class='block flex-1 border-0 bg-transparent py-2 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6'
                                        placeholder='example@organization.com' />
                             </div>
@@ -149,17 +168,17 @@ const form = reactive({
                         <p class='mt-3 text-sm leading-6 text-gray-600'>Напишите пару слов о вашей организации</p>
                     </div>
 
-<!--                    <div class='col-span-full'>-->
-<!--                        <ImageUpload label='Аватар'-->
-<!--                                     accept='.jpg,.png,.jpeg,.gif'-->
-<!--                                     :image='avatarImage'-->
-<!--                                     @fileChanged='avatarUploaded'-->
-<!--                        ></ImageUpload>-->
-<!--                    </div>-->
+                    <!--                    <div class='col-span-full'>-->
+                    <!--                        <ImageUpload label='Аватар'-->
+                    <!--                                     accept='.jpg,.png,.jpeg,.gif'-->
+                    <!--                                     :image='avatarImage'-->
+                    <!--                                     @fileChanged='avatarUploaded'-->
+                    <!--                        ></ImageUpload>-->
+                    <!--                    </div>-->
 
-<!--                    <div class='col-span-full'>-->
-<!--                        <ImageUploadCover :image='coverImage' label='Обложка' accept='.jpg,.png,.jpeg,.gif' @fileChanged='coverUploaded'></ImageUploadCover>-->
-<!--                    </div>-->
+                    <!--                    <div class='col-span-full'>-->
+                    <!--                        <ImageUploadCover :image='coverImage' label='Обложка' accept='.jpg,.png,.jpeg,.gif' @fileChanged='coverUploaded'></ImageUploadCover>-->
+                    <!--                    </div>-->
                 </div>
             </div>
 
@@ -172,6 +191,6 @@ const form = reactive({
                 </button>
             </div>
         </div>
-    </div>
+    </form>
 
 </template>

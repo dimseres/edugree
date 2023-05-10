@@ -37,6 +37,12 @@ export class AuthGuard implements IRouteGuard {
                 }
             }
 
+            if (route.name === 'OrganizationCreate') {
+                return {
+                    success: true,
+                }
+            }
+
             if (route.name === 'Home') {
                 return {
                     success: true,

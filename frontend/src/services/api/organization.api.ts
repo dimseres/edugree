@@ -1,5 +1,5 @@
 import { POSITION, useToast } from 'vue-toastification'
-import axios from 'axios/index'
+import {axios} from './axios.config'
 
 const toasted = useToast()
 
@@ -7,14 +7,14 @@ export interface IOrganizationCreateForm {
     title: string,
     domain: string,
     email: string,
-    description: string
+    description: string|null
 }
 
 export async function createOrganization(form: IOrganizationCreateForm) {
     try {
         const {data} = await axios.post("/organization/create", form)
         if (data.error) {
-            toasted.error(data.error)
+            toasted.error(data.message)
             return null
         }
         return data.data
