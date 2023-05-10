@@ -4,6 +4,7 @@ import (
 	"authorization/internal/constants"
 	"authorization/internal/helpers"
 	"authorization/internal/models"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -17,6 +18,7 @@ type AuthRepository interface {
 	RegisterRefreshToken(user *models.User, token string, salt string, lifeTime time.Duration) error
 	GetRefreshToken(token string) (*models.Token, error)
 	DeleteRefreshToken(token *models.Token) error
+	SetOrganizationCache(organization *models.Organization) error
 }
 
 type Claims struct {
@@ -81,6 +83,10 @@ func (self *AuthService) CreateJwtToken(user *models.User, domain string) (error
 			membershipRole.Organization = &member.Organization.Domain
 			membershipRole.OrganizationId = &member.OrganizationId
 			membershipRole.TenantUuid = &member.Organization.TenantUuid
+			err := self.repository.SetOrganizationCache(member.Organization)
+			if err != nil {
+				return errors.New("cant set organization cache"), ""
+			}
 		}
 
 		if member.Organization != nil {

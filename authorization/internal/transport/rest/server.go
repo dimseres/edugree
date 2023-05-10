@@ -1,6 +1,8 @@
 package rest
 
 import (
+	"authorization/config"
+	"authorization/internal/repositories"
 	"authorization/internal/transport/rest/forms"
 	"authorization/internal/transport/rest/middlewares"
 	"github.com/labstack/echo/v4"
@@ -19,6 +21,13 @@ func StartHttpServer(port string) {
 			AllowMethods:     []string{"*"},
 			AllowCredentials: true,
 		}))
+	}
+
+	repo := repositories.NewAuthRepository()
+	err := repo.SetInitialCache()
+	if err != nil {
+		config.GetLogger().Error(err)
+		panic(err)
 	}
 
 	e.Validator = forms.NewFormValidator()

@@ -3,6 +3,7 @@ package repositories
 import (
 	"authorization/internal/database"
 	"authorization/internal/models"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -73,6 +74,27 @@ func (self *AuthRepository) DeleteRefreshTokenByUserId(userId uint) error {
 	res := self.db.Where("user_id = ", userId).Delete(&refresh)
 	if res.Error != nil {
 		return res.Error
+	}
+	return nil
+}
+
+func (self *AuthRepository) SetOrganizationCache(organization *models.Organization) error {
+	return self.cache.SetTenantInfo(organization.Domain, organization)
+}
+
+func (self *AuthRepository) SetInitialCache() error {
+	var results []models.Organization
+	result := self.db.FindInBatches(&results, 100, func(tx *gorm.DB, batch int) error {
+		for _, result := range results {
+			err := self.cache.SetTenantInfo(result.Domain, &result)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if result.Error != nil {
+		return result.Error
 	}
 	return nil
 }
