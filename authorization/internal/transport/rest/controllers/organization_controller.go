@@ -53,11 +53,14 @@ func CreateOrganization(c echo.Context) error {
 	//repository.EndTransaction()
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"id":          organization.Id,
-		"title":       organization.Title,
-		"email":       organization.Email,
-		"description": organization.Description,
-		"avatar":      organization.Avatar,
+		"error": false,
+		"data": map[string]interface{}{
+			"id":          organization.Id,
+			"title":       organization.Title,
+			"email":       organization.Email,
+			"description": organization.Description,
+			"avatar":      organization.Avatar,
+		},
 	})
 }
 
