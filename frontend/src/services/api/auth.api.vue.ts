@@ -31,8 +31,13 @@ export async function login(form: LoginFormDTO): Promise<IApiResponse> {
             }
         }
 
-        const { setUser } = useUserStore()
+        const { setUser, setDefaultTenant } = useUserStore()
         setUser(data.user)
+        setDefaultTenant()
+
+        if (data.membership) {
+
+        }
 
         return {
             error: false,

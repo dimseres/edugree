@@ -54,6 +54,24 @@ export const useUserStore = defineStore('user', {
             this.user = user
         },
 
+        setDefaultTenant() {
+            const tenant = window.localStorage.getItem('tenant');
+            const tenantRole = window.localStorage.getItem('tenant_role');
+            let validTenant = false
+            if (this.user && tenant && tenantRole) {
+                for (const member of this.user.membership) {
+                    if (member.organization.domain === tenant) {
+                        return this.pickTenant(member)
+                    }
+                }
+            }
+            return this.clearLocalStorage()
+        },
+
+        clearLocalStorage() {
+            window.localStorage.clear()
+        },
+
         pickTenant(membership: IUserMembership) {
             window.localStorage.setItem('tenant', membership.organization.domain)
             window.localStorage.setItem('tenant_role', membership.role.slug)
