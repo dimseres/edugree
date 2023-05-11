@@ -42,9 +42,13 @@ return [
         ],
         'api' => [
             'driver' => 'jwt',
-//            'provider' => 'users',
+            'provider' => 'users',
 //            'hash' => false,
         ],
+        'testauth' => [
+            'driver' => 'testauth',
+            'provider' => 'users',
+        ]
     ],
 
     /*
