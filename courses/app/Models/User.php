@@ -34,7 +34,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function courses() {
+        return $this->belongsToMany(Course::class, 'user_courses');
+    }
 }

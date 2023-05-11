@@ -4,14 +4,14 @@ namespace App\Http\Requests\Courses;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCourseRequest extends FormRequest
+class CreateModuleRequest extends FormRequest
 {
     public function rules()
     {
         return [
-            'name' => ['required'],
+            'title' => ['required'],
+            'position' => ['required'],
             'description' => ['string'],
-            'cover' => ['mimes:jpeg,png,gif,jpg']
         ];
     }
 }

@@ -21,7 +21,7 @@ class RolesPermissionsSeeder extends Seeder
             'guard_name' => 'api'
         ]);
         $admin = Role::create([
-            'name' => 'admin',
+            'name' => 'administrator',
             'guard_name' => 'api'
         ]);
         $moderator = Role::create([

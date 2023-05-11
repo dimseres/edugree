@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Courses\CreateCourseRequest;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -15,6 +17,21 @@ class CourseController extends Controller
     {
         $courses = Course::query()->paginate(10);
         return $courses;
+    }
+
+    public function userCourses()
+    {
+        $user = Auth::user();
+        $courses = Course::query()
+            ->whereHas('userCourses', function ($q) use ($user) {
+                $q->where('user_courses.id', $user->getAuthIdentifier());
+            })->orWhereHas('courseAuthors', function ($q) use ($user) {
+                $q->whereIn('course_authors.id', [$user->getAuthIdentifier()]);
+            })
+            ->withCount('modules')
+            ->with('userCourses');
+
+        return $courses->paginate(25);
     }
 
     /**
@@ -30,25 +47,40 @@ class CourseController extends Controller
      */
     public function store(CreateCourseRequest $request)
     {
-        $courseName = $request->input('name');
-        $courseDescription = $request->input('description');
-        $course = Course::query()->where('title', $courseName)->first();
-        if ($course) {
+        try {
+            $courseName = $request->input('name');
+            $courseDescription = $request->input('description');
+            $course = Course::query()->where('title', $courseName)->first();
+            if ($course) {
+                return [
+                    'error' => true,
+                    'message' => 'курс с таким названием уже существует'
+                ];
+            }
+
+            DB::beginTransaction();
+            $course = Course::query()->create([
+                'title' => $courseName,
+                'description' => $courseDescription
+            ]);
+
+            $course->userCourses()->attach(Auth::user());
+            $course->courseAuthors()->attach(Auth::user(), ['owner_id' => Auth::user()->getAuthIdentifier()]);
+            DB::commit();
             return [
-                'error' => true,
-                'message' => 'курс с таким названием уже существует'
+                "error" => false,
+                "data" => $course
+            ];
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return [
+                "error" => true,
+                "message" => $exception->getMessage()
             ];
         }
 
-        $course = Course::query()->create([
-            'title' => $courseName,
-            'description' => $courseDescription
-        ]);
 
-        return [
-            "error" => false,
-            "data" => $course
-        ];
+
     }
 
     /**
@@ -86,8 +118,15 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Course $course)
     {
+        $modules = $course->modules;
+        if ($modules) {
+            return [
+                'error' => true,
+                'message' => 'сначала удалите модули'
+            ];
+        }
         $destroyed = Course::query()->find($id)->delete();
         if (!$destroyed) {
             return [

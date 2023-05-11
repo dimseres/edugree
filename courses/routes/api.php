@@ -17,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
-Route::middleware('auth')->group(function () {
-    Route::resource("/courses", \App\Http\Controllers\CourseController::class);
+Route::middleware('auth:testauth')->group(function () {
+//    Route::get("/", function () {
+//        return [];
+//    });
+    Route::get("/courses/my", [\App\Http\Controllers\CourseController::class, 'userCourses']);
+    Route::resource("courses", \App\Http\Controllers\CourseController::class);
+    Route::resource("courses.modules", \App\Http\Controllers\ModuleController::class);
 });

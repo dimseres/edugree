@@ -9,11 +9,13 @@ class Module extends Model
 {
     use HasFactory;
     protected $connection = 'tenant';
+
+    protected $guarded = [];
     public function courses() {
-        $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class);
     }
 
     public function units() {
-        $this->hasMany(Unit::class);
+        return $this->hasMany(Unit::class);
     }
 }
