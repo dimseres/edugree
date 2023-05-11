@@ -10,24 +10,31 @@ import (
 )
 
 func InitRoutes(app *echo.Group) {
-	controllers.InitUploadRoutes(app.Group("/uploads"))
-	controllers.InitAuthRoutes(app.Group("/auth"))
-	controllers.InitUserRoutes(app.Group("/users"))
-	controllers.InitOrganizationRoutes(app.Group("/organization"))
-	controllers.InitMembershipRoutes(app.Group("/membership"))
-	controllers.InitServiceMessagingController(app.Group("/messaging"))
+	apiGroup := app.Group("/api")
+	controllers.InitUploadRoutes(apiGroup.Group("/uploads"))
+	controllers.InitAuthRoutes(apiGroup.Group("/auth"))
+	controllers.InitUserRoutes(apiGroup.Group("/users"))
+	controllers.InitOrganizationRoutes(apiGroup.Group("/organization"))
+	controllers.InitMembershipRoutes(apiGroup.Group("/membership"))
+	controllers.InitServiceMessagingController(apiGroup.Group("/messaging"))
 
-	tenant := app.Group("")
+	tenant := apiGroup.Group("")
 	tenant.Use(middlewares.JwtProtect())
 	tenant.Use(middlewares.TenantGuard)
 
 	courseUrl, err := url.Parse(os.Getenv("COURSE_URL"))
+	frontendUrl, err := url.Parse("http://localhost:5173")
 	if err != nil {
 		panic(err)
 	}
 	coursesUrls := []*middleware.ProxyTarget{
 		{
 			URL: courseUrl,
+		},
+	}
+	frontendUrls := []*middleware.ProxyTarget{
+		{
+			URL: frontendUrl,
 		},
 	}
 	courseProxyConf := middleware.ProxyConfig{
@@ -38,4 +45,8 @@ func InitRoutes(app *echo.Group) {
 		},
 	}
 	tenant.Group("/courses", middleware.ProxyWithConfig(courseProxyConf))
+	app.Group("/*", middleware.ProxyWithConfig(middleware.ProxyConfig{
+		Skipper:  nil,
+		Balancer: middleware.NewRoundRobinBalancer(frontendUrls),
+	}))
 }

@@ -1,14 +1,30 @@
 version: "3.7"
 
 services:
-  auth:
-    build:
-      context: ./authorization
-      dockerfile: ./Dockerfile
-    depends_on:
-      - db
+#  auth:
+#    build:
+#      context: ./authorization
+#      dockerfile: ./Dockerfile
+#    depends_on:
+#      - db
+#    ports:
+#      - 7001:7001
+#    networks:
+#      - app_network
+
+  prometheus:
+    image: prom/prometheus:v2.24.0
+    volumes:
+      - ./devops/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
-      - 7001:7001
+      - 9090:9090
+    restart: always
     networks:
       - app_network
 
@@ -18,14 +34,35 @@ services:
       POSTGRES_USER: $DB_USER
       POSTGRES_PASSWORD: $DB_PASSWORD
     ports:
-      - 5432:7001
+      - 5432:5432
     volumes:
       - db_volume:/var/lib/postgresql/data
     networks:
       - app_network
 
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass $DB_REDIS_PASSWORD
+    volumes:
+      - cache:/data
+    networks:
+      - app_network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+    networks:
+      - app_network
+
 volumes:
   db_volume:
+  cache:
+  prometheus_data:
 
 networks:
   app_network:
