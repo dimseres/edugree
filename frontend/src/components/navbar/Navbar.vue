@@ -1,6 +1,6 @@
 <template>
-    <Disclosure as='nav' class='shadow' v-slot='{ open }'>
-        <div class='px-2 sm:px-6 lg:px-8'>
+    <Disclosure as='nav' class='shadow flex justify-center' v-slot='{ open }'>
+        <div class='container'>
             <div class='relative flex h-16 items-center justify-between'>
                 <div class='absolute inset-y-0 left-0 flex items-center sm:hidden'>
                     <!-- Mobile menu button-->
@@ -83,7 +83,7 @@
 
 <script lang='ts' setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { Bars3Icon, BellIcon, BriefcaseIcon, PlusIcon, CircleStackIcon, UserIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { Bars3Icon, AcademicCapIcon, BellIcon, BriefcaseIcon, PlusIcon, CircleStackIcon, UserIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useUserStore } from '../../store/user.store'
 import { computed } from 'vue'
 import Notification from './notification/Notification.vue'
@@ -101,10 +101,17 @@ const _navigation = [
         roles: ['owner', 'administrator', 'manager'],
     },
     {
-        name: 'Организация',
+        name: 'Организации',
         href: '/organizations',
         current: false,
         icon: BriefcaseIcon,
+        roles: ['owner', 'administrator', 'manager'],
+    },
+    {
+        name: 'Курсы',
+        href: '/courses',
+        current: false,
+        icon: AcademicCapIcon,
         roles: ['owner', 'administrator', 'manager'],
     },
 ]

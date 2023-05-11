@@ -58,6 +58,11 @@ export const router = createRouter({
                     name: 'OrganizationCreate',
                     component: () => import('../views/OrganizationCreate.vue')
                 },
+                {
+                    path: '/courses',
+                    name: 'Courses',
+                    component: () => import('../views/Courses.vue')
+                }
             ],
         },
         {
