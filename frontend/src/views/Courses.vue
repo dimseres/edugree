@@ -1,12 +1,13 @@
 <template>
-    <!--    <ModalWrapper v-if='activeComponent' @close='activeComponent = null' :title='modalTitle'>-->
-    <!--        <component :is='activeComponent' v-bind='modalComponentProps'></component>-->
-    <!--    </ModalWrapper>-->
     <div class='flex justify-center'>
         <div class='container'>
             <div class='head'>
                 <h1 class='text-2xl text-gray-700 font-bold'>Ваши курсы</h1>
                 <p class='text-gray-500 font-light text-sm'>Здесь находятся все ваши курсы</p>
+            </div>
+
+            <div class='flex'>
+                <router-link :to='{name: "CourseCreate"}' class='p-3 text-gray-700 shadow rounded-md bg-white hover:bg-purple hover:text-white'><PlusIcon class='h-[20px] inline'/>создать курс</router-link>
             </div>
 
             <div v-if='courses'>
@@ -36,6 +37,7 @@
 import { useUserStore } from '../store/user.store'
 import { ref } from 'vue'
 import CourseContainer from '../components/Courses/CourseContainer.vue'
+import { PlusIcon } from '@heroicons/vue/24/outline'
 
 const { getOrganizationList, pickTenant: _pickTennant } = useUserStore()
 

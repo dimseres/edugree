@@ -62,6 +62,11 @@ export const router = createRouter({
                     path: '/courses',
                     name: 'Courses',
                     component: () => import('../views/Courses.vue')
+                },
+                {
+                    path: '/courses/create',
+                    name: 'CourseCreate',
+                    component: () => import('../views/CourseCreate.vue')
                 }
             ],
         },
