@@ -6,6 +6,7 @@ namespace App\Providers;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
+use http\Client\Curl\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,17 @@ class AuthServiceProvider extends ServiceProvider
                 $tokenPayload = JWT::decode($request->bearerToken(), new Key($guid.env("GATEWAY_KEY"), 'HS256'));
                 dd($tokenPayload);
                 dd(base64_decode($tokenPayload));
+            } catch (\Exception $exception) {
+                Log::error($exception);
+                return null;
+            }
+        });
+
+        Auth::viaRequest('testauth', function (Request $request) {
+            try {
+                $email = $request->header('X-REQUEST-ID');
+                $user = \App\Models\User::query()->where('email', $email)->first();
+                return $user;
             } catch (\Exception $exception) {
                 Log::error($exception);
                 return null;
