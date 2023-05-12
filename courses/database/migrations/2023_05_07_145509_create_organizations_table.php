@@ -15,7 +15,7 @@ return new class extends Migration
         if (Schema::getConnection()->getDatabaseName() === env("DB_DATABASE")) {
             if (!Schema::hasTable('organizations')) {
                 Schema::connection('pgsql')->create('organizations', function (Blueprint $table) {
-                    $table->unsignedBigInteger('id');
+                    $table->unsignedBigInteger('id')->primary();
                     $table->unsignedBigInteger('owner_id');
                     $table->string('name');
                     $table->string('domain')->index()->unique();

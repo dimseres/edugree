@@ -108,7 +108,7 @@ func (self *OrganizationRepository) CreateTenantOrganization(organization *model
 		"name":        organization.Title,
 		"domain":      organization.Domain,
 		"tenant_uuid": organization.TenantUuid,
-		"owner": map[string]interface{}{
+		"user": map[string]interface{}{
 			"id":    user.Id,
 			"name":  user.FullName,
 			"email": user.Email,

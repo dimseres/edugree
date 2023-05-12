@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
-Route::middleware('auth.integration')->group(function () {
+Route::middleware('integration')->group(function () {
     Route::post("/organization/create", [\App\Integration\Controllers\OrganizationController::class, 'createOrganization']);
     Route::patch("/organization/update", [\App\Integration\Controllers\OrganizationController::class, 'updateOrganization']);
     Route::delete("/organization/delete", [\App\Integration\Controllers\OrganizationController::class, 'deleteOrganization']);

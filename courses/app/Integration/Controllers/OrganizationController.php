@@ -38,7 +38,9 @@ class OrganizationController
 
             try {
                 DB::beginTransaction();
-                $user = Owner::query()->create($owner);
+                $user = Owner::query()->updateOrCreate([
+                    'id' => $owner['id']
+                ], $owner);
                 $organization = Organization::query()->create([
                     'id' => $orgId,
                     'owner_id' => $user->id,
@@ -49,10 +51,10 @@ class OrganizationController
                 DB::commit();
             } catch (\Exception $exception) {
                 DB::rollBack();
-                return [
+                return response()->json([
                     "error" => true,
                     "message" => $exception->getMessage()
-                ];
+                ], 500);
             }
 
             DB::statement("CREATE DATABASE {$dbName}");
@@ -61,18 +63,18 @@ class OrganizationController
             $service->runSeeders();
             $service->setInitialData($owner, $organization);
 
-            return [
+            return response()->json([
                 "error" => false,
                 "message" => 'created',
-            ];
+            ]);
         } catch (\Exception $exception) {
-            $service->switchConnection("forge");
+            DB::reconnect(env('DB_CONNECTION'));
             DB::statement("DROP DATABASE {$dbName}");
             Organization::query()->where('id', $orgId)->delete();
-            return [
+            return response()->json([
                 "error" => true,
                 "message" => $exception->getMessage()
-            ];
+            ], 500);
         }
 
     }

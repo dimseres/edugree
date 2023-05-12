@@ -13,14 +13,14 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
+    public function run($tenantSeed = false): void
     {
 //        if (getenv("APP_ENV") === "development") {
 //
 //        }
         (new RolesPermissionsSeeder())->run();
 
-        if (getenv("APP_ENV") === "development") {
+        if (getenv("APP_ENV") === "development" && !$tenantSeed) {
             $ownerUser = \App\Models\User::factory()->create([
                 'id' => 1,
                 'name' => 'Test User',

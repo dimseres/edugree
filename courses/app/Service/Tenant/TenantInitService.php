@@ -31,7 +31,7 @@ class TenantInitService
 
     public function runSeeders() {
         $seeder = new DatabaseSeeder();
-        $seeder->run();
+        $seeder->run(true);
     }
 
     public function setInitialData(array $owner) {
