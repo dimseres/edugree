@@ -73,14 +73,17 @@ func (self *MembershipService) GetInviteList(page int, perPage int) (*[]models.O
 	return self.repository.GetInviteList(page, perPage, self.tenantContext.Id)
 }
 
-func (self *MembershipService) JoinOrganization(link string, action string) (*models.OrganizationInvite, error) {
+func (self *MembershipService) JoinOrganization(link string, action string, userId uint) (*models.OrganizationInvite, error) {
 	if action != models.ORG_ACCEPTED.String() || action != models.ORG_ACCEPTED.String() {
 		return nil, errors.New("wrong action")
 	}
-	org, err := self.repository.RejectOrAcceptInvite(self.tenantContext.UserId, link, action)
+	self.repository.StartTransaction()
+	org, err := self.repository.RejectOrAcceptInvite(userId, link, action)
 	if err != nil {
+		self.repository.RollbackTransaction()
 		return nil, err
 	}
+	self.repository.EndTransaction()
 
 	return org, err
 }

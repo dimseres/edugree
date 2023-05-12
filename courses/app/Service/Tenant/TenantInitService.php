@@ -40,4 +40,9 @@ class TenantInitService
         $role = Role::query()->where('name', 'owner')->first();
         $user->assignRole($role);
     }
+
+    public function formatTenantDbName($tenantUuid) {
+        $orgUuid = str_replace('-', '', $tenantUuid);
+        return "tenant_".$orgUuid;
+    }
 }

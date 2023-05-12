@@ -21,4 +21,6 @@ Route::middleware('integration')->group(function () {
     Route::post("/organization/create", [\App\Integration\Controllers\OrganizationController::class, 'createOrganization']);
     Route::patch("/organization/update", [\App\Integration\Controllers\OrganizationController::class, 'updateOrganization']);
     Route::delete("/organization/delete", [\App\Integration\Controllers\OrganizationController::class, 'deleteOrganization']);
+    Route::post("/organization/member/add", [\App\Integration\Controllers\OrganizationController::class, 'createTenantUser']);
+//     Route::delete("/organization/member/add", [\App\Integration\Controllers\OrganizationController::class, 'deleteOrganization']);
 });

@@ -212,7 +212,7 @@ func SetTenant(c echo.Context) error {
 		})
 	}
 
-	repository := repositories.NewMembershipRepository()
+	repository := repositories.NewMembershipRepository(c.Request().Header.Get("X-REQUEST-ID"))
 	service := services.NewMembershipService(&repository, nil)
 
 	token := c.Get("user").(*jwt.Token)

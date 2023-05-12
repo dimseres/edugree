@@ -19,7 +19,7 @@ func InitMembershipRoutes(app *echo.Group) {
 	protected.POST("invites", InviteMembers, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
 	protected.GET("invites/create", GetInvitesConstants, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "create"))
 	protected.GET("invites", GetInviteList, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "read"))
-	protected.GET("invites/:link/join", JoinOrganization, middlewares.TenantGuard)
+	protected.GET("invites/join/:link", JoinOrganization)
 	protected.DELETE("invites/:link", GetInviteList, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "delete"))
 	protected.PATCH("users/:id/role", ChangeMemberRole, middlewares.TenantGuard, middlewares.CasbinGuard("membership", "update"))
 }
@@ -32,7 +32,7 @@ func RemoveMember(c echo.Context) error {
 			"message": "wrong id",
 		})
 	}
-	repository := repositories.NewMembershipRepository()
+	repository := repositories.NewMembershipRepository(c.Request().Header.Get("X-REQUEST-ID"))
 	membershipService := services.NewMembershipService(&repository, &helpers.TenantContext{
 		Id:     c.Get("tenant_id").(uint),
 		Domain: c.Get("tenant").(string),
@@ -90,7 +90,7 @@ func InviteMembers(c echo.Context) error {
 		})
 	}
 
-	repo := repositories.NewMembershipRepository()
+	repo := repositories.NewMembershipRepository(c.Request().Header.Get("X-REQUEST-ID"))
 	service := services.NewMembershipService(&repo, helpers.GetDomainContext(c))
 	_, err = service.InviteMembers(&form)
 	if err != nil {
@@ -106,7 +106,7 @@ func InviteMembers(c echo.Context) error {
 }
 
 func GetInviteList(c echo.Context) error {
-	repo := repositories.NewMembershipRepository()
+	repo := repositories.NewMembershipRepository(c.Request().Header.Get("X-REQUEST-ID"))
 	service := services.NewMembershipService(&repo, helpers.GetDomainContext(c))
 
 	page, _ := strconv.Atoi(c.QueryParams().Get("page"))
@@ -134,19 +134,21 @@ func JoinOrganization(c echo.Context) error {
 			"message": "wrong link",
 		})
 	}
-	repo := repositories.NewMembershipRepository()
-	service := services.NewMembershipService(&repo, helpers.GetDomainContext(c))
+	repo := repositories.NewMembershipRepository(c.Request().Header.Get("X-REQUEST-ID"))
+	service := services.NewMembershipService(&repo, nil)
 
-	res, err := service.JoinOrganization(link, action)
+	claims := helpers.GetJwtClaims(c)
+
+	res, err := service.JoinOrganization(link, action, claims.Data.UserId)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
 			"error":   true,
-			"message": "wrong link",
+			"message": err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"error": true,
+		"error": false,
 		"data":  res,
 	})
 }

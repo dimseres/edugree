@@ -3,8 +3,10 @@
 namespace App\Integration\Controllers;
 
 use App\Integration\Requests\CreateOrganizationRequest;
+use App\Integration\Requests\CreateTenantUserRequest;
 use App\Models\Organization;
 use App\Models\Owner;
+use App\Models\Role;
 use App\Models\User;
 use App\Service\Tenant\TenantInitService;
 use Illuminate\Support\Facades\DB;
@@ -15,12 +17,12 @@ class OrganizationController
     {
         $orgName = $request->input('name');
         $orgDomain = $request->input('domain');
-        $orgUuid = str_replace('-', '', $request->input('tenant_uuid'));
+        $tenantUuid = $request->input('tenant_uuid');
         $orgId = $request->input('id');
 
         $owner = $request->input('user');
 
-        $dbName = "tenant_".$orgUuid;
+        $dbName = $service->formatTenantDbName($tenantUuid);
 
         try {
             $serviceOrganization = Organization::query()
@@ -79,30 +81,39 @@ class OrganizationController
 
     }
 
-    public function createTenantUser(CreateOrganizationRequest $request, TenantInitService $service)
+    public function createTenantUser(CreateTenantUserRequest $request, TenantInitService $service)
     {
         $orgDomain = $request->input('domain');
-        $dbName = "tenant_".$orgDomain;
+        $tenantUuid = $request->input('tenant_uuid');
+        $dbName = $service->formatTenantDbName($tenantUuid);
         $userData = $request->input('user');
 
         $service->switchConnection($dbName);
 //
         try {
             DB::beginTransaction();
-            $user = User::query()->create([
+            $user = User::query()->updateOrCreate([
                 'id' => $userData['id'],
                 'name' => $userData['name'],
                 'email' => $userData['email'],
                 'phone' => $userData['phone'],
             ]);
 
+            $role = Role::query()->where('name', $userData['role'])->first();
+            $user->assignRole($role);
 
+
+            DB::commit();
+            return response()->json([
+                'error' => false,
+                'data' => $user
+            ]);
         } catch (\Exception $exception) {
             DB::rollBack();
-            return [
+            return response()->json([
                 'error' => true,
                 'message' => $exception->getMessage()
-            ];
+            ], 500);
         }
     }
 }

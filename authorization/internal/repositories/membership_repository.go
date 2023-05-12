@@ -5,18 +5,25 @@ import (
 	"authorization/internal/database"
 	"authorization/internal/models"
 	"authorization/internal/transport/rest/forms"
+	"bytes"
+	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
+	"io"
+	"net/http"
+	"os"
+	"time"
 )
 
 type MembershipRepository struct {
 	BaseRepositoryHelpers
 }
 
-func NewMembershipRepository() MembershipRepository {
+func NewMembershipRepository(requestUuid string) MembershipRepository {
 	return MembershipRepository{
 		BaseRepositoryHelpers{
-			db: database.GetConnection(),
+			db:          database.GetConnection(),
+			requestUuid: requestUuid,
 		},
 	}
 }
@@ -193,7 +200,7 @@ func (self *MembershipRepository) GetInviteList(page int, perPage int, orgId uin
 	return &invites, nil
 }
 
-func (self *MembershipRepository) AddUserMemberShip(userId uint, roleId uint, organizationId uint) (*models.Membership, error) {
+func (self *MembershipRepository) AddUserMemberShip(userId uint, organizationId uint, roleId uint) (*models.Membership, error) {
 	membership := models.Membership{
 		UserId:         userId,
 		OrganizationId: organizationId,
@@ -218,23 +225,27 @@ func (self *MembershipRepository) RejectOrAcceptInvite(userId uint, link string,
 	}
 
 	var invite models.OrganizationInvite
-	res := self.db.Where("link = ? AND user_id = ?", link, userId).Find(&invite)
-	if res.Error != nil {
+	res := self.db.Where("link = ? AND user_id = ? AND status = ?", link, userId, models.ORG_INIVITED).Joins("User").Joins("Organization").Joins("Role").Find(&invite)
+	if res.Error != nil || invite.Id == 0 {
+		if invite.Id == 0 {
+			return nil, errors.New("link not found")
+		}
 		return nil, res.Error
 	}
 
-	self.StartTransaction()
 	res = self.db.Model(&invite).Update("status", status)
 	if res.Error != nil {
-		self.RollbackTransaction()
 		return nil, res.Error
 	}
 
 	if newMember {
-		memberRepo := NewMembershipRepository()
-		_, err := memberRepo.AddUserMemberShip(invite.UserId, invite.OrganizationId, invite.RoleId)
+		_, err := self.AddUserMemberShip(invite.UserId, invite.OrganizationId, invite.RoleId)
 		if err != nil {
-			self.RollbackTransaction()
+			return nil, err
+		}
+
+		err = self.CreateTenantMember(&invite.Organization, &invite.User, invite.Role.Slug)
+		if err != nil {
 			return nil, err
 		}
 
@@ -244,11 +255,71 @@ func (self *MembershipRepository) RejectOrAcceptInvite(userId uint, link string,
 		})
 
 		if res.Error != nil {
-			self.RollbackTransaction()
 			return nil, err
 		}
 	}
-	self.EndTransaction()
 
 	return &invite, nil
+}
+
+func (self *MembershipRepository) CreateTenantMember(organization *models.Organization, user *models.User, role string) error {
+	orgData := map[string]interface{}{
+		"domain":      organization.Domain,
+		"tenant_uuid": organization.TenantUuid,
+		"user": map[string]interface{}{
+			"id":    user.Id,
+			"name":  user.FullName,
+			"email": user.Email,
+			"phone": user.Phone,
+			"role":  role,
+		},
+	}
+
+	postBody, _ := json.Marshal(orgData)
+	responseBody := bytes.NewBuffer(postBody)
+
+	url := os.Getenv("COURSE_URL") + "/organization/member/add"
+	if self.requestUuid == "" {
+		return errors.New("empty request-id")
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, responseBody)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("X-ACCESS-KEY", os.Getenv("GATEWAY_KEY"))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-REQUEST-ID", self.requestUuid)
+
+	client := &http.Client{
+		Timeout: time.Second * 30,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	responseStructure := struct {
+		Error   bool   `json:"error"`
+		Message string `json:"message"`
+	}{}
+	if resp.StatusCode >= 400 {
+		body, err := io.ReadAll(resp.Body)
+		json.Unmarshal(body, &responseStructure)
+
+		if err != nil {
+			return err
+		}
+
+		if responseStructure.Error && responseStructure.Message != "" {
+			return errors.New(responseStructure.Message)
+		}
+
+		return errors.New(resp.Status)
+	}
+
+	return nil
 }
