@@ -84,14 +84,25 @@ func InviteMembers(c echo.Context) error {
 
 	err := helpers.ValidateJsonForm(bodyReader, &form)
 	if err != nil {
-		return err
+		return c.JSON(500, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
 	}
 
 	repo := repositories.NewMembershipRepository()
 	service := services.NewMembershipService(&repo, helpers.GetDomainContext(c))
 	_, err = service.InviteMembers(&form)
-
-	return nil
+	if err != nil {
+		return c.JSON(500, echo.Map{
+			"error":   true,
+			"message": err.Error(),
+		})
+	}
+	return c.JSON(200, echo.Map{
+		"error":   false,
+		"message": "ok",
+	})
 }
 
 func GetInviteList(c echo.Context) error {

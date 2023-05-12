@@ -74,11 +74,33 @@ func (self *MembershipRepository) InviteMembers(members []forms.MemberInviteForm
 	lim := 100
 	var chunk []inviteMemberPayloadDto
 	var _roles []models.Role
-	res := self.db.Where("slug IN ?", roles).Find(&_roles)
+	//var organization models.Organization
+	//res := self.db.Find(&organization, organizationId)
+	//if res.Error != nil {
+	//	return res.Error
+	//}
+
+	var membership []models.Membership
+	res := self.db.Joins("User").Where("organization_id = ?", organizationId).Find(&membership)
+	if res.Error != nil {
+		return res.Error
+	}
+
+	membersSet := make(map[string]bool)
+	for _, member := range membership {
+		membersSet[member.User.Email] = true
+	}
+
+	res = self.db.Where("slug IN ?", roles).Find(&_roles)
+
 	if res.Error != nil {
 		return res.Error
 	}
 	for idx, member := range members {
+		inList := membersSet[member.Email]
+		if inList {
+			continue
+		}
 		var memberRoleId uint = 0
 		for _, role := range _roles {
 			if role.Slug == member.Role {
