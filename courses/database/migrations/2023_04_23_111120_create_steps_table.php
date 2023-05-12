@@ -18,8 +18,8 @@ return new class extends Migration
                 $table->string('title');
                 $table->text('description')->nullable();
                 $table->foreignId('unit_id')->constrained('units');
-                $table->integer('position')->nullable();
-                $table->morphs('entity');
+                $table->integer('position');
+                $table->nullableMorphs('entity');
                 $table->timestamps();
             });
         }
