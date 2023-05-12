@@ -9,6 +9,8 @@ class Step extends Model
 {
     use HasFactory;
     protected $connection = 'tenant';
+
+    protected $guarded = [];
     public function unit() {
         $this->belongsTo(Unit::class);
     }

@@ -25,4 +25,5 @@ Route::middleware('auth:testauth')->group(function () {
     Route::resource("courses", \App\Http\Controllers\CourseController::class);
     Route::resource("courses.modules", \App\Http\Controllers\ModuleController::class);
     Route::resource("modules.units", \App\Http\Controllers\UnitController::class);
+    Route::resource("units.steps", \App\Http\Controllers\StepController::class);
 });
