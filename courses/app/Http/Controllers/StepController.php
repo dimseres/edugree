@@ -100,9 +100,9 @@ class StepController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Unit $unit)
+    public function show(int $unit, Step $step)
     {
-        return $unit->load(['steps']);
+        return $step->load(['entity']);
     }
 
     /**

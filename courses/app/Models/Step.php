@@ -12,10 +12,10 @@ class Step extends Model
 
     protected $guarded = [];
     public function unit() {
-        $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class);
     }
 
-    public function content() {
-        $this->morphTo();
+    public function entity() {
+        return $this->morphTo();
     }
 }

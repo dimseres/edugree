@@ -9,6 +9,7 @@ class Knowledge extends Model
 {
     use HasFactory;
     protected $connection = 'tenant';
+    protected $guarded = [];
     public function module() {
         $this->belongsTo(Module::class);
     }
