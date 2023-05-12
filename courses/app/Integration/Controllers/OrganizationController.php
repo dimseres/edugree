@@ -18,7 +18,7 @@ class OrganizationController
         $orgUuid = str_replace('-', '', $request->input('tenant_uuid'));
         $orgId = $request->input('id');
 
-        $owner = $request->input('owner');
+        $owner = $request->input('user');
 
         $dbName = "tenant_".$orgUuid;
 

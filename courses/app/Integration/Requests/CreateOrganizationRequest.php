@@ -19,11 +19,12 @@ class CreateOrganizationRequest extends FormRequest
             'name' => ['required'],
             'domain' => ['required'],
             'tenant_uuid' => ['required'],
-            'owner' => ['required', 'array'],
-            'owner.id' => ['required', 'numeric'],
-            'owner.name' => ['required','string'],
-            'owner.email' => ['required', 'email'],
-            'owner.phone' => ['required'],
+            'user' => ['required', 'array'],
+            'user.id' => ['required', 'numeric'],
+            'user.name' => ['required','string'],
+            'user.email' => ['required', 'email'],
+            'user.phone' => ['required'],
+            'user.avatar' => ['string'],
         ];
     }
 }
