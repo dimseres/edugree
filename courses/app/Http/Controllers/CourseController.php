@@ -7,6 +7,8 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class CourseController extends Controller
 {
@@ -48,6 +50,7 @@ class CourseController extends Controller
     public function store(CreateCourseRequest $request)
     {
         try {
+            $cover = $request->hasFile('cover');
             $courseName = $request->input('name');
             $courseDescription = $request->input('description');
             $course = Course::query()->where('title', $courseName)->first();
@@ -63,6 +66,11 @@ class CourseController extends Controller
                 'title' => $courseName,
                 'description' => $courseDescription
             ]);
+
+            if ($cover) {
+                $path = Storage::disk('public')->put('images/covers', $request->file('cover'));
+                $course->cover = URL::asset('storage/'.$path);
+            }
 
             $course->userCourses()->attach(Auth::user());
             $course->courseAuthors()->attach(Auth::user(), ['owner_id' => Auth::user()->getAuthIdentifier()]);
@@ -105,14 +113,30 @@ class CourseController extends Controller
      */
     public function update(CreateCourseRequest $request, string $id)
     {
-        $courseName = $request->input('name');
-        $courseDescription = $request->input('description');
-        $course = Course::query()->where('id', $id)->with(['modules', 'modules.units'])->firstOrFail();
+        try {
+            $cover = $request->hasFile('cover');
+            $courseName = $request->input('name');
+            $courseDescription = $request->input('description');
+            $course = Course::query()->where('id', $id)->with(['modules', 'modules.units'])->firstOrFail();
 
-        $course->title = $courseName;
-        $course->description = $courseDescription;
+            if ($cover) {
+                $path = Storage::disk('public')->put('images/covers', $request->file('cover'));
+                $course->cover = URL::asset('storage/'.$path);
+            }
 
-        return $course;
+            $course->title = $courseName ?? $course->title;
+            $course->description = $courseDescription ?? $course->description;
+
+            $course->save();
+
+            return $course;
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => true,
+                'message' => $exception->getMessage()
+            ]);
+        }
+
     }
 
     /**
