@@ -278,7 +278,7 @@ func (self *MembershipRepository) CreateTenantMember(organization *models.Organi
 	postBody, _ := json.Marshal(orgData)
 	responseBody := bytes.NewBuffer(postBody)
 
-	url := os.Getenv("COURSE_URL") + "/organization/member/add"
+	url := os.Getenv("COURSE_URL") + "/integration/organization/member/add"
 	if self.requestUuid == "" {
 		return errors.New("empty request-id")
 	}

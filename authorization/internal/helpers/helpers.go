@@ -121,6 +121,7 @@ func GetServiceJwtToken(commonToken *JwtAuthClaims, domain string, requestUuid s
 		if *member.Organization == domain {
 			memb.Services = member.Services
 			memb.Organization = member.Organization
+			memb.TenantUuid = member.TenantUuid
 			memb.Role = member.Role
 			memb.OrganizationId = member.OrganizationId
 		}

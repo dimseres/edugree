@@ -119,7 +119,7 @@ func (self *OrganizationRepository) CreateTenantOrganization(organization *model
 	postBody, _ := json.Marshal(orgData)
 	responseBody := bytes.NewBuffer(postBody)
 
-	url := os.Getenv("COURSE_URL") + "/organization/create"
+	url := os.Getenv("COURSE_URL") + "/integration/organization/create"
 	if self.requestUuid == "" {
 		return errors.New("empty request-id")
 	}

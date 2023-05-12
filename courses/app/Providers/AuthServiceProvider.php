@@ -3,10 +3,11 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Service\Tenant\TenantInitService;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
-use http\Client\Curl\User;
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,9 +34,12 @@ class AuthServiceProvider extends ServiceProvider
         Auth::viaRequest('jwt', function (Request $request) {
             try {
                 $guid = $request->header('X-REQUEST-ID');
+                $service = new TenantInitService();
                 $tokenPayload = JWT::decode($request->bearerToken(), new Key($guid.env("GATEWAY_KEY"), 'HS256'));
-                dd($tokenPayload);
-                dd(base64_decode($tokenPayload));
+                $service->switchConnection($service->formatTenantDbName($tokenPayload->data->membership->tenant_uuid));
+                $user = User::query()->find($tokenPayload->data->user_id);
+                return $user;
+
             } catch (\Exception $exception) {
                 Log::error($exception);
                 return null;

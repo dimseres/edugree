@@ -41,7 +41,7 @@ func InitRoutes(app *echo.Group) {
 		Skipper:  nil,
 		Balancer: middleware.NewRoundRobinBalancer(coursesUrls),
 		Rewrite: map[string]string{
-			"/api/courses*": "/api/v1/$1",
+			"/api/courses/*": "/api/v1/$1",
 		},
 	}
 	tenant.Group("/courses", middleware.ProxyWithConfig(courseProxyConf))

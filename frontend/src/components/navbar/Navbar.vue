@@ -112,7 +112,7 @@ const _navigation = [
         href: '/courses',
         current: false,
         icon: AcademicCapIcon,
-        roles: ['owner', 'administrator', 'manager'],
+        roles: ['owner', 'administrator', 'manager', 'student'],
     },
 ]
 

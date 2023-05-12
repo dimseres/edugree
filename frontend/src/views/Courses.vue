@@ -35,12 +35,24 @@
 
 <script lang='ts' setup>
 import { useUserStore } from '../store/user.store'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import CourseContainer from '../components/Courses/CourseContainer.vue'
 import { PlusIcon } from '@heroicons/vue/24/outline'
+import { getMyCourses } from '../services/api/courses.api'
 
 const { getOrganizationList, pickTenant: _pickTennant } = useUserStore()
 
+const fetchData = async () => {
+    const data = await getMyCourses()
+    if (data) {
+        courses.value = data
+    }
+}
+
 const courses = ref()
+
+onMounted(async () => {
+    await fetchData()
+})
 
 </script>
