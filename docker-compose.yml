@@ -12,6 +12,46 @@ services:
 #    networks:
 #      - app_network
 
+
+  nginx-backend:
+    image: nginx:1.19-alpine
+    restart: always
+    volumes:
+      - ./courses:/var/www/courses
+      - ./devops/nginx/default.conf:/etc/nginx/templates/default.conf.template
+      - ./courses/storage/app/public:/var/www/courses/public/storage
+    environment:
+      - "PHP_CONTAINER_NAME=host.docker.internal"
+      - "RELATIVE_ROOT_PATH=courses/public"
+    ports:
+      - 80:80
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.rule=((Host(`${DOMAIN}`) || Host(`${DOMAIN_KZ}`) || Host(`${DOMAIN_CRM}`)) && (PathPrefix(`/api`) || PathPrefix(`/crm`) || PathPrefix(`/storage`)))"
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.middlewares=${COMPOSE_PROJECT_NAME}-nginx-https-only"
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.rule=((Host(`${DOMAIN}`) || Host(`${DOMAIN_KZ}`) || Host(`${DOMAIN_CRM}`)) && (PathPrefix(`/api`) || PathPrefix(`/crm`) || PathPrefix(`/storage`)))"
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.entrypoints=websecure"
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.tls.certresolver=myresolver"
+#      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-nginx-https-only.redirectscheme.scheme=https"
+#      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-nginx-https-only.redirectscheme.permanent=true"
+    networks:
+      - default
+
+  php:
+    build:
+      context: ./devops/php
+      args:
+        - INI_NAME=php.ini-development
+    restart: always
+    user: "82:82"
+    volumes:
+      - ./courses:/var/www/courses
+    working_dir: "/var/www/courses"
+    networks:
+      - default
+    ports:
+      - 9000:9000
+
   prometheus:
     image: prom/prometheus:v2.24.0
     volumes:

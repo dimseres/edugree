@@ -16,6 +16,7 @@ return new class extends Migration
             Schema::connection('tenant')->create('tasks', function (Blueprint $table) {
                 $table->id();
                 $table->string('title');
+                $table->integer('cost')->default(1);
                 $table->text('description')->nullable();
                 $table->morphs('entity');
                 $table->timestamps();

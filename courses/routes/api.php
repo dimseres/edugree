@@ -17,14 +17,15 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:testauth')->group(function () {
 //    Route::get("/", function () {
 //        return [];
 //    });
-    Route::get("/courses/my", [\App\Http\Controllers\CourseController::class, 'userCourses']);
-    Route::resource("courses", \App\Http\Controllers\CourseController::class);
-    Route::resource("courses.modules", \App\Http\Controllers\ModuleController::class);
-    Route::resource("modules.units", \App\Http\Controllers\UnitController::class);
-    Route::resource("units.steps", \App\Http\Controllers\StepController::class);
+    Route::get("/courses/my", [\App\Http\Controllers\CoursePublicController::class, 'userCourses']);
+    Route::post("/courses/{course_id}/join", [\App\Http\Controllers\CoursePublicController::class, 'userCourses']);
+    Route::resource("edit/courses", \App\Http\Controllers\CourseEditController::class);
+    Route::resource("edit/courses.modules", \App\Http\Controllers\ModuleEditController::class);
+    Route::resource("edit/modules.units", \App\Http\Controllers\UnitEditController::class);
+    Route::resource("edit/units.steps", \App\Http\Controllers\StepEditController::class);
     Route::resource("knowledge", \App\Http\Controllers\KnowledgeController::class);
 });

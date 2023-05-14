@@ -14,7 +14,7 @@ class Course extends Model
     protected $guarded = [];
 
     const COURSE_EDITED = 1;
-    const COURSE_ACTIVE = 2;
+    const COURSE_PUBLISHED = 2;
     public function modules() {
         return $this->hasMany(Module::class);
     }

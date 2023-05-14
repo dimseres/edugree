@@ -5,21 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Courses\CreateModuleRequest;
 use App\Http\Requests\Courses\CreateUnitRequest;
 use App\Models\Course;
-use App\Models\Module;
+use App\Models\Step;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Exception;
 use PhpParser\Node\Expr\AssignOp\Mod;
 
-class UnitController extends Controller
+class StepEditController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Module $module)
+    public function index(Unit $unit)
     {
-        return Unit::query()->where('module_id', $module->id)->with('steps')->get();
+        return Step::query()->where('unit_id', $unit->id)->with('steps')->get();
     }
 
     /**
@@ -33,36 +33,36 @@ class UnitController extends Controller
 
     private function incrementPositions(int $insertedPos, int $moduleId)
     {
-        $units = Unit::query()
+        $steps = Step::query()
             ->where("position", '>=', $insertedPos)
-            ->where("module_id", $moduleId)->get();
+            ->where("unit_id", $moduleId)->get();
 
-        foreach ($units as $unit) {
-            $unit->position += 1;
-            $unit->save();
+        foreach ($steps as $step) {
+            $step->position += 1;
+            $step->save();
         }
 
-        return $units;
+        return $steps;
     }
 
     private function decrementPositions(int $insertedPos, int $moduleId)
     {
-        $units = Unit::query()
+        $steps = Step::query()
             ->where("position", '>=', $insertedPos)
-            ->where("module_id", $moduleId)->get();
+            ->where("unit_id", $moduleId)->get();
 
-        foreach ($units as $unit) {
-            $unit->position -= 1;
-            $unit->save();
+        foreach ($steps as $step) {
+            $step->position -= 1;
+            $step->save();
         }
 
-        return $units;
+        return $steps;
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateUnitRequest $request, Module $module)
+    public function store(CreateUnitRequest $request, Unit $unit)
     {
         try {
             $position = $request->input('position');
@@ -70,7 +70,7 @@ class UnitController extends Controller
             $description = $request->input('description');
             DB::beginTransaction();
 
-            $maxPos = Unit::query()->max('position');
+            $maxPos = Step::query()->max('position');
 
             $position = $position <= 0 ? 1 : $position;
 
@@ -78,17 +78,17 @@ class UnitController extends Controller
                 $position = $maxPos + 1;
             }
 
-            $units = $this->incrementPositions($position, $module->id);
+            $units = $this->incrementPositions($position, $unit->id);
 
-            $unit = Unit::query()->create([
+            $step = Step::query()->create([
                 'title' => $title,
-                'module_id' => $module->id,
+                'unit_id' => $unit->id,
                 'description' => $description,
                 'position' => count($units) == 0 && $position <= 1 ? 1 : $position
             ]);
 
             DB::commit();
-            return $unit;
+            return $step;
         } catch (\Exception $exception) {
             return [
                 "error" => true,
@@ -100,15 +100,15 @@ class UnitController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Unit $unit)
+    public function show(int $unit, Step $step)
     {
-        return $unit->load(['steps']);
+        return $step->load(['entity']);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Course $course, Module $module)
+    public function edit(Course $course, Unit $module)
     {
         return null;
     }
@@ -116,7 +116,7 @@ class UnitController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CreateUnitRequest $request, Module $module, Unit $unit)
+    public function update(CreateUnitRequest $request, Unit $unit, Step $step)
     {
         try {
             $position = $request->input('position');
@@ -124,7 +124,7 @@ class UnitController extends Controller
             $description = $request->input('description');
 
             $position = $position <= 0 ? 1 : $position;
-            $maxPos = Module::query()->count('id');
+            $maxPos = Step::query()->count('id');
 
             if ($position > $maxPos) {
                 $position = $maxPos;
@@ -132,21 +132,21 @@ class UnitController extends Controller
 
             DB::beginTransaction();
 
-            if ($unit->position !== $position) {
-                $replaced = Unit::query()->where('module_id', $module->id)->where('position', $position)->update([
-                    'position' => $unit->position
+            if ($step->position !== $position) {
+                $replaced = Step::query()->where('unit_id', $unit->id)->where('position', $position)->update([
+                    'position' => $step->position
                 ]);
             }
 
-            $unit->update([
+            $step->update([
                 'title' => $title,
-                'module_id' => $module->id,
+                'unit_id' => $unit->id,
                 'description' => $description,
                 'position' => $position,
             ]);
 
             DB::commit();
-            return $unit;
+            return $step;
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
@@ -159,16 +159,16 @@ class UnitController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Module $module, Unit $unit)
+    public function destroy(Unit $unit, Step $step)
     {
         try {
             DB::beginTransaction();
 
-            $unit->delete();
-            $units = Unit::query()->where('module_id', $module->id)->orderBy('position')->get();
-            foreach ($units as $idx => $unit) {
-                $unit->position = $idx + 1;
-                $unit->save();
+            $step->delete();
+            $steps = Step::query()->where('unit_id', $unit->id)->orderBy('position')->get();
+            foreach ($steps as $idx => $step) {
+                $step->position = $idx + 1;
+                $step->save();
             }
             DB::commit();
             return response()->json([

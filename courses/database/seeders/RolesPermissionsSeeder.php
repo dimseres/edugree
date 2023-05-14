@@ -17,23 +17,23 @@ class RolesPermissionsSeeder extends Seeder
     public function run(): void
     {
         $owner = Role::create([
-            'name' => 'owner',
+            'name' => Role::ROLE_OWNER,
             'guard_name' => 'api'
         ]);
         $admin = Role::create([
-            'name' => 'administrator',
+            'name' => Role::ROLE_ADMINISTRATOR,
             'guard_name' => 'api'
         ]);
         $moderator = Role::create([
-            'name' => 'moderator',
+            'name' => Role::ROLE_MODERATOR,
             'guard_name' => 'api'
         ]);
         $teacher = Role::create([
-            'name' => 'teacher',
+            'name' => Role::ROLE_TEACHER,
             'guard_name' => 'api'
         ]);
         $student = Role::create([
-            'name' => 'student',
+            'name' => Role::ROLE_STUDENT,
             'guard_name' => 'api'
         ]);
         Permission::query()->insert([

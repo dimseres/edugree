@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('course_authors', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId("user_id")->constrained('users');
-            $table->foreignId("course_id")->constrained('courses');
-            $table->foreignId("owner_id")->constrained('users');
-            $table->timestamps();
-        });
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::connection('tenant')->create('course_authors', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId("user_id")->constrained('users');
+                $table->foreignId("course_id")->constrained('courses');
+                $table->foreignId("owner_id")->constrained('users');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -25,6 +27,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('course_authors');
+        if (Schema::getConnection()->getDatabaseName() !== env("DB_DATABASE")) {
+            Schema::dropIfExists('course_authors');
+        }
     }
 };

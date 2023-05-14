@@ -37,3 +37,20 @@ export async function getMyCourses() {
         toasted.error(e.message)
     }
 }
+
+export async function createCourses() {
+    try {
+        const {data} = await axios.get("courses/courses/my")
+        if (data.error) {
+            toasted.error(data.message)
+            return null
+        }
+        return data;
+    } catch (e: any) {
+        if (e.response && e.response.data?.error) {
+            toasted.error(e.response.data.error)
+            return null
+        }
+        toasted.error(e.message)
+    }
+}

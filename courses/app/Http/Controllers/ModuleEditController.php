@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Exception;
 use PhpParser\Node\Expr\AssignOp\Mod;
 
-class ModuleController extends Controller
+class ModuleEditController extends Controller
 {
     /**
      * Display a listing of the resource.

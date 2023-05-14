@@ -35,6 +35,9 @@ class AuthServiceProvider extends ServiceProvider
             try {
                 $guid = $request->header('X-REQUEST-ID');
                 $service = new TenantInitService();
+                if (!$request->bearerToken() && !$guid) {
+                    throw new \Exception("token missed");
+                }
                 $tokenPayload = JWT::decode($request->bearerToken(), new Key($guid.env("GATEWAY_KEY"), 'HS256'));
                 $service->switchConnection($service->formatTenantDbName($tokenPayload->data->membership->tenant_uuid));
                 $user = User::query()->find($tokenPayload->data->user_id);
