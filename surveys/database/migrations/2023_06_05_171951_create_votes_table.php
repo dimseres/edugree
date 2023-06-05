@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->unique()->primary();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->rememberToken();
+        Schema::create('votes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('question_id')->constrained('questions');
+            $table->foreignId('answer_id')->nullable()->constrained('answers');
+            $table->string('answer')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('votes');
     }
 };
