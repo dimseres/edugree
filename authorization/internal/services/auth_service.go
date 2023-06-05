@@ -64,40 +64,42 @@ func (self *AuthService) CreateJwtToken(user *models.User, domain string) (error
 
 	var memberships []helpers.JwtMembershipData
 
-	for _, member := range *user.Membership {
-		var allowedServices []string
+	if user.Membership != nil {
+		for _, member := range *user.Membership {
+			var allowedServices []string
 
-		if member.Organization.Services != nil {
-			for _, member := range *member.Organization.Services {
-				allowedServices = append(allowedServices, member.Slug)
+			if member.Organization.Services != nil {
+				for _, member := range *member.Organization.Services {
+					allowedServices = append(allowedServices, member.Slug)
+				}
 			}
-		}
 
-		var membershipRole helpers.JwtMembershipData
+			var membershipRole helpers.JwtMembershipData
 
-		if member.Role != nil {
-			membershipRole.Role = &member.Role.Slug
-		}
-
-		if member.Organization != nil {
-			membershipRole.Organization = &member.Organization.Domain
-			membershipRole.OrganizationId = &member.OrganizationId
-			membershipRole.TenantUuid = &member.Organization.TenantUuid
-			err := self.repository.SetOrganizationCache(member.Organization)
-			if err != nil {
-				return errors.New("cant set organization cache"), ""
+			if member.Role != nil {
+				membershipRole.Role = &member.Role.Slug
 			}
-		}
 
-		if member.Organization != nil {
-			membershipRole.Organization = &member.Organization.Domain
-		}
+			if member.Organization != nil {
+				membershipRole.Organization = &member.Organization.Domain
+				membershipRole.OrganizationId = &member.OrganizationId
+				membershipRole.TenantUuid = &member.Organization.TenantUuid
+				err := self.repository.SetOrganizationCache(member.Organization)
+				if err != nil {
+					return errors.New("cant set organization cache"), ""
+				}
+			}
 
-		if len(allowedServices) > 0 {
-			membershipRole.Services = &allowedServices
-		}
+			if member.Organization != nil {
+				membershipRole.Organization = &member.Organization.Domain
+			}
 
-		memberships = append(memberships, membershipRole)
+			if len(allowedServices) > 0 {
+				membershipRole.Services = &allowedServices
+			}
+
+			memberships = append(memberships, membershipRole)
+		}
 	}
 
 	jwtPayload.UserId = user.Id
