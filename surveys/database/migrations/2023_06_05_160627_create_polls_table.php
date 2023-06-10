@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('slug');
             $table->boolean('published')->default(0);
+            $table->boolean('type')->default(1);
 
             $table->timestamps();
             $table->softDeletes();

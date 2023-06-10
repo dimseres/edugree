@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:testauth')->group(function () {
+   Route::post('/polls/{poll}', [\App\Api\Controllers\PollController::class, 'updatePoll']);
+   Route::get('/polls/{poll}', [\App\Api\Controllers\PollController::class, 'updatePoll']);
+   Route::delete('/polls/{poll}', [\App\Api\Controllers\PollController::class, 'deletePoll']);
+   Route::patch('/polls/{poll}/restore', [\App\Api\Controllers\PollController::class, 'restorePoll']);
+
+   Route::resource('/polls.questions', \App\Api\Controllers\QuestionController::class);
 });

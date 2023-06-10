@@ -5,6 +5,7 @@ namespace App\Providers;
 // use Illuminate\Support\Facades\Gate;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
@@ -33,6 +34,17 @@ class AuthServiceProvider extends ServiceProvider
                 $user = User::query()->find($tokenPayload->data->user_id);
                 return $user;
 
+            } catch (\Exception $exception) {
+                Log::error($exception);
+                return null;
+            }
+        });
+
+        Auth::viaRequest('testauth', function (Request $request) {
+            try {
+                $email = $request->header('X-REQUEST-ID');
+                $user = \App\Models\User::query()->where('email', $email)->first();
+                return $user;
             } catch (\Exception $exception) {
                 Log::error($exception);
                 return null;

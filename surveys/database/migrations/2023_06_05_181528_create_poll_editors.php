@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pool_editors', function (Blueprint $table) {
+        Schema::create('poll_editors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('poll_id')->constrained('polls');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pool_editors');
+        Schema::dropIfExists('poll_editors');
     }
 };
