@@ -54,7 +54,7 @@ func (self *EventService) FireEvent(eventType string, payload interface{}) bool 
 	for _, queueName := range amqp.EventQueueMap[eventType] {
 		self.client.SendMessage(&amqp.QueueConfig{
 			Name:         queueName,
-			Durable:      false,
+			Durable:      true,
 			UnusedDelete: false,
 			Exclusive:    false,
 			NoWait:       false,

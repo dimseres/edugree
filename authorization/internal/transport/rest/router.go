@@ -23,6 +23,7 @@ func InitRoutes(app *echo.Group) {
 	tenant.Use(middlewares.TenantGuard)
 
 	courseUrl, err := url.Parse(os.Getenv("COURSE_URL"))
+	surveyUrl, err := url.Parse(os.Getenv("SURVEY_URL"))
 	frontendUrl, err := url.Parse("http://localhost:5173")
 	if err != nil {
 		panic(err)
@@ -37,6 +38,11 @@ func InitRoutes(app *echo.Group) {
 			URL: frontendUrl,
 		},
 	}
+	surveysUrls := []*middleware.ProxyTarget{
+		{
+			URL: surveyUrl,
+		},
+	}
 	courseProxyConf := middleware.ProxyConfig{
 		Skipper:  nil,
 		Balancer: middleware.NewRoundRobinBalancer(coursesUrls),
@@ -44,7 +50,15 @@ func InitRoutes(app *echo.Group) {
 			"/api/courses/*": "/api/v1/$1",
 		},
 	}
+	surveyProxyConf := middleware.ProxyConfig{
+		Skipper:  nil,
+		Balancer: middleware.NewRoundRobinBalancer(surveysUrls),
+		Rewrite: map[string]string{
+			"/api/surveys/*": "/api/$1",
+		},
+	}
 	tenant.Group("/courses", middleware.ProxyWithConfig(courseProxyConf))
+	tenant.Group("/surveys", middleware.ProxyWithConfig(surveyProxyConf))
 	app.Group("/*", middleware.ProxyWithConfig(middleware.ProxyConfig{
 		Skipper:  nil,
 		Balancer: middleware.NewRoundRobinBalancer(frontendUrls),
