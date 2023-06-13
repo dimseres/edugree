@@ -1,10 +1,10 @@
 package main
 
 import (
+	"authorization/config"
 	"authorization/internal/transport/amqp"
 	"fmt"
 	"github.com/joho/godotenv"
-	"os"
 )
 
 func main() {
@@ -14,9 +14,9 @@ func main() {
 	}
 
 	fmt.Println("Start Queue Listener")
-	login := os.Getenv("RABBIT_LOGIN")
-	password := os.Getenv("RABBIT_PASSWORD")
-	host := os.Getenv("RABBIT_HOST")
+	login := config.GetConfig("RABBIT_LOGIN")
+	password := config.GetConfig("RABBIT_PASSWORD")
+	host := config.GetConfig("RABBIT_HOST")
 
 	//client, err := amqp.NewAmqpClient(&amqp.Config{
 	//	Login:    login,

@@ -6,15 +6,14 @@ import (
 	"authorization/internal/database"
 	"authorization/internal/transport/rest"
 	"fmt"
-	"github.com/joho/godotenv"
-	"os"
 )
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		panic(err)
-	}
+	config.InitConfigs()
+	//err := godotenv.Load()
+	//if err != nil {
+	//	panic(err)
+	//}
 }
 
 // start service
@@ -23,8 +22,8 @@ func main() {
 	defer file.Close()
 	connection := database.InitPgConnection()
 	database.InitRedisConnection(&database.RedisConnectionConfig{
-		Host:     os.Getenv("REDIS_HOST"),
-		Password: os.Getenv("REDIS_PASSWORD"),
+		Host:     config.GetConfig("REDIS_HOST"),
+		Password: config.GetConfig("REDIS_PASSWORD"),
 	})
 	casbin2.InitCasbin(connection)
 

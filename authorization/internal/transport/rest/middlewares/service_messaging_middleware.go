@@ -1,14 +1,14 @@
 package middlewares
 
 import (
+	"authorization/config"
 	"github.com/labstack/echo/v4"
-	"os"
 )
 
 func requestValidator(service string, token string) bool {
 	switch service {
 	case "courses":
-		return os.Getenv("COURSE_SERVICE_KEY") == token
+		return config.GetConfig("COURSE_SERVICE_KEY") == token
 	}
 	return false
 }

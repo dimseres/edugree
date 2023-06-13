@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"authorization/config"
 	"authorization/internal/constants"
 	"authorization/internal/transport/rest/forms"
 	"encoding/hex"
@@ -23,7 +24,7 @@ func Init() {
 }
 
 func CreatePasswordHash(password string) (string, error) {
-	firstSalt, err := scrypt.Key([]byte(password), []byte(os.Getenv("SALT")), 2048, 4, 2, 32)
+	firstSalt, err := scrypt.Key([]byte(password), []byte(config.GetConfig("SALT")), 2048, 4, 2, 32)
 	passwordHash, err := scrypt.Key([]byte(password), firstSalt, 16384, 8, 1, 32)
 	if err != nil {
 		return "", err
@@ -90,7 +91,7 @@ func (e *JwtCreateError) Error() string {
 }
 
 func CreateAuthToken(payload JwtData) (error, string) {
-	lifetime, err := strconv.Atoi(os.Getenv("JWT_LIFETIME"))
+	lifetime, err := strconv.Atoi(config.GetConfig("JWT_LIFETIME"))
 
 	if err != nil {
 		return &JwtCreateError{Message: err.Error()}, ""
@@ -104,7 +105,7 @@ func CreateAuthToken(payload JwtData) (error, string) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	t, err := token.SignedString([]byte(config.GetConfig("JWT_SECRET")))
 
 	if err != nil {
 		return err, ""
@@ -140,7 +141,7 @@ func GetServiceJwtToken(commonToken *JwtAuthClaims, domain string, requestUuid s
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, err := token.SignedString([]byte(requestUuid + os.Getenv("GATEWAY_KEY")))
+	t, err := token.SignedString([]byte(requestUuid + config.GetConfig("GATEWAY_KEY")))
 	if err != nil {
 		return "", nil
 	}
@@ -303,7 +304,7 @@ func GetPublicUploadPath() string {
 }
 
 func MakeAbsoluteStaticUrl(path string) string {
-	return os.Getenv("APP_URL") + "/public/" + path
+	return config.GetConfig("APP_URL") + "/public/" + path
 }
 
 func CreateFolder(dirname string) error {

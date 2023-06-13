@@ -1,12 +1,12 @@
 package services
 
 import (
+	"authorization/config"
 	"authorization/internal/constants"
 	"authorization/internal/models"
 	"authorization/internal/transport/amqp"
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 type IEventClient interface {
@@ -24,9 +24,9 @@ type EventDTO struct {
 
 func NewEventService() EventService {
 	client, err := amqp.NewAmqpClient(&amqp.Config{
-		Login:    os.Getenv("RABBIT_LOGIN"),
-		Password: os.Getenv("RABBIT_PASSWORD"),
-		Host:     os.Getenv("RABBIT_HOST"),
+		Login:    config.GetConfig("RABBIT_LOGIN"),
+		Password: config.GetConfig("RABBIT_PASSWORD"),
+		Host:     config.GetConfig("RABBIT_HOST"),
 	})
 
 	if err != nil {

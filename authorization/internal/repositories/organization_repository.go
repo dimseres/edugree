@@ -10,6 +10,7 @@ package repositories
 //	Active            bool
 
 import (
+	"authorization/config"
 	"authorization/internal/database"
 	"authorization/internal/models"
 	"bytes"
@@ -17,7 +18,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -119,7 +119,7 @@ func (self *OrganizationRepository) CreateTenantOrganization(organization *model
 	postBody, _ := json.Marshal(orgData)
 	responseBody := bytes.NewBuffer(postBody)
 
-	url := os.Getenv("COURSE_URL") + "/integration/organization/create"
+	url := config.GetConfig("COURSE_URL") + "/integration/organization/create"
 	if self.requestUuid == "" {
 		return errors.New("empty request-id")
 	}
@@ -129,7 +129,7 @@ func (self *OrganizationRepository) CreateTenantOrganization(organization *model
 		return err
 	}
 
-	req.Header.Set("X-ACCESS-KEY", os.Getenv("GATEWAY_KEY"))
+	req.Header.Set("X-ACCESS-KEY", config.GetConfig("GATEWAY_KEY"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-REQUEST-ID", self.requestUuid)
 

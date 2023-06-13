@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"authorization/config"
 	"authorization/internal/constants"
 	"authorization/internal/database"
 	"authorization/internal/models"
@@ -11,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"io"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -278,7 +278,7 @@ func (self *MembershipRepository) CreateTenantMember(organization *models.Organi
 	postBody, _ := json.Marshal(orgData)
 	responseBody := bytes.NewBuffer(postBody)
 
-	url := os.Getenv("COURSE_URL") + "/integration/organization/member/add"
+	url := config.GetConfig("COURSE_URL") + "/integration/organization/member/add"
 	if self.requestUuid == "" {
 		return errors.New("empty request-id")
 	}
@@ -288,7 +288,7 @@ func (self *MembershipRepository) CreateTenantMember(organization *models.Organi
 		return err
 	}
 
-	req.Header.Set("X-ACCESS-KEY", os.Getenv("GATEWAY_KEY"))
+	req.Header.Set("X-ACCESS-KEY", config.GetConfig("GATEWAY_KEY"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-REQUEST-ID", self.requestUuid)
 

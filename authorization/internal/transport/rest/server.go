@@ -9,7 +9,6 @@ import (
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"os"
 )
 
 func StartHttpServer(port string) {
@@ -17,7 +16,7 @@ func StartHttpServer(port string) {
 	if port == "" {
 		port = "5000"
 	}
-	if os.Getenv("APP_ENV") == "development" {
+	if config.GetConfig("APP_ENV") == "development" {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins:     []string{"*"},
 			AllowMethods:     []string{"*"},

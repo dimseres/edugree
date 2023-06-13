@@ -7,7 +7,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
-	"os"
 	"time"
 )
 
@@ -24,7 +23,7 @@ func InitPgConnection() *gorm.DB {
 			ParameterizedQueries:      true,
 		},
 	)
-	conn, err := gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{
+	conn, err := gorm.Open(postgres.Open(config.GetConfig("DSN")), &gorm.Config{
 		Logger: logger,
 	})
 	if err != nil {
