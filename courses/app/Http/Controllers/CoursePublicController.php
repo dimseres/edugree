@@ -39,7 +39,6 @@ class CoursePublicController extends Controller
             })
             ->withCount('modules')
             ->with('userCourses');
-
         return $courses->paginate(25);
     }
 

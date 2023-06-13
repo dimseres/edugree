@@ -52,6 +52,9 @@ class AuthServiceProvider extends ServiceProvider
         Auth::viaRequest('testauth', function (Request $request) {
             try {
                 $email = $request->header('X-REQUEST-ID');
+                if (!$email) {
+                      throw new \Exception("token missed");
+                }
                 $user = \App\Models\User::query()->where('email', $email)->first();
                 return $user;
             } catch (\Exception $exception) {
