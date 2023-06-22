@@ -10,10 +10,6 @@ import (
 
 func init() {
 	config.InitConfigs()
-	//err := godotenv.Load()
-	//if err != nil {
-	//	panic(err)
-	//}
 }
 
 // start service
