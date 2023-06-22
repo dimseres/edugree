@@ -35,7 +35,7 @@ class CourseEditController extends Controller
             ->whereHas('userCourses', function ($q) use ($user) {
                 $q->where('user_courses.id', $user->getAuthIdentifier());
             })->orWhereHas('courseAuthors', function ($q) use ($user) {
-                $q->whereIn('course_authors.id', [$user->getAuthIdentifier()]);
+                $q->whereIn('user_id', [$user->getAuthIdentifier()]);
             })
             ->withCount('modules')
             ->with('userCourses');
@@ -120,7 +120,7 @@ class CourseEditController extends Controller
             ->whereHas('userCourses', function ($q) use ($user) {
                 $q->where('user_courses.id', $user->getAuthIdentifier());
             })->orWhereHas('courseAuthors', function ($q) use ($user) {
-                $q->whereIn('course_authors.id', [$user->getAuthIdentifier()]);
+                $q->whereIn('user_id', [$user->getAuthIdentifier()]);
             })
             ->where('id', $id)
             ->with(['modules', 'modules.units'])
@@ -139,7 +139,7 @@ class CourseEditController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CreateCourseRequest $request, string $id)
+    public function update(string $id, CreateCourseRequest $request)
     {
         try {
             $user = Auth::user();
@@ -149,7 +149,7 @@ class CourseEditController extends Controller
             } else {
                 $course = Course::query()->where('id', $id)->with(['modules', 'modules.units'])
                     ->whereHas('courseAuthors', function ($q) use ($user) {
-                    $q->whereIn('course_authors.id', [$user->getAuthIdentifier()]);
+                    $q->whereIn('user_id', [$user->getAuthIdentifier()]);
                 })->firstOrFail();
             }
             if (!$course) {
@@ -185,10 +185,20 @@ class CourseEditController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Course $course)
+    public function destroy(int $id)
     {
+        $user = Auth::user();
+        $isAdmin = $user->hasRole([Role::ROLE_MODERATOR, Role::ROLE_ADMINISTRATOR, Role::ROLE_OWNER]);
+        if (!$isAdmin) {
+            $course = Course::query()->where('id', $id)->with(['modules', 'modules.units'])->firstOrFail();
+        } else {
+            $course = Course::query()->where('id', $id)->with(['modules', 'modules.units'])
+                ->whereHas('courseAuthors', function ($q) use ($user) {
+                    $q->whereIn('user_id', [$user->getAuthIdentifier()]);
+                })->firstOrFail();
+        }
         $modules = $course->modules;
-        if ($modules) {
+        if (!$modules->isEmpty()) {
             return [
                 'error' => true,
                 'message' => 'сначала удалите модули'

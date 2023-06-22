@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 class PollController extends BaseController
 {
     public function getPollData($poll_id) {
+
         throw new \Exception("NOT IMPLEMENTED");
     }
     public function updatePoll(Poll $poll, PollUpdateRequest $request)

@@ -2,11 +2,6 @@ version: "3.7"
 
 services:
   auth:
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 256M
     build:
       context: ./authorization
       dockerfile: ./Dockerfile
@@ -18,10 +13,6 @@ services:
       - app_network
 
   auth2:
-    deploy:
-      resources:
-        limits:
-          memory: 32M
     build:
       context: ./authorization
       dockerfile: ./Dockerfile
@@ -57,11 +48,6 @@ services:
       - app_network
 
   php:
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 512M
     build:
       context: ./devops/php
       args:
@@ -76,12 +62,7 @@ services:
     ports:
       - 9002:9000
 
-  php-next:
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 256M
+  php-surveys:
     build:
       context: ./devops/php
       args:
@@ -89,32 +70,42 @@ services:
     restart: always
     user: "82:82"
     volumes:
-      - ./courses:/var/www/courses
-    working_dir: "/var/www/courses"
+      - ./courses:/var/www/surveys
+    working_dir: "/var/www/surveys"
     networks:
       - app_network
     ports:
-      - 9001:9000
+      - 9003:9000
 
-  php3:
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 256M
-    build:
-      context: ./devops/php
-      args:
-        - INI_NAME=php.ini-development
-    restart: always
-    user: "82:82"
-    volumes:
-      - ./courses:/var/www/courses
-    working_dir: "/var/www/courses"
-    networks:
-      - app_network
-    ports:
-      - 9004:9000
+#  php-next:
+#    build:
+#      context: ./devops/php
+#      args:
+#        - INI_NAME=php.ini-development
+#    restart: always
+#    user: "82:82"
+#    volumes:
+#      - ./courses:/var/www/courses
+#    working_dir: "/var/www/courses"
+#    networks:
+#      - app_network
+#    ports:
+#      - 9001:9000
+#
+#  php3:
+#    build:
+#      context: ./devops/php
+#      args:
+#        - INI_NAME=php.ini-development
+#    restart: always
+#    user: "82:82"
+#    volumes:
+#      - ./courses:/var/www/courses
+#    working_dir: "/var/www/courses"
+#    networks:
+#      - app_network
+#    ports:
+#      - 9004:9000
 
 
   prometheus:

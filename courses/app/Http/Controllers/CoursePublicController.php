@@ -33,12 +33,13 @@ class CoursePublicController extends Controller
         $user = Auth::user();
         $courses = Course::query()
             ->whereHas('userCourses', function ($q) use ($user) {
-                $q->where('user_courses.id', $user->getAuthIdentifier());
+                $q->where('user_id', $user->getAuthIdentifier());
             })->orWhereHas('courseAuthors', function ($q) use ($user) {
-                $q->whereIn('course_authors.id', [$user->getAuthIdentifier()]);
+                $q->whereIn('user_id', [$user->getAuthIdentifier()]);
             })
             ->withCount('modules')
             ->with('userCourses');
+
         return $courses->paginate(25);
     }
 
